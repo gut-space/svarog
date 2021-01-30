@@ -5,6 +5,11 @@ python:
   - "3.7"
   - "3.8"
 
+env:
+  - SHELL_SCRIPTS  = "station/recipes/meteor-qpsk.sh"
+  - SHELL_SCRIPTS += "station/recipes/noaa-apt.sh"
+  - SHELLCHECK_OPTS = ""
+
 #services:
 #  - postgresql
 
@@ -19,6 +24,7 @@ install:
   - pip install -r station/requirements.txt
   - pip install -r server/requirements.txt
   - pip install pytest
+  - apt install shellcheck
 
 before_script:
   - psql -c 'create database satnogs;' -U postgres
@@ -30,6 +36,7 @@ before_script:
 script:
   - cd station && pytest -v && cd ..
   - cd server && PYTHONTEST=. pytest -v
+  - shellcheck ${SCRIPTS} ${SHELLCHECK_OPTS}
 
 notifications:
   email:
