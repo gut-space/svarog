@@ -8,18 +8,18 @@ Project founders: [Sławek Figiel](https://github.com/fivitti) and [Tomek Mrugal
 
 # Project status
 
-As of April 2020, the following features are working:
+As of Jan 2021, the following features are working:
 
 - WiMo TA-1 antenna, SDR and RPi4 are working
 - Automated reception and transmission decoding for NOAA-15, NOAA-18 and NOAA-19 satellites (APT)
 - Support for Meteor M2 transmissions (LRPT)
 - Transmissions are decoded and uploaded automatically to our content server (see https://satnogs.klub.com.pl)
-- automated updates for the server
+- Automated updates for the server
+- Orbital TLE data is recorded
+- Pass over charts (azimuth/elevation)
 
 Work in progress and plans for the next couple weeks:
 
-- record TLE
-- fly-over (azimuth/elevation) charts
 - user management
 - automated updates for the station
 - quality assessment for decoded images
@@ -33,3 +33,4 @@ Work in progress and plans for the next couple weeks:
 - [Project report](doc/prototype-phase/satnogs-gdn-report.pdf) - a report from the early days when this was a team university project
 - [Project poster 1](doc/prototype-phase/poster1-pl.jpg)
 - [Project poster 2](doc/prototype-phase/poster2-en.jpg)
+- For older files see https://github.com/gut-space/satnogs.
