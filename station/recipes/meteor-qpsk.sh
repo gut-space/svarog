@@ -57,8 +57,6 @@ meteor_demod_name() {
 meteor_demod_name
 echo "METEOR DEMOD found: [$METEOR_DEMOD]"
 
-$METEOR_DEMOD
-
 # Record raw IQ data
 timeout "$RECEIVE_TIMEOUT" \
     rtl_fm -M raw -f "$FREQUENCY" -s 288k -g 48 -p 1 | \
@@ -93,7 +91,7 @@ echo "Decoded"
 convert "$PRODUCT_BITMAP_FILENAME" "$PRODUCT_FILENAME" || exit $?
 rm "$PRODUCT_BITMAP_FILENAME"
 echo "Converted"
-echo !! Product: "$PRODUCT_FILENAME"
+echo "!! Product: $PRODUCT_FILENAME"
 
 # Demodulator from: https://github.com/dbdexter-dev/meteor_demod
 # Decoder from: https://github.com/artlav/meteor_decoder
