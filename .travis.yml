@@ -20,12 +20,12 @@ addons:
     packages:
     - postgresql-10
     - postgresql-client-10
+    - shellcheck
 
 install:
   - pip install -r station/requirements.txt
   - pip install -r server/requirements.txt
   - pip install pytest
-  - apt install shellcheck
 
 before_script:
   - psql -c 'create database satnogs;' -U postgres
