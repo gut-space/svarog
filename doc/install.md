@@ -22,7 +22,7 @@ Also, the following tools are needed:
 
 1. noaa-apt - download Raspberry Pi binaries from https://noaa-apt.mbernardi.com.ar/download.html
 2. medet - https://github.com/artlav/meteor_decoder, binaries available from: http://orbides.org/page.php?id=1023
-3. meteor-demod - https://github.com/artlav/meteor_decoder
+3. meteor-demod - https://github.com/dbdexter-dev/meteor_demod
 
 2. **Create satnogs user**:
 
