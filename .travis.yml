@@ -37,7 +37,7 @@ before_script:
 script:
   - cd station && pytest -v && cd ..
   - cd server && PYTHONTEST=. pytest -v
-  - shellcheck ${SCRIPTS} ${SHELLCHECK_OPTS}
+  - shellcheck ${SHELL_SCRIPTS} ${SHELLCHECK_OPTS}
 
 notifications:
   email:
