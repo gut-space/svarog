@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gut-space/aquarius.svg?branch=master)](https://travis-ci.org/gut-space/aquarius)
+[![Build Status](https://travis-ci.com/gut-space/aquarius.svg?branch=master)](https://travis-ci.com/gut-space/aquarius)
 
 <img align="right" width="128" height="128" src="https://github.com/gut-space/satnogs/blob/master/doc/logo.png">
 
