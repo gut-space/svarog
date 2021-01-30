@@ -6,9 +6,7 @@ python:
   - "3.8"
 
 env:
-  - SHELL_SCRIPTS  = "station/recipes/meteor-qpsk.sh"
-  - SHELL_SCRIPTS += "station/recipes/noaa-apt.sh"
-  - SHELLCHECK_OPTS = ""
+  - SHELL_SCRIPTS="station/recipes/meteor-qpsk.sh station/recipes/noaa-apt.sh" SHELLCHECK_OPTS=""
 
 #services:
 
