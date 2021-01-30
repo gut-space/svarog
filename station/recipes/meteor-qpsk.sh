@@ -13,6 +13,12 @@
 # where CATEGORY is label, tag, category of file and PATH is path to this file.
 # Caller is responsible for returned paths.
 
+if test "$#" -ne 3; then
+    echo "ERROR: Expected exactly 3 parameters: BASENAME FREQUENCY RECEIVE_TIMEOUT"
+    echo "ERROR: See comment in $0 for details."
+    exit 1
+fi
+
 BASENAME=$1
 FREQUENCY=$2
 RECEIVE_TIMEOUT=$3
@@ -26,9 +32,36 @@ PRODUCT_BITMAP_FILENAME=${PRODUCT_FILENAME_WITOUT_EXT}.bmp
 SIGNAL_FILENAME=${BASENAME}_signal.wav
 PRODUCT_FILENAME=${PRODUCT_FILENAME_WITOUT_EXT}.png
 
+# This little function checks if meteor demod is available as meteor_demod or meteor-demod
+# and then sets the $METEOR_DEMOD variable accordingly.
+meteor_demod_name() {
+
+    # command -v is really a portable which command
+    command -v meteor-demod > /dev/null
+    if test "$?" -eq 0; then
+        METEOR_DEMOD="meteor-demod"
+        return
+    fi
+
+    command -v meteor_demod > /dev/null
+    if test "$?" -eq 0; then
+        METEOR_DEMOD="meteor_demod"
+        return
+    fi
+
+    echo "ERROR: meteor-demod not found. Couldn't find meteor-demod nor meteor_demod."
+    echo "ERROR: Make sure those are available in the system PATH."
+    exit 1
+}
+
+meteor_demod_name
+echo "METEOR DEMOD found: [$METEOR_DEMOD]"
+
+$METEOR_DEMOD
+
 # Record raw IQ data
-timeout $RECEIVE_TIMEOUT \
-    rtl_fm -M raw -f $FREQUENCY -s 288k -g 48 -p 1 | \
+timeout "$RECEIVE_TIMEOUT" \
+    rtl_fm -M raw -f "$FREQUENCY" -s 288k -g 48 -p 1 | \
     sox -t raw -r 288k -c 2 -b 16 -e s - -t wav "$SIGNAL_FILENAME" rate 96k
 
 retVal=$?
@@ -36,12 +69,13 @@ if [ $retVal -ne 0 ]; then
 	exit $retVal
 fi
 
-echo !! Signal: $SIGNAL_FILENAME
+
+echo "!! Signal: $SIGNAL_FILENAME"
 # Normalize .wav
 sox "$SIGNAL_FILENAME" "$NORMALIZED_SIGNAL_FILENAME" gain -n || exit $?
 echo "Normalized"
-# Demodulate .wav to QPSK
-yes | meteor-demod -o "$QPSK_FILENAME" -B "$NORMALIZED_SIGNAL_FILENAME" || exit $?
+# Demodulate .wav to QPSK using meteor-demod
+yes | $METEOR_DEMOD -o "$QPSK_FILENAME" -B "$NORMALIZED_SIGNAL_FILENAME" || exit $?
 rm "$NORMALIZED_SIGNAL_FILENAME"
 echo "Demodulated"
 # Keep original file timestamp
@@ -59,11 +93,11 @@ echo "Decoded"
 convert "$PRODUCT_BITMAP_FILENAME" "$PRODUCT_FILENAME" || exit $?
 rm "$PRODUCT_BITMAP_FILENAME"
 echo "Converted"
-echo !! Product: $PRODUCT_FILENAME
+echo !! Product: "$PRODUCT_FILENAME"
 
 # Demodulator from: https://github.com/dbdexter-dev/meteor_demod
 # Decoder from: https://github.com/artlav/meteor_decoder
-# Mni Tnx to authors!
+# Many Tnx to authors!
 
 # timeout 600: reception time
 # if your reception conditions are good, you can use "rate 120k" or more
