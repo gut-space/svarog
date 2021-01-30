@@ -13,6 +13,12 @@
 # where CATEGORY is label, tag, category of file and PATH is path to this file.
 # Caller is responsible for returned paths.
 
+if test "$#" -ne 3; then
+    echo "ERROR: Expected exactly 3 parameters: BASENAME FREQUENCY RECEIVE_TIMEOUT"
+    echo "ERROR: See comment in $0 for details."
+    exit 1
+fi
+
 BASENAME=$1
 FREQUENCY=$2
 RECEIVE_TIMEOUT=$3
@@ -21,17 +27,17 @@ SIGNAL_FILENAME=${BASENAME}_signal.wav
 PRODUCT_FILENAME=${BASENAME}_product.png
 
 # Record signal
-timeout $RECEIVE_TIMEOUT \
-	rtl_fm -d 0 -f $FREQUENCY -s 48000 -g 49.6 -p 1 -F 9 -A fast -E DC - | \
-	sox -t raw -b16 -es -r 48000 -c1 -V1 - $SIGNAL_FILENAME rate 11025
+timeout "$RECEIVE_TIMEOUT" \
+	rtl_fm -d 0 -f "$FREQUENCY" -s 48000 -g 49.6 -p 1 -F 9 -A fast -E DC - | \
+	sox -t raw -b16 -es -r 48000 -c1 -V1 - "$SIGNAL_FILENAME" rate 11025
 
 retVal=$?
 if [ $retVal -ne 0 ]; then
     exit $retVal
 fi
 
-echo !! Signal: $SIGNAL_FILENAME
+echo !! Signal: "$SIGNAL_FILENAME"
 
 # Decode signal
-noaa-apt -o $PRODUCT_FILENAME $SIGNAL_FILENAME || exit $?
-echo !! Product: $PRODUCT_FILENAME
+noaa-apt -o "$PRODUCT_FILENAME $SIGNAL_FILENAME" || exit $?
+echo !! Product: "$PRODUCT_FILENAME"
