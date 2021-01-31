@@ -91,6 +91,16 @@ def get_planner_command(directory=None):
 def get_receiver_command(directory=None):
     return _get_command(directory, "receiver.py")
 
+def get_updater_command(directory=None):
+    """Returns an absolute path to the update.sh script, to be used by cron job."""
+    if directory is None:
+        directory = sys.argv[0]
+    if not os.path.isdir(directory):
+        directory = os.path.dirname(directory)
+    path = os.path.join(directory, "update.sh")
+    path = os.path.abspath(path)
+    return path
+
 def open_crontab() -> CronTab:
     if DEV_ENVIRONMENT:
         path = os.path.join(CONFIG_DIRECTORY, "crontab")
