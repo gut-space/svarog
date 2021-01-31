@@ -92,7 +92,7 @@ class TestCli(unittest.TestCase):
     def test_cli_help(self):
         """Checks if help is printed and has reasonable information."""
 
-        exp = [ "usage: satnogs-gut [-h] {clear,logs,plan,pass,config}",
+        exp = [ "usage: aquarius [-h] {clear,logs,plan,pass,config}",
                 "positional arguments:",
                 "{clear,logs,plan,pass,config}",
                 "clear               Clear all schedule receiving",
