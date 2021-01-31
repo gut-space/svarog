@@ -15,9 +15,10 @@ else:
     from typing_extensions import TypedDict, Literal
 
 DEV_ENVIRONMENT =  os.environ.get("DEV_ENVIRONMENT") == '1'
-APP_NAME = "satnogs-gut"
-COMMENT_PASS_TAG = APP_NAME + "-Pass"
-COMMENT_PLAN_TAG = APP_NAME + "-Plan"
+APP_NAME = "aquarius"
+COMMENT_PASS_TAG = APP_NAME + "-pass"
+COMMENT_PLAN_TAG = APP_NAME + "-plan"
+COMMENT_UPDATE_TAG = APP_NAME + "-update"
 
 CONFIG_DIRECTORY: str = os.environ.get("SATNOGS_GUT_CONFIG_DIR") # type: ignore
 if CONFIG_DIRECTORY is None:
@@ -106,7 +107,12 @@ def open_config() -> Configuration:
     if not config_exists:
         directory = os.path.dirname(config_path)
         os.makedirs(directory, exist_ok=True)
-        shutil.copyfile('config.yml.template', config_path)
+
+        # Need to get the current directory, so this should work regardless if this command is issued from
+        # top dir or from station/ subdir.
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        shutil.copyfile(curr_dir + os.path.sep + 'config.yml.template', config_path)
+        print("WARNING: config file (%s) was missing, generated using template." % config_path)
 
     with open(config_path) as f:
         return yaml.safe_load(f) # type: ignore
