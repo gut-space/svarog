@@ -77,29 +77,26 @@ class Configuration(TypedDict):
     obsdir: Optional[str]
 
 def _get_command(directory, filename):
+    """Returns an absolute path to the file in directory."""
     if directory is None:
         directory = sys.argv[0]
     if not os.path.isdir(directory):
         directory = os.path.dirname(directory)
     path = os.path.join(directory, filename)
     path = os.path.abspath(path)
-    return "python3 %s " % path
+    return path
 
 def get_planner_command(directory=None):
-    return _get_command(directory, "planner.py")
+    """Returns a shell command to be executed to start a planner."""
+    return "python3 %s " % _get_command(directory, "planner.py")
 
 def get_receiver_command(directory=None):
-    return _get_command(directory, "receiver.py")
+    """Returns a shell command to be executed to receive transmission."""
+    return "python3 %s " % _get_command(directory, "receiver.py")
 
 def get_updater_command(directory=None):
     """Returns an absolute path to the update.sh script, to be used by cron job."""
-    if directory is None:
-        directory = sys.argv[0]
-    if not os.path.isdir(directory):
-        directory = os.path.dirname(directory)
-    path = os.path.join(directory, "update.sh")
-    path = os.path.abspath(path)
-    return path
+    return _get_command(directory, "update.sh")
 
 def open_crontab() -> CronTab:
     if DEV_ENVIRONMENT:
