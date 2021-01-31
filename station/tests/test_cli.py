@@ -125,8 +125,6 @@ class TestCli(unittest.TestCase):
 
         del environ["DEV_ENVIRONMENT"]
 
-        #input("Press enter")
-
         # This is not perfect, but it's better than nothing. It checks if the crontab file contains the following strings in
         # order. In fact, the entries should be:
         #
