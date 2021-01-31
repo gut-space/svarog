@@ -13,7 +13,7 @@ As of Jan 2021, the following features are working:
 - WiMo TA-1 antenna, SDR and RPi4 are working
 - Automated reception and transmission decoding for NOAA-15, NOAA-18 and NOAA-19 satellites (APT)
 - Support for Meteor M2 transmissions (LRPT)
-- Transmissions are decoded and uploaded automatically to our content server (see https://satnogs.klub.com.pl)
+- Transmissions are decoded and uploaded automatically to our content server (see https://aquarius.klub.com.pl)
 - Automated updates for the server
 - Orbital TLE data is recorded
 - Pass over charts (azimuth/elevation)
