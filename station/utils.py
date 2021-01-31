@@ -121,7 +121,7 @@ def open_config() -> Configuration:
         # Need to get the directory where the utils.py resides, so this will work regardless if this command is issued from
         # top dir or from station/ subdir.
         template_dir = os.path.dirname(os.path.realpath(__file__))
-        shutil.copyfile(template_dir + os.path.sep + 'config.yml.template', config_path)
+        shutil.copyfile(os.path.join(template_dir, 'config.yml.template'), config_path)
         print("WARNING: config file (%s) was missing, generated using template." % config_path)
 
     with open(config_path) as f:
