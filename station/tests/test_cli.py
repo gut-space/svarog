@@ -48,6 +48,13 @@ class TestCli(unittest.TestCase):
             cnt += 1
         return cnt
 
+    def check_file(self, file, strings):
+        """Checks if specified file contains specified strings."""
+        with open(file, "r") as f:
+            content = f.read()
+
+        self.check_output(content, strings)
+
     def check_command(self, bin, params, exp_code = 0, exp_strings = []):
         """Runs specified command (bin) with parameters (params) and expected
         the return code to be exp_code. """
@@ -95,9 +102,9 @@ class TestCli(unittest.TestCase):
         exp = [ "usage: aquarius [-h] {clear,logs,plan,pass,config}",
                 "positional arguments:",
                 "{clear,logs,plan,pass,config}",
-                "clear               Clear all schedule receiving",
+                "clear               Clear all scheduled reception events",
                 "logs                Show logs",
-                "plan                Schedule planning receiving",
+                "plan                Schedule planned reception events",
                 "pass                Information about passes",
                 "config              Configuration",
                 "-h, --help            show this help message and exit"
@@ -105,3 +112,27 @@ class TestCli(unittest.TestCase):
         exp_code = 0
 
         self.check_command(CLI, None, exp_code, exp)
+
+
+    def test_plan(self):
+        """Checks if cli.py plan really schedules anything in cron."""
+
+        # Set the DEV_ENVIRONMENT, so the cron script writes to a crontab file in ./config/crontab rather than the
+        # actual crontab file.
+        environ["DEV_ENVIRONMENT"] = "1"
+
+        self.check_command(CLI, [ "plan" ], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day, every day"])
+
+        del environ["DEV_ENVIRONMENT"]
+
+        #input("Press enter")
+
+        # This is not perfect, but it's better than nothing. It checks if the crontab file contains the following strings in
+        # order. In fact, the entries should be:
+        #
+        # 55 3 * * * /home/thomson/devel/aquarius/station/update.sh # aquarius-update
+        # 0 4 * * * python3 /home/thomson/devel/aquarius/station/planner.py 86400 # aquarius-plan
+        # However, the /home/thomson/devel/aquarius is very much deployment specific. So, we use a simplified approach
+        # and just check if the beginnings and ends match.
+        self.check_file("tests/config/crontab", ["55 3 * * *", "/station/update.sh # aquarius-update",
+                                                 "0 4 * * * python3", "station/planner.py 86400 # aquarius-plan"])

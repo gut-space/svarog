@@ -95,13 +95,13 @@ parser = argparse.ArgumentParser(APP_NAME)
 subparsers = parser.add_subparsers(help='commands', dest="command")
 
 clear_parser = subparsers.add_parser(
-    'clear', help='Clear all schedule receiving')
+    'clear', help='Clear all scheduled reception events')
 
 log_parser = subparsers.add_parser(
     'logs', help='Show logs'
 )
 
-plan_parser = subparsers.add_parser('plan', help='Schedule planning receiving')
+plan_parser = subparsers.add_parser('plan', help='Schedule planned reception events')
 plan_parser.add_argument("--cron", type=str, help='Cron format required. Default "0 4 * * *" for 4:00 AM')
 plan_parser.add_argument("--force", action="store_true", default=False, help="Perform planning now. (default: %(default)s)")
 plan_parser.add_argument("--skip-update", action="store_true", default=False, help="Disables periodic update. (default: %(default)s)")
