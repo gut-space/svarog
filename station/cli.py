@@ -191,7 +191,7 @@ elif command == "plan":
         print("Trying to set up cron job for periodic updates.")
         updater_job = first(cron.find_comment(COMMENT_UPDATE_TAG))
         if updater_job is None:
-            cmd = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "update.sh"
+            cmd = os.path.join(os.path.dirname(os.path.realpath(__file__)) , "update.sh")
             updater_job = cron.new(comment=COMMENT_UPDATE_TAG, command=cmd)
             updater_job.setall("55 3 * * *")
             cron.write()
