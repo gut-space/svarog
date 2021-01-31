@@ -141,7 +141,7 @@ def first(iterable: Iterable[T], condition: Callable[[T], bool] = lambda x: True
     If the condition is not given, returns the first item of
     the iterable.
 
-    Return `None` if no item satysfing the condition is found.
+    Return `None` if no item satisfying the condition is found.
 
     >>> first( (1,2,3), condition=lambda x: x % 2 == 0)
     2
