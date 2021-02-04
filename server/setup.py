@@ -8,9 +8,9 @@ from setuptools import setup, find_packages
 # STEP 1: install python packages
 REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 
-setup(name='satnogs-server',
+setup(name='aquarius-server',
       version='1.0',
-      description='satnogs-gut server',
+      description='aquarius server',
       author='SF, TM',
       packages=find_packages(),
       install_requires=REQUIREMENTS
@@ -34,7 +34,7 @@ def backup_database():
     config.read(config_path)
     db = config["database"]
     now = datetime.datetime.utcnow()
-    timestamp_filename="satnogs-gut-%s.backup" % (now.isoformat())
+    timestamp_filename="aquarius-%s.backup" % (now.isoformat())
     backup_path = path.join(backup_dir, timestamp_filename)
     env = environ.copy()
     env["PGPASSWORD"] = db["password"]
@@ -60,7 +60,7 @@ from migrate_db import *
 migrate()
 
 # STEP 4: make sure the update script will be called every day
-COMMENT_UPDATE_TAG = 'satnogs-gut-update'
+COMMENT_UPDATE_TAG = 'aquarius-update'
 
 def install_update_cronjob():
     print("Installing cronjob")
