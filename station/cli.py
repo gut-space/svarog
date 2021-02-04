@@ -14,7 +14,7 @@ from deepdiff import DeepHash
 
 import planner
 from orbitdb import OrbitDatabase
-from utils import COMMENT_PLAN_TAG, COMMENT_PASS_TAG, SatelliteConfiguration, first, get_location, \
+from utils import COMMENT_PLAN_TAG, COMMENT_PASS_TAG, COMMENT_UPDATE_TAG, SatelliteConfiguration, first, get_location, \
                 get_planner_command, get_receiver_command, get_satellite, open_config, save_config, \
                 APP_NAME, open_crontab, LOG_FILE, from_iso_format
 from recipes.factory import get_recipe_names
@@ -95,15 +95,16 @@ parser = argparse.ArgumentParser(APP_NAME)
 subparsers = parser.add_subparsers(help='commands', dest="command")
 
 clear_parser = subparsers.add_parser(
-    'clear', help='Clear all schedule receiving')
+    'clear', help='Clear all scheduled reception events')
 
 log_parser = subparsers.add_parser(
     'logs', help='Show logs'
 )
 
-plan_parser = subparsers.add_parser('plan', help='Schedule planning receiving')
+plan_parser = subparsers.add_parser('plan', help='Schedule planned reception events')
 plan_parser.add_argument("--cron", type=str, help='Cron format required. Default "0 4 * * *" for 4:00 AM')
 plan_parser.add_argument("--force", action="store_true", default=False, help="Perform planning now. (default: %(default)s)")
+plan_parser.add_argument("--skip-update", action="store_true", default=False, help="Disables periodic update. (default: %(default)s)")
 
 pass_parser = subparsers.add_parser("pass", help="Information about passes")
 pass_parser.add_argument("target", type=str, help="Pass number or satellite name")
@@ -177,13 +178,28 @@ if command == "clear":
     cron.remove_all(comment=COMMENT_PLAN_TAG)
     cron.write()
     print("Cleared all existing jobs")
+
 elif command == "logs":
     if LOG_FILE is None:
         print("Log on console. History not available.")
     else:
         with open(LOG_FILE, "rt") as f:
             print(f.read())
+
 elif command == "plan":
+    if not args.skip_update:
+        print("Trying to set up cron job for periodic updates.")
+        updater_job = first(cron.find_comment(COMMENT_UPDATE_TAG))
+        if updater_job is None:
+            cmd = os.path.join(os.path.dirname(os.path.realpath(__file__)) , "update.sh")
+            updater_job = cron.new(comment=COMMENT_UPDATE_TAG, command=cmd)
+            updater_job.setall("55 3 * * *")
+            cron.write()
+            print("Added cronjob for update, scheduled for 3:55")
+        else:
+            print("Cron job for update found. Not adding.")
+            # TODO: We probably want to remove it and add again, just in case there's an update somewhere.
+
     if planner_job is None:
         args.cron = args.cron or "0 4 * * *"
         planner_job = cron.new(comment=COMMENT_PLAN_TAG, command="placeholder")
@@ -222,6 +238,7 @@ elif command == "plan":
                 status = ">>>"
 
             print(" ".join([str(idx).rjust(2), status, description, parameters]))
+
 elif command == "pass":
     pass_target = args.target
     if pass_target.isdecimal():
@@ -263,6 +280,7 @@ elif command == "pass":
     az_elev_chart.plot(sat_name, pass_.aos, pass_.los, location,
         args.step, args.width, args.height, args.scale_elevation,
         axis_in_local_time=not args.print_utc, scale_polar=args.scale_polar)
+
 elif command == "config":
     config_command = args.config_command
 

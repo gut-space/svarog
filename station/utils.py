@@ -15,9 +15,10 @@ else:
     from typing_extensions import TypedDict, Literal
 
 DEV_ENVIRONMENT =  os.environ.get("DEV_ENVIRONMENT") == '1'
-APP_NAME = "satnogs-gut"
-COMMENT_PASS_TAG = APP_NAME + "-Pass"
-COMMENT_PLAN_TAG = APP_NAME + "-Plan"
+APP_NAME = "aquarius"
+COMMENT_PASS_TAG = APP_NAME + "-pass"
+COMMENT_PLAN_TAG = APP_NAME + "-plan"
+COMMENT_UPDATE_TAG = APP_NAME + "-update"
 
 CONFIG_DIRECTORY: str = os.environ.get("SATNOGS_GUT_CONFIG_DIR") # type: ignore
 if CONFIG_DIRECTORY is None:
@@ -76,19 +77,26 @@ class Configuration(TypedDict):
     obsdir: Optional[str]
 
 def _get_command(directory, filename):
+    """Returns an absolute path to the file in directory."""
     if directory is None:
         directory = sys.argv[0]
     if not os.path.isdir(directory):
         directory = os.path.dirname(directory)
     path = os.path.join(directory, filename)
     path = os.path.abspath(path)
-    return "python3 %s " % path
+    return path
 
 def get_planner_command(directory=None):
-    return _get_command(directory, "planner.py")
+    """Returns a shell command to be executed to start a planner."""
+    return "python3 %s " % _get_command(directory, "planner.py")
 
 def get_receiver_command(directory=None):
-    return _get_command(directory, "receiver.py")
+    """Returns a shell command to be executed to receive transmission."""
+    return "python3 %s " % _get_command(directory, "receiver.py")
+
+def get_updater_command(directory=None):
+    """Returns an absolute path to the update.sh script, to be used by cron job."""
+    return _get_command(directory, "update.sh")
 
 def open_crontab() -> CronTab:
     if DEV_ENVIRONMENT:
@@ -106,7 +114,12 @@ def open_config() -> Configuration:
     if not config_exists:
         directory = os.path.dirname(config_path)
         os.makedirs(directory, exist_ok=True)
-        shutil.copyfile('config.yml.template', config_path)
+
+        # Need to get the directory where the utils.py resides, so this will work regardless if this command is issued from
+        # top dir or from station/ subdir.
+        template_dir = os.path.dirname(os.path.realpath(__file__))
+        shutil.copyfile(os.path.join(template_dir, 'config.yml.template'), config_path)
+        print("WARNING: config file (%s) was missing, generated using template." % config_path)
 
     with open(config_path) as f:
         return yaml.safe_load(f) # type: ignore
@@ -125,7 +138,7 @@ def first(iterable: Iterable[T], condition: Callable[[T], bool] = lambda x: True
     If the condition is not given, returns the first item of
     the iterable.
 
-    Return `None` if no item satysfing the condition is found.
+    Return `None` if no item satisfying the condition is found.
 
     >>> first( (1,2,3), condition=lambda x: x % 2 == 0)
     2
