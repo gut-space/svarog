@@ -4,7 +4,7 @@ from subprocess import Popen, PIPE
 import unittest
 
 # It must be set before import "utils"
-environ["SATNOGS_GUT_CONFIG_DIR"] = "tests/config"
+environ["AQUARIUS_CONFIG_DIR"] = "tests/config"
 
 from utils import CONFIG_DIRECTORY
 

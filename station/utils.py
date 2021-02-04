@@ -20,7 +20,7 @@ COMMENT_PASS_TAG = APP_NAME + "-pass"
 COMMENT_PLAN_TAG = APP_NAME + "-plan"
 COMMENT_UPDATE_TAG = APP_NAME + "-update"
 
-CONFIG_DIRECTORY: str = os.environ.get("SATNOGS_GUT_CONFIG_DIR") # type: ignore
+CONFIG_DIRECTORY: str = os.environ.get("AQUARIUS_CONFIG_DIR") # type: ignore
 if CONFIG_DIRECTORY is None:
     if DEV_ENVIRONMENT:
         CONFIG_DIRECTORY = os.path.abspath("./config")

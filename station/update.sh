@@ -48,7 +48,7 @@ fi
 
 # If we gotten so far, there's something new. Pull and rerun the setup procedure.
 git pull
-python3 setup.py install
+sudo python3 setup.py install
 python3 cli.py clear
 python3 cli.py plan --force --update
 
