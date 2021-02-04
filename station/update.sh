@@ -50,7 +50,7 @@ fi
 git pull
 sudo python3 setup.py install
 python3 cli.py clear
-python3 cli.py plan --force --update
+python3 cli.py plan --force
 
 # Store current SHA in a file
 git rev-parse HEAD > commit.txt
