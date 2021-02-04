@@ -5,7 +5,7 @@ import unittest
 from shutil import copy, rmtree
 
 # It must be set before import "utils"
-environ["SATNOGS_GUT_CONFIG_DIR"] = "tests/config"
+environ["AQUARIUS_CONFIG_DIR"] = "tests/config"
 
 from utils import CONFIG_DIRECTORY
 
