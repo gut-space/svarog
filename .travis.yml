@@ -6,7 +6,7 @@ python:
   - "3.8"
 
 env:
-  - SHELL_SCRIPTS="station/recipes/meteor-qpsk.sh station/recipes/noaa-apt.sh" SHELLCHECK_OPTS=""
+  - SHELLCHECK_OPTS=""
 
 #services:
 
@@ -35,7 +35,7 @@ before_script:
 script:
   - cd station && pytest -v ; cd ..
   - cd server && PYTHONTEST=. pytest -v ; cd ..
-  - shellcheck ${SHELL_SCRIPTS} ${SHELLCHECK_OPTS}
+  - find . -name '*.sh' | xargs shellcheck ${SHELLCHECK_OPTS}
 
 notifications:
   email:
