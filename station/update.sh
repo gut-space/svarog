@@ -14,13 +14,13 @@ remote_repo_status() {
     REMOTE=$(git rev-parse "$UPSTREAM")
     BASE=$(git merge-base @ "$UPSTREAM")
 
-    if [ $LOCAL = $REMOTE ]; then
+    if [ "$LOCAL" = "$REMOTE" ]; then
         # "Up-to-date"
         return 0
-    elif [ $LOCAL = $BASE ]; then
+    elif [ "$LOCAL" = "$BASE" ]; then
         # "Need to pull"
         return 1
-    elif [ $REMOTE = $BASE ]; then
+    elif [ "$REMOTE" = "$BASE" ]; then
         # "Need to push"
         return 2
     else
