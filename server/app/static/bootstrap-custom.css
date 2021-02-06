@@ -13,3 +13,10 @@
 .text-warning {
     color: orange
 }
+
+.tle { white-space: pre}
+
+.tle1 span { white-space: pre; color: green }
+.tle2 span { white-space: pre; color: blue }
+.tle3 span { white-space: pre; color: black }
+.tle4 span { white-space: pre; color: orange }
