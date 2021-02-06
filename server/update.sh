@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=`git branch|sed -ne 's,^\* ,,p'`
+BRANCH=$(git branch|sed -ne 's,^\* ,,p')
 
 if test "$BRANCH" != "master"; then
     echo "The current branch ($BRANCH) is not master, skipping update."
@@ -33,7 +33,10 @@ git rev-parse HEAD > commit.txt
 # Run the installation script
 VENV=$PWD/venv/bin/activate
 echo "Enabling venv at $VENV"
-. $VENV
+
+# We don't care that venv activation scritp will not be checked.
+# shellcheck disable=SC1090
+. "$VENV"
 python setup.py install
 
 # Restart apache
