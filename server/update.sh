@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=$(git branch|sed -ne 's,^\* ,,p')
+BRANCH=$(git branch --show-current)
 
 if test "$BRANCH" != "master"; then
     echo "The current branch ($BRANCH) is not master, skipping update."
