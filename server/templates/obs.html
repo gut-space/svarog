@@ -24,10 +24,86 @@
 
     <img width="45%" class="tle-plot" alt="Azimuth/elevation by time" src="/data/charts/by_time-{{ obs.obs_id }}.png" />
     <img width="45%" class="tle-plot" alt="Azimuth/elevation polar" src="/data/charts/polar-{{ obs.obs_id }}.png" /><br/>
-    <b>TLE:</b><br/>
-    {{ obs.tle[0] }}<br/>
-    {{ obs.tle[1] }}
+
+    <hr/>
+
+    <!-- playground code -->
+
+    <!-- defining the styles using style directly works fine. -->
+    <code>
+        <span style="color: green; white-space: pre;">01 2  3   4    X</span>
+    </code>
+
+    <!-- defining the styles in .css and then using classes doesn't work. -->
+    <code class="tle1">
+        <span class="tle1">01 2  3   4    X</span>
+    </code>
+
+    <hr/>
+
+    <b>TLE:</b><pre>{{ obs.tle[0] }}
+{{ obs.tle[1] }}</pre>
     {% endif %}
+
+
+    <!-- TLE LINE 1 -->
+    <b>TLE (annotated):</b><br/>
+    <code><abbr title="Line number"><span style="color: green">{{ obs.tle[0][0] }}</span></abbr>
+
+        <abbr title="Norad ID"><span style="color: darkorange">{{ obs.tle[0][2:7] }}</span></abbr>
+
+        <abbr title="Classification: U=unclassified, C=classified S=secret (columns 3-7))"><span style="color: red">{{ obs.tle[0][7] }}</span></abbr>
+
+        <abbr title="Launch year, last two digit (columns 10-11)"><span style="color: blue">{{ obs.tle[0][9:11] }}</span></abbr>
+
+        <abbr title="launch number of the year (columns 12-14)"><span style="color: brown">{{ obs.tle[0][11:14] }}</span></abbr>
+
+        <abbr title="piece of the launch, starting with A (columns 15-17)"><span style="white-space: pre; color:green">{{ obs.tle[0][14:17] }}</span></abbr>
+        <abbr title="Epoch: year, last two digits of a year (columns 19-20)"><span style="color: darkorange">{{ obs.tle[0][18:20] }}</span></abbr>
+        <abbr title="Epoch: day of the year and fractional portion of the day (columns 21-32)"><span style="color: red">{{ obs.tle[0][20:32] }}</span></abbr>
+
+        <abbr title="First derivative of Mean Motion, aka Ballistic Coefficient (columns 34-43)"><span style="color: blue;
+         white-space: pre">{{ obs.tle[0][33:43] }}</span></abbr>
+
+        <abbr title="Second derivative of Mean Motion, decimal point assumed (columns 45-52)"><span style="color: brown;
+        white-space: pre">{{ obs.tle[0][44:52] }}</span></abbr>
+
+        <abbr title="Drag term, Radiation Pressure coefficient or BSTAR (decimal point assumed, columns 54-61)"><span style="color: green;
+        white-space: pre">{{ obs.tle[0][53:61] }}</span></abbr>
+
+        <abbr title="Ephemeris type (internal use only, always zero in distributed TLE data), column 63"><span style="color: darkorange;
+        white-space: pre">{{ obs.tle[0][62] }}</span></abbr>
+
+<abbr title="Element set number, incremented when a new TLE is generated for this object, column 65-68"><span style="color: red;
+    white-space: pre">{{ obs.tle[0][64:68] }}</span></abbr>
+
+<abbr title="Checksum (modulo 10), column 68"><span style="color: gray; white-space: pre">{{ obs.tle[0][68] }}</span></abbr>
+    <br/> <!-- TLE LINE 2 -->
+
+    <abbr title="Line number"><span style="color: green">{{ obs.tle[1][0] }}</span></abbr>
+
+    <abbr title="Norad ID"><span style="color: darkorange">{{ obs.tle[1][2:7] }}</span></abbr>
+
+    <abbr title="Inclination (degrees), columns 9-16"><span style="color: red">{{ obs.tle[1][8:16] }}</span></abbr>
+
+    <abbr title="Right Ascension of the Ascending Node (degrees), columns 18-25"><span style="color: blue">{{ obs.tle[1][17:25]
+    }}</span></abbr>
+
+    <abbr title="Eccentricity (decimal point assumed), columns 27-33"><span style="color: brown">{{ obs.tle[1][26:33]
+    }}</span></abbr>
+
+    <abbr title="Argument of Peryapsis (degrees), columns 35-42"><span style="color: green">{{ obs.tle[1][34:42]
+    }}</span></abbr>
+
+    <abbr title="Mean anomaly (degrees), columns 44-51"><span style="color: darkorange">{{ obs.tle[1][43:51] }}</span></abbr>
+
+    <abbr title="Mean Motion (revolutions per day), columns 53-63"><span style="color: red">{{ obs.tle[1][52:63]
+    }}</span></abbr>
+
+    <abbr title="Revolution number at epoch (revolutions), columns 64-68"><span style="color: blue">{{ obs.tle[1][63:68] }}</span></abbr>
+
+    <abbr title="Checksum (modulo 10), column 69"><span style="color: gray; white-space: pre">{{ obs.tle[0][69] }}</span></abbr>
+</code>
 
     <h4>Attachments:</h4>
     {% for file_ in files %}
