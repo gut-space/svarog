@@ -27,35 +27,17 @@
 
     <hr/>
 
-    <!-- playground code -->
-
-    <!-- defining the styles using style directly works fine. -->
-    <code>
-        <span style="color: green; white-space: pre;">01 2  3   4    X</span>
-    </code>
-
-    <!-- defining the styles in .css and then using classes doesn't work. -->
-    <code class="tle1">
-        <span class="tle1">01 2  3   4    X</span>
-    </code>
-
-    <hr/>
-
-    <b>TLE:</b><pre>{{ obs.tle[0] }}
-{{ obs.tle[1] }}</pre>
-    {% endif %}
-
-    <b>TLE (annotated):</b><br/>
+    <b>Orbital parameters in <abbr title="Two Line Element, a popular notation that describes Earth orbits">TLE</abbr>:</b><br/>
     <code class="tle">
         <!-- TLE LINE 1 -->
         <abbr title="Line number [column 1]" class="tle1">{{ obs.tle[0][0] }}</abbr>
-        <abbr title="Norad ID [columns 3-7]" class="tle2">{{ obs.tle[0][2:7] }}</abbr>
-        <abbr title="Classification: U=unclassified, C=classified S=secret [column 8]" class="tle3">{{ obs.tle[0][7] }}</abbr>
-        <abbr title="Launch year, last two digit [columns 10-11]" class="tle4">{{ obs.tle[0][9:11] }}</abbr>
-        <abbr title="launch number of the year [columns 12-14]" class="tle5">{{ obs.tle[0][11:14] }}</abbr>
-        <abbr title="piece of the launch, starting with A [columns 15-17]" class="tle1">{{ obs.tle[0][14:17] }}</abbr>
-        <abbr title="Epoch: year, last two digits of a year [columns 19-20]" class="tle2">{{ obs.tle[0][18:20] }}</abbr>
-        <abbr title="Epoch: day of the year and fractional portion of the day [columns 21-32]" class="tle3">{{ obs.tle[0][20:32] }}</abbr>
+        <abbr title="Norad ID [columns 3-7]" class="tle2">{{ obs.tle[0][2:7] }}</abbr><abbr
+              title="Classification: U=unclassified, C=classified S=secret [column 8]" class="tle3">{{ obs.tle[0][7] }}</abbr>
+        <abbr title="Launch year, last two digit [columns 10-11]" class="tle4">{{ obs.tle[0][9:11] }}</abbr><abbr
+              title="launch number of the year [columns 12-14]" class="tle5">{{ obs.tle[0][11:14] }}</abbr><abbr
+              title="piece of the launch, starting with A [columns 15-17]" class="tle1">{{ obs.tle[0][14:17] }}</abbr>
+        <abbr title="Epoch: year, last two digits of a year [columns 19-20]" class="tle2">{{ obs.tle[0][18:20] }}</abbr><abbr
+              title="Epoch: day of the year and fractional portion of the day [columns 21-32]" class="tle3">{{ obs.tle[0][20:32] }}</abbr>
         <abbr title="First derivative of Mean Motion, aka Ballistic Coefficient [columns 34-43]" class="tle4">{{ obs.tle[0][33:43] }}</abbr>
         <abbr title="Second derivative of Mean Motion, decimal point assumed [columns 45-52]" class="tle5">{{ obs.tle[0][44:52] }}</abbr>
         <abbr title="Drag term, Radiation Pressure coefficient or BSTAR, decimal point assumed (i.e. add leading 0.) [columns 54-61]" class="tle1"
@@ -63,8 +45,8 @@
         <abbr title="Ephemeris type (internal use only, always zero in distributed TLE data) [column 63]" class="tle2"
         >{{ obs.tle[0][62] }}</abbr>
         <abbr title="Element set number, incremented when a new TLE is generated for this object [column 65-68]" class="tle3"
-        >{{ obs.tle[0][64:68] }}</abbr>
-        <abbr title="Checksum modulo 10 [column 69]" class="tle6">{{ obs.tle[0][68] }}</abbr>
+        >{{ obs.tle[0][64:68] }}</abbr><abbr
+              title="Checksum modulo 10 [column 69]" class="tle6">{{ obs.tle[0][68] }}</abbr>
 
         <br/> <!-- TLE LINE 2 -->
 
@@ -75,10 +57,11 @@
         <abbr title="Eccentricity with decimal point not assumed, i.e. add leading 0. [columns 27-33]" class="tle5">{{ obs.tle[1][26:33] }}</abbr>
         <abbr title="Argument of Periapsis (degrees) [columns 35-42]" class="tle1">{{ obs.tle[1][34:42] }}</abbr>
         <abbr title="Mean anomaly (degrees) [columns 44-51]" class="tle2">{{ obs.tle[1][43:51] }}</abbr>
-        <abbr title="Mean Motion (revolutions per day) [columns 53-63]" class="tle3">{{ obs.tle[1][52:63] }}</abbr>
-        <abbr title="Revolution number at epoch (revolutions) [columns 64-68]" class="tle4">{{ obs.tle[1][63:68] }}</abbr>
-        <abbr title="Checksum (modulo 10) [column 69]" class="tle6">{{ obs.tle[1][68] }}</abbr>
+        <abbr title="Mean Motion (revolutions per day) [columns 53-63]" class="tle3">{{ obs.tle[1][52:63] }}</abbr><abbr
+              title="Revolution number at epoch (revolutions) [columns 64-68]" class="tle4">{{ obs.tle[1][63:68] }}</abbr><abbr
+              title="Checksum (modulo 10) [column 69]" class="tle6">{{ obs.tle[1][68] }}</abbr>
     </code>
+    {% endif %}
 
     <h4>Attachments:</h4>
     {% for file_ in files %}
