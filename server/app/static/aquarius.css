@@ -1,0 +1,19 @@
+.tle {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.tle1 { white-space: pre; color: green }
+.tle2 { white-space: pre; color: black }
+.tle3 { white-space: pre; color: red }
+.tle4 { white-space: pre; color: blue }
+.tle5 { white-space: pre; color: darkorange }
+.tle6 { white-space: pre; color: gray }
