@@ -39,12 +39,12 @@ class BasicTests(unittest.TestCase):
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
         app.config["database"] = self.postgres.dsn()
-        app.config["storage"] = dict()
+        app.config["storage"] = {}
         app.config["storage"]["image_root"] = IMAGE_ROOT
         os.makedirs(os.path.join(IMAGE_ROOT, "thumbs"), exist_ok=True)
         os.makedirs(os.path.join(IMAGE_ROOT, "charts"), exist_ok=True)
 
-        app.config["view"] = dict()
+        app.config["view"] = {}
         app.config["view"]["items_per_page"] = 100
 
         self.app = app.test_client()
