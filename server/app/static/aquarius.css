@@ -1,15 +1,13 @@
-.tle {
-    display: block;
-    padding: 9.5px;
-    margin: 0 0 10px;
-    font-size: 13px;
-    line-height: 1.42857143;
-    word-break: break-all;
-    word-wrap: break-word;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 46em;
+.tle-title {
+    font-weight: bold;
+}
+
+.tle-wrapper {
+    white-space: normal;
+}
+
+.tle-wrapper code {
+    white-space: nowrap;
 }
 
 .tle1 { white-space: pre; color: green }
