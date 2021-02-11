@@ -16,3 +16,21 @@
 .tle4 { white-space: pre; color: blue }
 .tle5 { white-space: pre; color: darkorange }
 .tle6 { white-space: pre; color: gray }
+
+.product-wrapper {
+    position: relative;
+}
+
+.product-wrapper .product-rating {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}
+
+.product-rating {
+    padding: 4px;
+    z-index: 1;
+    border: 2px solid;
+    border-radius: 5px;
+    background-color: white;
+}
