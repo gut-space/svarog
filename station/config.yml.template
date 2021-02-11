@@ -11,13 +11,17 @@ norad:
 satellites:
 - freq: 137.62e6
   name: NOAA 15
+  rate: analog
 - freq: 137.9125e6
   name: NOAA 18
+  rate: analog
 - freq: 137.1e6
   name: NOAA 19
+  rate: analog
 - freq: 137.1e6
   name: METEOR-M 2
   recipe: meteor-qpsk
+  rate: digital
 server:
   id: '1'
   secret: 0123456789abcdef0123456789abcdef
