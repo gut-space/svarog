@@ -72,11 +72,12 @@
     {% endif %}
 
     <h4>Attachments:</h4>
+    <p>Full resolution image (click for full res):</p>
     {% for file_ in files %}
-        <p>
-            Full resolution image (click for full res):<br/>
+        <div class="product-wrapper">
+            <i class="product-rating {{ file_.rating | rating_icon }}" title="{{ file_.rating | percentage }}"></i>
             <a href="/data/{{ file_.filename }}"><img src="/data/{{ file_.filename }}" width=800/></a>
-        </p>
+        </div>
     {% endfor %}
     {% include 'pagination.html' %}
 {% endblock %}

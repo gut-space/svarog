@@ -31,7 +31,7 @@ def datetime(value):
 
 @app.template_filter()
 def rating_icon(value):
-    base = "glyphicon "
+    base = "product-rating glyphicon "
     if value < 0.2:
         return base + "glyphicon-pawn text-danger"
     elif value < 0.4:
