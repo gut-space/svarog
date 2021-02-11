@@ -67,10 +67,10 @@ def migrate(config=None, migration_directory="db"):
     with repository.transaction() as transaction:
         for migration_version, migration_path in migrations:
             if migration_version <= db_version:
-                print("Skip to %d version migration" % (migration_version,))
+                print("Skip migration to %d version" % (migration_version,))
                 continue
 
-            print("Process to %d version migration..." % (migration_version,), end="")
+            print("Process migration to %d version..." % (migration_version,), end="")
             with open(migration_path) as migration_file:
                 content = migration_file.read()
 

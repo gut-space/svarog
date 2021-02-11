@@ -1,0 +1,12 @@
+ALTER TABLE observation_files ADD COLUMN rating real DEFAULT NULL;
+
+-- General puropose ratings for observations
+
+CREATE VIEW observation_ratings AS
+    SELECT observation_files.obs_id as obs_id,
+           AVG(observation_files.rating) as rating
+    FROM observation_files
+    WHERE observation_files.rating IS NOT NULL
+    GROUP BY observation_files.obs_id;
+
+UPDATE schema SET version = 9;

@@ -5,6 +5,7 @@ from os import path
 import shutil
 from typing import Callable, Iterable, Optional, TypeVar
 
+
 def coords(lon, lat):
     t = "%2.4f" % lat
     if (lat>0):

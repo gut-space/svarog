@@ -64,7 +64,8 @@
         <th><abbr title="Time of closest approach">TCA</abbr></th>
         <th><abbr title="Loss of Signal">LOS</abbr></th>
         <th>Satellite</th>
-        <th><abbr title="Two Line Element">TLE</abbr></th>
+        <th class="text-center"><abbr title="Two Line Element">TLE</abbr></th>
+        <th class="text-center">Rating</th>
         <th>Station</th>
         <th>Image</th>
     </tr>
@@ -84,11 +85,16 @@
                     {{ obs.sat_name }}
                 </a>
             </td>
-            <td>
+            <td class="text-center">
                 {% if obs.tle %}
                 <span class="tle glyphicon text-success glyphicon-ok"></span>
                 {% else %}
                 <span class="glyphicon text-danger glyphicon-remove"></span>
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {% if obs.rating %}
+                <span title="{{ obs.rating | percentage }}" class="{{ obs.rating | rating_icon }}"></span>
                 {% endif %}
             </td>
             <td>
