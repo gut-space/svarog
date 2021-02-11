@@ -18,6 +18,7 @@ from utils import COMMENT_PLAN_TAG, COMMENT_PASS_TAG, COMMENT_UPDATE_TAG, Satell
                 get_planner_command, get_receiver_command, get_satellite, open_config, save_config, \
                 APP_NAME, open_crontab, LOG_FILE, from_iso_format
 from recipes.factory import get_recipe_names
+from quality_ratings import get_rate_names
 
 def get_interval(job):
     frequency = job.frequency()
@@ -147,6 +148,7 @@ satellite_config_parser.add_argument("-aos", type=int, help="Elevation (in degre
 satellite_config_parser.add_argument("-me", "--max-elevation", type=int, help="Max elevation greater than")
 satellite_config_parser.add_argument("-d", "--delete", action="store_true", default=False, help="Delete satellite")
 satellite_config_parser.add_argument("--recipe", choices=get_recipe_names(), help="Recipe name to handle observation")
+satellite_config_parser.add_argument("--rate", choices=get_rate_names(), help="Function to rate quality of imagery")
 submit_satellite_config_parser = satellite_config_parser.add_mutually_exclusive_group()
 submit_satellite_config_parser.add_argument("--submit", action="store_true", help="Submit observations to content server", dest="submit", default=None)
 submit_satellite_config_parser.add_argument("--no-submit", action="store_false", help="Don't submit observations to content server", dest="submit", default=None)
@@ -323,7 +325,7 @@ elif command == "config":
                     ("freq", "frequency"),
                     ("aos_at", "aos"),
                     ("max_elevation_greater_than", "max_elevation"),
-                    "recipe"
+                    "recipe", "rate"
                 ))
                 if args.submit and 'submit' in sat:
                     del sat['submit']

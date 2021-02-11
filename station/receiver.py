@@ -3,10 +3,15 @@ import logging
 import os
 import shutil
 import sys
+import typing
 
-from utils import first, open_config, get_satellite, from_iso_format
-from submitobs import submit_observation
+from matplotlib.pyplot import imread
+
+from utils import first, open_config, get_satellite, from_iso_format, safe_call
+from submitobs import submit_observation, SubmitRequestData
 from recipes import factory
+from quality_ratings import get_rate_by_name
+
 
 def move_to_satellite_directory(root: str, sat_name: str, path: str):
     now = datetime.datetime.utcnow()
@@ -18,7 +23,23 @@ def move_to_satellite_directory(root: str, sat_name: str, path: str):
     os.makedirs(new_dir, exist_ok=True)
     shutil.move(path, new_path)
 
+
 config = open_config()
+
+
+def get_rating_for_product(product_path: str, rate_name: typing.Optional[str]) \
+        -> typing.Optional[float]:
+    if rate_name is None:
+        return None
+
+    try:
+        rate = get_rate_by_name(rate_name)
+        img = imread(product_path)
+        return rate(img)
+    except Exception as _:
+        logging.error("Error during rating the product", exc_info=True)
+        return None
+
 
 def cmd():
     _, name, los, *opts = sys.argv
@@ -47,7 +68,14 @@ def cmd():
     if should_submit:
         product = first(products, lambda _: True)
         if product is not None:
-            submit_observation(product[1], name, aos_datetime, aos_datetime, los_datetime, "")
+            rating = get_rating_for_product(product[1], satellite.get("rating"))
+            submit_observation(
+                SubmitRequestData(
+                    product[1], name, aos_datetime, aos_datetime,
+                    los_datetime, "", rating
+                )
+            )
+                
 
     if save_mode in ("PRODUCT", "ALL"):
         for _, path in products:

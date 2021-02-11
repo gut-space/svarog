@@ -56,6 +56,7 @@ class SatelliteConfiguration(TypedDict, total=False):
     max_elevation_greater_than: Optional[int]
     disabled: Optional[bool]
     recipe: Optional[str]
+    rate: Optional[str]
 
 class ServerConfiguration(TypedDict):
     id: str
@@ -240,3 +241,12 @@ def from_iso_format(raw: str) -> datetime.datetime:
         return dateutil.parser.isoparse(raw)
     else:
         return datetime.datetime.fromisoformat(raw)
+
+
+def safe_call(func, *arg, **kwargs):
+    """Call function with provided arguments. No throw, but return
+        (result, excepion) tuple"""
+    try:
+        return func(*args, **kwargs), None
+    except Exception as ex:
+        return None, ex

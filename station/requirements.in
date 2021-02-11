@@ -1,3 +1,5 @@
+-e git+https://github.com/gut-space/analog-noise-estimator.git#egg=analog-noise-estimator
+
 orbit-predictor
 DateTimeRange
 python-crontab

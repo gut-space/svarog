@@ -4,6 +4,7 @@ import os
 import requests
 import sys
 from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 
 from utils import open_config, from_iso_format
 from hmac_token import get_authorization_header_value
@@ -15,17 +16,10 @@ station_id = str(section["id"])
 secret = bytearray.fromhex(section["secret"])
 url = section["url"]
 
-def get_tle(sat_name: str, date: datetime.datetime) -> Optional[List[str]]:
-    try:
-        db = OrbitDatabase()
-        return db.get_tle(sat_name, date)
-    except:
-        return None
-
-def submit_observation(image_path: str, sat_name: str, aos: datetime.datetime,
-        tca: datetime.datetime, los: datetime.datetime, notes: str):
-    '''
-    Submit observation to content server.
+@dataclass
+class SubmitRequestData:
+    """
+    Request data for send to server.
 
     Parameters
     ==========
@@ -41,22 +35,45 @@ def submit_observation(image_path: str, sat_name: str, aos: datetime.datetime,
         Loss of Signal (or Satellite)
     notes: str
         Any text note
+    rating: float?
+        Rating of image
+    """
+    image_path: str
+    sat_name: str
+    aos: datetime.datetime
+    tca: datetime.datetime
+    los: datetime.datetime
+    notes: str
+    rating: Optional[float]
+
+
+def get_tle(sat_name: str, date: datetime.datetime) -> Optional[List[str]]:
+    try:
+        db = OrbitDatabase()
+        return db.get_tle(sat_name, date)
+    except:
+        return None
+
+def submit_observation(data: SubmitRequestData):
     '''
-    _, filename = os.path.split(image_path)
+    Submit observation to content server.
+    '''
+    _, filename = os.path.split(data.image_path)
 
     form_data: dict = {
-        "aos": aos.isoformat(),
-        "tca": tca.isoformat(),
-        "los": los.isoformat(),
-        "sat": sat_name,
-        "notes": notes,
+        "aos": data.aos.isoformat(),
+        "tca": data.tca.isoformat(),
+        "los": data.los.isoformat(),
+        "sat": data.sat_name,
+        "notes": data.notes,
+        "rating": data.rating
     }
 
-    tle = get_tle(sat_name, aos)
+    tle = get_tle(data.sat_name, data.aos)
     if tle is not None:
         form_data["tle"] = tle
 
-    file_obj = open(image_path, 'rb') 
+    file_obj = open(data.image_path, 'rb') 
     body: Dict[str, Any] = {
         "file": file_obj
     }
@@ -100,4 +117,6 @@ if __name__ == '__main__':
     if len(sys.argv) >= 7:
         NOTES = sys.argv[6]
 
-    submit_observation(filename, sat_name, aos, tca, los, notes)
+    submit_observation(
+        SubmitRequestData(filename, sat_name, aos, tca, los, notes, None)
+    )
