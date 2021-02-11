@@ -11,7 +11,7 @@ import testing.postgresql
 from app import app
 from app.hmac_token import get_authorization_header_value
 from app.repository import Repository
-from tests.test_utils import standard_seed_db, check_output
+from tests.utils import standard_seed_db, check_output
 
 Postgresql: testing.postgresql.PostgresqlFactory
 
@@ -102,7 +102,8 @@ class BasicTests(unittest.TestCase):
                 # Include trailling character
                 "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927 ",
                 "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
-            ]
+            ],
+            "rating": 0.75
         }
 
         header_value = get_authorization_header_value(str(station_id), secret,

@@ -15,6 +15,9 @@
             {% if obs.notes %}
             <dt>Notes:</dt><dl>{{ obs.notes }}</dl>
             {% endif %}
+            {% if obs.rating %}
+            <dt>Rating:</dt><dl>{{ obs.rating | percentage }} <i class="{{ obs.rating | rating_icon }}"></i></dl>
+            {% endif %}
             <dt>Satellite:</dt><dl><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dl>
             <dt>Ground station:</dt><dl><a href="/station/{{ obs.station_id }}">Link</a></dl>
         </dl>

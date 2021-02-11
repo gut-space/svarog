@@ -44,6 +44,7 @@ class RequestArguments(TypedDict):
     sat: str
     notes: Optional[str]
     tle: Optional[List[str]]
+    rating: Optional[float]
 
 ALLOWED_FILE_TYPES = {
     "image/png": ".png"
@@ -150,7 +151,8 @@ def receive(station_id: str, args: RequestArguments):
                 "obs_file_id": ObservationFileId(0),
                 "filename": filename,
                 "media_type": file_.mimetype,
-                "obs_id": obs_id
+                "obs_id": obs_id,
+                'rating': args.get('rating')
             }
             repository.insert_observation_file(observation_file)
 

@@ -32,6 +32,7 @@ class ObservationFile(TypedDict):
     filename: str
     media_type: str
     obs_id: ObservationId
+    rating: Optional[float]
 
 class Observation(TypedDict):
     obs_id: ObservationId
@@ -210,17 +211,18 @@ class Repository:
     @use_cursor
     def read_observations(self, filters: ObservationFilter={}, limit:int=100,
             offset:int=0) -> Sequence[Observation]:
-        q = ("SELECT obs_id, aos, tca, los,  sat_id,  thumbnail,  station_id, "
-                "notes, tle "
-            "FROM observations "
-            "WHERE (%(obs_id)s IS NULL OR obs_id = %(obs_id)s) AND "
-              "(%(aos_before)s IS NULL OR aos <= %(aos_before)s) AND "
-              "(%(los_after)s IS NULL OR los >= %(los_after)s) AND "
-              "(%(sat_id)s IS NULL OR sat_id = %(sat_id)s) AND "
-              "(%(station_id)s IS NULL OR station_id = %(station_id)s) AND "
-              "(%(notes)s IS NULL OR notes ILIKE '%%' || %(notes)s || '%%') AND "
-              "(%(has_tle)s IS NULL OR (tle IS NOT NULL) = %(has_tle)s) "
-            "ORDER BY aos DESC "
+        q = ("SELECT o.obs_id, o.aos, o.tca, o.los, o.sat_id, o.thumbnail, "
+                "o.station_id, o.notes, o.tle, r.rating "
+            "FROM observations o "
+            "LEFT JOIN observation_ratings r ON o.obs_id = r.obs_id "
+            "WHERE (%(obs_id)s IS NULL OR o.obs_id = %(obs_id)s) AND "
+              "(%(aos_before)s IS NULL OR o.aos <= %(aos_before)s) AND "
+              "(%(los_after)s IS NULL OR o.los >= %(los_after)s) AND "
+              "(%(sat_id)s IS NULL OR o.sat_id = %(sat_id)s) AND "
+              "(%(station_id)s IS NULL OR o.station_id = %(station_id)s) AND "
+              "(%(notes)s IS NULL OR o.notes ILIKE '%%' || %(notes)s || '%%') AND "
+              "(%(has_tle)s IS NULL OR (o.tle IS NOT NULL) = %(has_tle)s) "
+            "ORDER BY o.aos DESC "
             "LIMIT %(limit)s OFFSET %(offset)s")
         cursor = self._cursor
         query_kwargs = DefaultDictWithAnyKey(lambda: None)
@@ -277,7 +279,7 @@ class Repository:
     @use_cursor
     def read_observation_files(self, obs_id: ObservationId,
             limit:int=100, offset:int=0) -> Sequence[ObservationFile]:
-        q = ("SELECT obs_file_id, filename, media_type, obs_id "
+        q = ("SELECT obs_file_id, filename, media_type, obs_id, rating "
             "FROM observation_files "
             "WHERE obs_id = %s "
             "ORDER BY obs_file_id "
@@ -289,15 +291,16 @@ class Repository:
     @use_cursor
     def insert_observation_file(self, observation_file: ObservationFile) -> ObservationFileId:
         q = ("INSERT INTO observation_files "
-                "(filename, media_type, obs_id) "
+                "(filename, media_type, obs_id, rating) "
              "VALUES "
-                "(%(filename)s, %(media)s, %(obs)s) "
+                "(%(filename)s, %(media)s, %(obs)s, %(rating)s) "
              "RETURNING obs_file_id;")
         cursor = self._cursor
         cursor.execute(q, {
             'filename': observation_file['filename'],
             'media': observation_file['media_type'],
-            'obs': observation_file['obs_id']
+            'obs': observation_file['obs_id'],
+            'rating': observation_file['rating']
         })
         return cursor.fetchone()['obs_file_id']
 

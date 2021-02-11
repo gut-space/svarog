@@ -21,8 +21,9 @@ INSERT INTO public.observations (obs_id, aos, tca, los, sat_id, thumbnail, notes
 -- which makes it particularly good for experiments with rectification and georeferencing)
 INSERT INTO public.observations (obs_id, aos, tca, los, sat_id, notes, config, tle, station_id, thumbnail) VALUES
 (1276, '2020-04-12 09:01:03.063476', '2020-04-12 09:01:03.063476', '2020-04-12 09:17:06.466954', 28654, '', NULL, '{"1 28654U 05018A   20098.54037539  .00000075  00000-0  65128-4 0  9992","2 28654  99.0522 154.2797 0015184  73.2195 287.0641 14.12501077766909"}', 1, 'thumb-7ee1c350-09e8-49f0-9826-ca504c5543bf-ab802ca1-419f-418a-aeea-d99bb9c702aa-0-1c60fdf5-3f18-409d-9834-17f014c608c1_product.png');
-INSERT INTO public.observation_files (obs_file_id, filename, media_type, obs_id)
-VALUES (1069, 'ab802ca1-419f-418a-aeea-d99bb9c702aa-0-1c60fdf5-3f18-409d-9834-17f014c608c1_product.png', 'image/png', 1276);
+INSERT INTO public.observation_files (obs_file_id, filename, media_type, obs_id, rating)
+VALUES (1069, 'ab802ca1-419f-418a-aeea-d99bb9c702aa-0-1c60fdf5-3f18-409d-9834-17f014c608c1_product.png', 'image/png', 1276, NULL),
+       (1070, 'abcdefab-cdef-abcd-efab-abcdefabcdef-0-12345678-9012-3456-7890-123456789012_product.png', 'image/png', 750, 0.5);
 
 INSERT INTO public.station_photos (photo_id, station_id, sort, filename, descr) VALUES
 (1, 1, 1, 'wimo-ta1-antenna.jpg	WiMo antenna', NULL),

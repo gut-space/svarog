@@ -3,11 +3,10 @@ import os
 from typing import Tuple
 import unittest
 from functools import wraps
-from pytest import raises
 
 import testing.postgresql
 
-from tests.test_utils import standard_seed_db
+from tests.utils import standard_seed_db
 from app.repository import (Observation, ObservationFile, ObservationFileId, ObservationFilter, ObservationId, Repository, SatelliteId, StationId,
     Station, Observation, Satellite, StationStatistics, User, UserRole)
 
@@ -137,7 +136,8 @@ class RepositoryPostgresTests(unittest.TestCase):
             'tle': [
                 "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927",
                 "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
-            ]
+            ],
+            'rating': None
         }
 
         obs_id = repository.insert_observation(observation)
@@ -152,7 +152,8 @@ class RepositoryPostgresTests(unittest.TestCase):
             'obs_file_id': ObservationFileId(0),
             'filename': '123.png',
             'media_type': 'image/png',
-            'obs_id': obs_id
+            'obs_id': obs_id,
+            'rating': 0.66
         }
 
         file_id = repository.insert_observation_file(observation_file)
@@ -164,6 +165,9 @@ class RepositoryPostgresTests(unittest.TestCase):
         observation_file["obs_file_id"] = file_id
         db_observation_file = observation_files[0]
         self.assertDictEqual(observation_file, db_observation_file) # type: ignore
+
+        db_observation = repository.read_observation(obs_id)
+        self.assertAlmostEquals(db_observation["rating"], 0.66, places=2)
 
         repository.delete_observation(obs_id)
 
@@ -387,5 +391,5 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(repository.user_role_to_enum('ADMIN'), UserRole.ADMIN)
         self.assertEqual(repository.user_role_to_enum('BANNED'), UserRole.BANNED)
 
-        with raises(LookupError):
-            repository.user_role_to_enum('moderator') # no such role
+        self.assertRaises(LookupError, repository.user_role_to_enum,
+            'moderator') # no such role
