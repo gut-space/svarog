@@ -117,6 +117,8 @@ CREATE USER satnogs WITH PASSWORD 'secret'; -- make sure to use an actual passwo
 GRANT ALL PRIVILEGES ON DATABASE satnogs TO satnogs;
 ```
 
+Make sure to either run `setup.py` or run DB schema migration manually: `python3 migrate_db.py`.
+
 3. **Modify your apache configuration**
 
 The general goal is to have an apache2 running with WSGI scripting capability that runs Flask. See an [example
