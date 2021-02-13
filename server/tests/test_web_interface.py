@@ -77,6 +77,10 @@ class BasicTests(unittest.TestCase):
         response = self.app.get('/obs/1', follow_redirects=True)
         self.assertEqual(response.status_code, 404)
 
+    def test_rating_missing_for_observation(self):
+        response = self.app.get('/obs/1276', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
     def test_stations(self):
         response = self.app.get('/stations', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
