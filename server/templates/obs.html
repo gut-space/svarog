@@ -75,7 +75,9 @@
     <p>Full resolution image (click for full res):</p>
     {% for file_ in files %}
         <div class="product-wrapper">
+            {% if file_.rating %}
             <i class="product-rating {{ file_.rating | rating_icon }}" title="{{ file_.rating | percentage }}"></i>
+            {% endif %}
             <a href="/data/{{ file_.filename }}"><img src="/data/{{ file_.filename }}" width=800/></a>
         </div>
     {% endfor %}
