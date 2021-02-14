@@ -34,18 +34,21 @@ class TestQualityRatings(unittest.TestCase):
         self.assertAlmostEquals(0.5, rating, 1)
 
     def test_analog_rating_on_blank(self):
+        '''Image doesn't contain any noise - good quality'''
         img = np.zeros((1000, 1000))
         rate = quality_ratings.get_rate_by_name("analog")
         rating = rate(img)
         self.assertAlmostEquals(1, rating, 2)
 
     def test_digital_rating_on_black(self):
+        '''All pixels are black - no data - bad quality'''
         img = np.zeros((1000, 1000))
         rate = quality_ratings.get_rate_by_name("digital")
         rating = rate(img)
         self.assertAlmostEquals(0, rating, 3)
 
     def test_digital_rating_on_white(self):
+        '''All pixels aren't black - full data - goo quality'''
         img = np.ones((1000, 1000))
         rate = quality_ratings.get_rate_by_name("digital")
         rating = rate(img)
