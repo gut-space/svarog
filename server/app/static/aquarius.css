@@ -21,13 +21,19 @@
     position: relative;
 }
 
+.product-wrapper img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+}
+
 .product-wrapper .product-rating {
     position: absolute;
     left: 5px;
     top: 5px;
 }
 
-.product-rating {
+.product-rating--border {
     padding: 4px;
     z-index: 1;
     border: 2px solid;

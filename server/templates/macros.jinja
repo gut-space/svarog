@@ -1,0 +1,9 @@
+{% macro rating_icon(value, border=True)  %}
+    <span class="product-rating {{ 'product-rating--border' if border }}
+        {{ 'text-danger' if value < 0.2 else
+          'text-warning' if value < 0.6 else
+          'text-info' if value < 0.8 else
+          'text-success' }}"> 
+        {{ value | percentage }}
+    </span>
+{% endmacro %}
