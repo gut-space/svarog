@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.jinja" import rating_icon %}
 
 {% block content %}
 <div class="container">
@@ -94,7 +95,7 @@
             </td>
             <td class="text-center">
                 {% if obs.rating %}
-                <span title="{{ obs.rating | percentage }}" class="{{ obs.rating | rating_icon }}"></span>
+                {{ rating_icon(obs.rating) }}
                 {% endif %}
             </td>
             <td>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.jinja" import rating_icon %}
 
 {% block content %}
     <h3>Observation  {{ obs.obs_id }}</h3>
@@ -9,17 +10,20 @@
     </p>
     <p>
         <dl>
-            <dt>AOS:</dt><dl>{{ obs.aos }}</dl>
-            <dt>TCA:</dt><dl>{{ obs.tca }}</dl>
-            <dt>LOS:</dt><dl>{{ obs.los }}</dl>
+            <dt>AOS:</dt><dd>{{ obs.aos }}</dd>
+            <dt>TCA:</dt><dd>{{ obs.tca }}</dd>
+            <dt>LOS:</dt><dd>{{ obs.los }}</dd>
             {% if obs.notes %}
-            <dt>Notes:</dt><dl>{{ obs.notes }}</dl>
+            <dt>Notes:</dt><dd>{{ obs.notes }}</dd>
             {% endif %}
             {% if obs.rating %}
-            <dt>Rating:</dt><dl>{{ obs.rating | percentage }} <i class="{{ obs.rating | rating_icon }}"></i></dl>
+            <dt>Rating:</dt>
+            <dd>
+                {{ rating_icon(obs.rating, border=False) }}
+            </dd>
             {% endif %}
-            <dt>Satellite:</dt><dl><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dl>
-            <dt>Ground station:</dt><dl><a href="/station/{{ obs.station_id }}">Link</a></dl>
+            <dt>Satellite:</dt><dd><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dd>
+            <dt>Ground station:</dt><dd><a href="/station/{{ obs.station_id }}">Link</a></dd>
         </dl>
     </p>
     {% if obs.tle %}
@@ -76,7 +80,7 @@
     {% for file_ in files %}
         <div class="product-wrapper">
             {% if file_.rating %}
-            <i class="product-rating {{ file_.rating | rating_icon }}" title="{{ file_.rating | percentage }}"></i>
+            {{ rating_icon(file_.rating )}}
             {% endif %}
             <a href="/data/{{ file_.filename }}"><img src="/data/{{ file_.filename }}" width=800/></a>
         </div>
