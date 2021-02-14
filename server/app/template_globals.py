@@ -30,19 +30,5 @@ def datetime(value):
     return value.isoformat(" ", "seconds")
 
 @app.template_filter()
-def rating_icon(value):
-    base = "product-rating glyphicon "
-    if value < 0.2:
-        return base + "glyphicon-pawn text-danger"
-    elif value < 0.4:
-        return base + "glyphicon-knight text-warning"
-    elif value < 0.6:
-        return base + "glyphicon-bishop text-warning"
-    elif value < 0.8:
-        return base + "glyphicon-queen text-info"
-    else:
-        return base + "glyphicon-king text-success"
-
-@app.template_filter()
 def percentage(value):
     return "{:.0%}".format(value)
