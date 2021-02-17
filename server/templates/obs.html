@@ -30,7 +30,8 @@
                 {{ rating_icon(obs.rating, border=False) }}
             </dd>
             {% endif %}
-            <dt class="badge">Satellite</dt><dd><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dd>
+            <dt class="badge">Satellite</dt><dd><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a>,
+                norad id {{ obs.sat_id }}</dd>
             <dt class="badge">Ground station</dt><dd><a href="/station/{{ obs.station_id }}">Link</a></dd>
         </dl>
     </p>
@@ -43,7 +44,7 @@
     <h4>Orbital parameters</h4>
     <p>
     <dl>
-        <dt class="badge">Orbit overview</dt><dd>{{ orbit }}</dd>
+        <dt class="badge">Orbit overview</dt><dd>{{ orbit.overview }}</dd>
         <dt class="badge">Inclination <i>i</i></dt><dd> {{ orbit.inc }}</dd>
         <dt class="badge">Major semi-axis <i>a</i></dt><dd>{{ "%4.1f %s" % (orbit.a.value, orbit.a.unit) }}</dd>
         <dt class="badge">Eccentricity <i>e</i></dt><dd>{{ orbit.ecc }}</dd>
@@ -54,6 +55,7 @@ describes the angle where orbital plane crosses the equatorial plane.
 In other words, how rotated the orbital plane is around the the polar N-S axis.">RAAN <i>&Omega;</i></abbr>
         </dt><dd> {{orbit.raan}} </dd>
         <dt class="badge">Epoch</dt><dd>{{ orbit.epoch }}</dd>
+        <dt class="badge">Period</dt><dd>{{ orbit.period }}</dd>
 
 
     <dt class="badge"><abbr title="Two Line Element, a popular notation that describes Earth orbits">TLE format</abbr></dt>
