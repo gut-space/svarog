@@ -11,9 +11,16 @@
     <h4>Transmission parameters</h4>
     <p>
         <dl>
-            <dt class="badge">AOS</dt><dd>{{ obs.aos }}</dd>
-            <dt class="badge">TCA</dt><dd>{{ obs.tca }}</dd>
-            <dt class="badge">LOS</dt><dd>{{ obs.los }}</dd>
+            <dt class="badge">
+                <abbr title="Acquistion of Signal, when the satellite was first seen over the horizon">AOS</abbr>
+            </dt><dd>{{ obs.aos }}</dd>
+
+            <dt class="badge">
+                <abbr title="Time of Closest Approach, a moment when the satellite was closest to the observer (and typically highest over the horizon">TCA</abbr>
+            </dt>
+            <dd>{{ obs.tca }}</dd>
+
+            <dt class="badge"><abbr title="Loss of Signal, when the satellite set under the horizon and was no longer visible">LOS</abbr></dt><dd>{{ obs.los }}</dd>
             {% if obs.notes %}
             <dt class="badge">Notes</dt><dd>{{ obs.notes }}</dd>
             {% endif %}
@@ -40,9 +47,13 @@
         <dt class="badge">Inclination <i>i</i></dt><dd> {{ orbit.inc }}</dd>
         <dt class="badge">Major semi-axis <i>a</i></dt><dd>{{ "%4.1f %s" % (orbit.a.value, orbit.a.unit) }}</dd>
         <dt class="badge">Eccentricity <i>e</i></dt><dd>{{ orbit.ecc }}</dd>
-        <dt class="badge">Apogee</dt><dd>...</dd>
-        <dt class="badge">Perigee</dt><dd>...</dd>
-        <dt class="badge">RAAN &Omega;</dt><dd>...</dd>
+        <dt class="badge">Apogee</dt><dd> {{ orbit.r_a}} </dd>
+        <dt class="badge">Perigee</dt><dd> {{ orbit.r_p}} </dd>
+        <dt class="badge"><abbr title="Right Ascension of the Ascending Node (or longtiude of the AN),
+describes the angle where orbital plane crosses the equatorial plane.
+In other words, how rotated the orbital plane is around the the polar N-S axis.">RAAN &Omega;</abbr>
+        </dt><dd> {{orbit.raan}} </dd>
+        <dt class="badge">Epoch</dt><dd>{{ orbit.epoch }}</dd>
 
 
     <dt class="badge"><abbr title="Two Line Element, a popular notation that describes Earth orbits">TLE format</abbr></dt>
