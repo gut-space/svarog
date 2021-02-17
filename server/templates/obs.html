@@ -4,26 +4,27 @@
 {% block content %}
     <h3>Observation  {{ obs.obs_id }}</h3>
 
-    <p>
-        Thumbnail:<br/>
+    <p style="float: right">
         <img src="/data/thumbs/{{ obs.thumbnail }}" />
     </p>
+
+    <h4>Transmission parameters</h4>
     <p>
         <dl>
-            <dt>AOS:</dt><dd>{{ obs.aos }}</dd>
-            <dt>TCA:</dt><dd>{{ obs.tca }}</dd>
-            <dt>LOS:</dt><dd>{{ obs.los }}</dd>
+            <dt class="badge">AOS</dt><dd>{{ obs.aos }}</dd>
+            <dt class="badge">TCA</dt><dd>{{ obs.tca }}</dd>
+            <dt class="badge">LOS</dt><dd>{{ obs.los }}</dd>
             {% if obs.notes %}
-            <dt>Notes:</dt><dd>{{ obs.notes }}</dd>
+            <dt class="badge">Notes</dt><dd>{{ obs.notes }}</dd>
             {% endif %}
             {% if obs.rating %}
-            <dt>Rating:</dt>
+            <dt class="badge">Rating</dt>
             <dd>
                 {{ rating_icon(obs.rating, border=False) }}
             </dd>
             {% endif %}
-            <dt>Satellite:</dt><dd><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dd>
-            <dt>Ground station:</dt><dd><a href="/station/{{ obs.station_id }}">Link</a></dd>
+            <dt class="badge">Satellite</dt><dd><a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">{{ sat_name }}</a></dd>
+            <dt class="badge">Ground station</dt><dd><a href="/station/{{ obs.station_id }}">Link</a></dd>
         </dl>
     </p>
     {% if obs.tle %}
@@ -32,12 +33,20 @@
     <img width="45%" class="tle-plot" alt="Azimuth/elevation by time" src="/data/charts/by_time-{{ obs.obs_id }}.png" />
     <img width="45%" class="tle-plot" alt="Azimuth/elevation polar" src="/data/charts/polar-{{ obs.obs_id }}.png" />
 
-    <hr/>
+    <h4>Orbital parameters</h4>
+    <p>
+    <dl>
+        <dt class="badge">Orbit overview</dt><dd>{{ orbit }}</dd>
+        <dt class="badge">Inclination <i>i</i></dt><dd> {{ orbit.inc }}</dd>
+        <dt class="badge">Major semi-axis <i>a</i></dt><dd>{{ "%4.1f %s" % (orbit.a.value, orbit.a.unit) }}</dd>
+        <dt class="badge">Eccentricity <i>e</i></dt><dd>{{ orbit.ecc }}</dd>
+        <dt class="badge">Apogee</dt><dd>...</dd>
+        <dt class="badge">Perigee</dt><dd>...</dd>
+        <dt class="badge">RAAN &Omega;</dt><dd>...</dd>
 
-    <span class="tle-title">
-        Orbital parameters in 
-        <abbr title="Two Line Element, a popular notation that describes Earth orbits">TLE</abbr>:
-    </span>
+
+    <dt class="badge"><abbr title="Two Line Element, a popular notation that describes Earth orbits">TLE format</abbr></dt>
+    <dd>
     <pre class="tle-wrapper">
         <code>
             <!-- TLE LINE 1 -->
@@ -73,6 +82,10 @@
                 title="Checksum (modulo 10) [column 69]" class="tle6">{{ obs.tle[1][68] }}</abbr>
         </code>
     </pre>
+</dd>
+</dl>
+</p>
+
     {% endif %}
 
     <h4>Attachments:</h4>

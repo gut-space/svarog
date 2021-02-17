@@ -40,3 +40,27 @@
     border-radius: 5px;
     background-color: white;
 }
+
+dl {
+    padding: 0.5em;
+}
+
+dt {
+    float: left;
+    clear: left;
+    width: 130px;
+    margin: 0 0 0 10px;
+    border: 1px solid black;
+    text-align: right;
+    font-weight: bold;
+}
+
+dd {
+    margin: 0 0 0 50px;
+    padding: 0 0 0.5em 1em;
+}
+
+.badge {
+    background-color: green;
+
+}
