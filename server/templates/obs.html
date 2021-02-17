@@ -51,7 +51,7 @@
         <dt class="badge">Perigee</dt><dd> {{ orbit.r_p}} </dd>
         <dt class="badge"><abbr title="Right Ascension of the Ascending Node (or longtiude of the AN),
 describes the angle where orbital plane crosses the equatorial plane.
-In other words, how rotated the orbital plane is around the the polar N-S axis.">RAAN &Omega;</abbr>
+In other words, how rotated the orbital plane is around the the polar N-S axis.">RAAN <i>&Omega;</i></abbr>
         </dt><dd> {{orbit.raan}} </dd>
         <dt class="badge">Epoch</dt><dd>{{ orbit.epoch }}</dd>
 
@@ -99,8 +99,8 @@ In other words, how rotated the orbital plane is around the the polar N-S axis."
 
     {% endif %}
 
-    <h4>Attachments:</h4>
-    <p>Full resolution image (click for full res):</p>
+    <h4>Products</h4>
+    <p>Click on images to get full resolution.</p>
     {% for file_ in files %}
         <div class="product-wrapper">
             {% if file_.rating %}
