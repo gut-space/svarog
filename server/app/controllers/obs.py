@@ -1,8 +1,9 @@
 from flask import abort
 
 from app import app
-from app.repository import ObservationId, Repository
+from app.repository import ObservationId, Repository, Observation
 from app.pagination import use_pagination
+from math import floor
 
 from tletools import TLE
 
@@ -31,9 +32,67 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
         files_count = repository.count_observation_files(obs_id)
         satellite = repository.read_satellite(observation["sat_id"])
 
+    # Now tweak some observation parameters to make them more human readable
+    observation = human_readable_obs(observation)
+
     return 'obs.html', dict(obs = observation, files=files,
         sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit)
 
-def parse_tle(tle1, tle2):
+def parse_tle(tle1: str, tle2: str) -> dict:
+    """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
+        and other parameters."""
+
+    # First, parse the TLE lines. We don't care about the name.
     t = TLE.from_lines(line1=tle1, line2=tle2, name="whatevah")
-    return t.to_orbit()
+
+    # Now convert it to poliastro orbit. All the data is there, but we want to
+    # make it easier to read, format it nicely and do some basic calculations.
+    # Hence the orb dictionary.
+    o = t.to_orbit()
+
+    RE = o.attractor.R # Earth radius
+    r_a = o.r_a - RE # Calculate apogee and perigee as altitude above Earth surface,
+    r_p = o.r_p - RE # rather than as distance from barycenter.
+
+    # Now make the parameters easier to read (cut unnecessary digits after comma, show altitude, etc)
+    orb = {}
+    orb["overview"] = repr(o)
+    orb["inc"] = "%4.1f %s" % (o.inc.value, o.inc.unit)
+    orb["a"] = o.a
+    orb["ecc"] = o.ecc
+    orb["r_a"] = "%4.1f %s (%4.1f %s above surface)" % (o.r_a.value, o.r_a.unit, r_a.value, r_a.unit)
+    orb["r_p"] = "%4.1f %s (%4.1f %s above surface)" % (o.r_p.value, o.r_p.unit, r_p.value, r_p.unit)
+    orb["raan"] = "%4.1f %s" % (o.raan.value, o.raan.unit)
+    orb["period"] = "%4.0f %s" % (o.period.value, o.period.unit)
+
+    # This is ugly hack. But it converts the ISO 8601 notation to a more human readable form.
+    tmp = str(o.epoch)[:19]
+    tmp = tmp[0:10] + " " + tmp[11:19] # replace T representing the timezone
+    orb["epoch"] = tmp + " UTC" # we don't need nanoseconds precision
+
+    return orb
+
+def human_readable_obs(obs: Observation) -> Observation:
+    """Gets an observation and formats some of its parameters to make it more human readable.
+       Returns an observation."""
+
+    aos_los_duration = obs["los"] - obs["aos"]
+    tca_correction = ""
+
+    if obs["aos"] == obs["tca"]:
+        obs["tca"] = obs["aos"] + aos_los_duration / 2
+        tca_correction = " (corrected, the original observation record incorrectly says TCA = AOS)"
+
+    aos_tca_duration = obs["tca"] - obs["aos"]
+
+    # This is ridiculous, but there's no formatter for timedelta object.
+    tca_duration_m = floor(aos_tca_duration.total_seconds() / 60)
+    tca_duration_s = aos_tca_duration.total_seconds() - tca_duration_m * 60
+    los_duration_m = floor(aos_los_duration.total_seconds() / 60)
+    los_duration_s = aos_los_duration.total_seconds() - los_duration_m * 60
+
+
+    obs.aos = obs["aos"].strftime("%Y-%m-%d %H:%M:%S")
+    obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", %d min %d secs since AOS" % (tca_duration_m, tca_duration_s) + tca_correction
+    obs.los = obs["los"].strftime("%Y-%m-%d %H:%M:%S") + ", %d min %d secs since AOS" % (los_duration_m, los_duration_s)
+    return obs
