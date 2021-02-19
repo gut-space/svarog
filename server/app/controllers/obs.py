@@ -23,14 +23,15 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
         if observation is None:
             abort(404, "Observation not found")
 
-        orbit = observation
-        if observation['tle'] is not None:
-            orbit = parse_tle(observation['tle'][0], observation['tle'][1])
-
         files = repository.read_observation_files(observation["obs_id"],
             **limit_and_offset)
         files_count = repository.count_observation_files(obs_id)
         satellite = repository.read_satellite(observation["sat_id"])
+
+        orbit = observation
+        if observation['tle'] is not None:
+            # observation['tle'] is always an array of exactly 2 strings.
+            orbit = parse_tle(*observation['tle'], satellite["sat_name"])
 
     # Now tweak some observation parameters to make them more human readable
     observation = human_readable_obs(observation)
@@ -38,12 +39,12 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
     return 'obs.html', dict(obs = observation, files=files,
         sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit)
 
-def parse_tle(tle1: str, tle2: str) -> dict:
+def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
         and other parameters."""
 
     # First, parse the TLE lines. We don't care about the name.
-    t = TLE.from_lines(line1=tle1, line2=tle2, name="whatevah")
+    t = TLE.from_lines(line1=tle1, line2=tle2, name=name)
 
     # Now convert it to poliastro orbit. All the data is there, but we want to
     # make it easier to read, format it nicely and do some basic calculations.
