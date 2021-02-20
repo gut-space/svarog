@@ -1,5 +1,6 @@
 from datetime import timedelta
 import signal
+from contextlib import suppress
 
 import sh
 
@@ -23,7 +24,7 @@ def execute(prefix: str, frequency: str, duration: timedelta):
         _piped=True
     )
 
-    try:
+    with suppress(sh.TimeoutException):
         sh.sox(rtl_fm_proc,
             "-t", "raw",
             "-b16",
@@ -35,9 +36,6 @@ def execute(prefix: str, frequency: str, duration: timedelta):
             signal_filename,
             "rate", "11025"
         )
-    except sh.TimeoutException:
-        pass
-
 
     sh.noaa_apt(
         "-o", product_filename,
