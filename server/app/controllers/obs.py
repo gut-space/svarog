@@ -7,6 +7,7 @@ from math import floor
 from app.utils import strfdelta
 
 from tletools import TLE
+from astropy import units as u
 
 @app.route('/obs/<obs_id>')
 @use_pagination(5)
@@ -34,11 +35,13 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
             # observation['tle'] is always an array of exactly 2 strings.
             orbit = parse_tle(*observation['tle'], satellite["sat_name"])
 
+        station = repository.read_station(observation["station_id"])
+
     # Now tweak some observation parameters to make them more human readable
     observation = human_readable_obs(observation)
 
     return 'obs.html', dict(obs = observation, files=files,
-        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit)
+        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station)
 
 def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
@@ -56,6 +59,9 @@ def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     r_a = o.r_a - RE # Calculate apogee and perigee as altitude above Earth surface,
     r_p = o.r_p - RE # rather than as distance from barycenter.
 
+    m = floor(o.period.to(u.s).value/60)
+    s = (o.period.to(u.s) - m*60*u.s).value
+
     # Now make the parameters easier to read (cut unnecessary digits after comma, show altitude, etc)
     orb = {}
     orb["overview"] = repr(o)
@@ -65,7 +71,7 @@ def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     orb["r_a"] = "%4.1f %s (%4.1f %s above surface)" % (o.r_a.value, o.r_a.unit, r_a.value, r_a.unit)
     orb["r_p"] = "%4.1f %s (%4.1f %s above surface)" % (o.r_p.value, o.r_p.unit, r_p.value, r_p.unit)
     orb["raan"] = "%4.1f %s" % (o.raan.value, o.raan.unit)
-    orb["period"] = "%4.0f %s" % (o.period.value, o.period.unit)
+    orb["period"] = "%4.0f %s (%dm %ds)" % (o.period.value, o.period.unit, m, s)
 
     # This is ugly hack. But it converts the ISO 8601 notation to a more human readable form.
     tmp = str(o.epoch)[:19]
