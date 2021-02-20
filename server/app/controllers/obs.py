@@ -4,6 +4,7 @@ from app import app
 from app.repository import ObservationId, Repository, Observation
 from app.pagination import use_pagination
 from math import floor
+from app.utils import strfdelta
 
 from tletools import TLE
 
@@ -94,6 +95,6 @@ def human_readable_obs(obs: Observation) -> Observation:
 
 
     obs.aos = obs["aos"].strftime("%Y-%m-%d %H:%M:%S")
-    obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", %d min %d secs since AOS" % (tca_duration_m, tca_duration_s) + tca_correction
-    obs.los = obs["los"].strftime("%Y-%m-%d %H:%M:%S") + ", %d min %d secs since AOS" % (los_duration_m, los_duration_s)
+    obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_tca_duration, fmt="{M:02}m {S:02}s since AOS")
+    obs.los = obs["los"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_los_duration, fmt="{M:02}m {S:02}s since AOS")
     return obs
