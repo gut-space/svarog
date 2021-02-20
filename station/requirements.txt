@@ -61,6 +61,8 @@ requests==2.23.0
     # via orbit-predictor
 sgp4==2.3
     # via orbit-predictor
+sh==1.14.1
+    # via -r requirements.in
 six==1.14.0
     # via
     #   cycler
