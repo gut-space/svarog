@@ -1,13 +1,17 @@
-from datetime import timedelta
-import signal
 from contextlib import suppress
+from datetime import timedelta
+import os.path
+import signal
 
 import sh
 
+from helpers import set_sh_defaults
 
-def execute(prefix: str, frequency: str, duration: timedelta):
-    signal_filename = prefix + "_signal.wav"
-    product_filename = prefix + "_product.png"
+
+@set_sh_defaults
+def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
+    signal_path = os.path.join(working_dir, "signal.wav")
+    product_path = os.path.join(working_dir, "product.png")
     
     rtl_fm_proc = sh.rtl_fm(
         "-d", 0,
@@ -29,22 +33,20 @@ def execute(prefix: str, frequency: str, duration: timedelta):
             "-t", "raw",
             "-b16",
             "-es",
-            "-r 48000",
+            "-r", 48000,
             "-c1",
             "-V1",
             "-",
-            signal_filename,
+            signal_path,
             "rate", "11025"
         )
 
     sh.noaa_apt(
-        "-o", product_filename,
-        signal_filename
+        "-o", product_path,
+        signal_path
     )
 
     return {
-        "signal": signal_filename,
-        "product": product_filename
+        "signal": signal_path,
+        "product": product_path
     }
-
-
