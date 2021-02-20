@@ -73,10 +73,8 @@ def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     orb["raan"] = "%4.1f %s" % (o.raan.value, o.raan.unit)
     orb["period"] = "%4.0f %s (%dm %ds)" % (o.period.value, o.period.unit, m, s)
 
-    # This is ugly hack. But it converts the ISO 8601 notation to a more human readable form.
-    tmp = str(o.epoch)[:19]
-    tmp = tmp[0:10] + " " + tmp[11:19] # replace T representing the timezone
-    orb["epoch"] = tmp + " UTC" # we don't need nanoseconds precision
+    # Let's convert epoch to something more pleasantly readable.
+    orb["epoch"] = o.epoch.strftime("%Y-%m-%d %H:%M:%S") + " UTC"
 
     return orb
 
