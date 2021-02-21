@@ -141,6 +141,8 @@ source venv/bin/activate
 python setup.py install
 ```
 
+Sometimes it's necessary to explicitly say which python version to use: `python3 -m virtualenv --python=python3 venv`
+
 This step will install necessary dependencies. It is a good practice to install them in virtual environment. If you don't have virtualenv
 installed, you can add it with `sudo apt install python-virtualenv`
 or similar command for your system. Alternatively, you may use venv.
