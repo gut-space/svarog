@@ -1,6 +1,8 @@
 #!/bin/bash
 
-BRANCH=$(git branch --show-current)
+# For some strange reason, git branch --show-current doesn't work on Debian 10,
+# even though the git version is 2.20 there.
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 if test "$BRANCH" != "master"; then
     echo "The current branch ($BRANCH) is not master, skipping update."
