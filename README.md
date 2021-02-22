@@ -14,16 +14,16 @@ As of Feb 2021, the following features are working:
 - Automated reception and transmission decoding for NOAA-15, NOAA-18 and NOAA-19 satellites (APT)
 - Support for Meteor M2 transmissions (LRPT)
 - Transmissions are decoded and uploaded automatically to our content server (see https://aquarius.klub.com.pl)
-- Automated updates for the server
-- Orbital TLE data is recorded
+- Automated updates for the server and station
+- Orbital TLE data is recorded and prestend in several formats (native TLE, easy to understand orbital parameters etc.)
 - Pass over charts (azimuth/elevation)
 
-Work in progress and plans for the next couple weeks:
+Work in progress and plans for the near future:
 
-- user management
-- automated updates for the station
 - quality assessment for decoded images
+- user management
 - georeferencing
+- telemetry reception
 
 # Documentation
 
