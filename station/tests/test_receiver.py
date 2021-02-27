@@ -4,7 +4,7 @@ import os.path
 import receiver
 
 
-class TestReceiver(unittest.TestCase):
+class TestReceiverRatings(unittest.TestCase):
     def setUp(self):
         data_directory = os.path.join(os.path.dirname(__file__), "data")
         self.rgb_path = os.path.join(data_directory, "rgb-image.png")

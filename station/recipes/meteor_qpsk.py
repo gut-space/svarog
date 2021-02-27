@@ -21,7 +21,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     product_raw_path = product_raw_prefix_path + ".bmp"
 
     # Record signal
-    rtl_fm_proc = sh.rtl_fm(
+    fm_proc = sh.rx_fm(
         "-M", "raw",
         "-f", frequency,
         "-s", 48000,
@@ -33,7 +33,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     )
 
     with suppress(sh.TimeoutException):
-        sh.sox(rtl_fm_proc,
+        sh.sox(fm_proc,
             "-t", "raw",
             "-r", "288k",
             "-c", 2,
