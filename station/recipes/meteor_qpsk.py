@@ -22,10 +22,13 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     # Record signal
     fm_proc = sh.rx_fm(
+        # Modulation raw
         "-M", "raw",
         "-f", frequency,
         "-s", 48000,
+        # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
         "-g", 48,
+        # Copy-paste from suspects www
         "-p", 1,
         _timeout=duration.total_seconds(),
         _timeout_signal=signal.SIGTERM,
@@ -34,19 +37,31 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     with suppress(sh.TimeoutException):
         sh.sox(fm_proc,
+            # Type of input
             "-t", "raw",
             "-r", "288k",
+            # Channels - 2 - stereo
             "-c", 2,
+            # Sample size
             "-b", 16,
+            # Signed integer encoding
             "-e", "s",
+            # Read from stdin (from pipe)
             "-",
+            # Type of output
             "-t", "wav",
             signal_path,
+            # Resampling rate
             "rate", "96k"
         )
 
     # Normalize signal
-    sh.sox(signal_path, normalized_signal_path, "gain", "-n")
+    sh.sox(
+        signal_path,
+        normalized_signal_path,
+        # Normalize to 0dBfs
+        "gain", "-n"
+    )
 
     # Demodulating
     sh.meteor_demod(
@@ -59,13 +74,22 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     sh.touch("-r", signal_path, qpsk_path)
 
     # Decode QPSK
-    sh.medet(qpsk_path, dump_prefix_path, "-cd")
+    sh.medet(
+        qpsk_path,
+        dump_prefix_path,
+        # Make doceded dump (fastest)
+        "-cd"
+    )
 
     # Generate images
     sh.medet(dump_path, product_raw_prefix_path,
+        # APID for red
         "-r", 66,
+        # APID for green
         "-g", 65,
+        # APID for blue
         "-b", 64,
+        # Use dump
         "-d"
     )
 

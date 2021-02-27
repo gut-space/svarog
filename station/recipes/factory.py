@@ -55,6 +55,11 @@ All recipes must be located in directory with this file ("recipes") and have
 BASE_DIR = "/tmp/observations_tmp"
 os.makedirs(BASE_DIR, exist_ok=True)
 
+# Categories of result the reception
+# Signal - recorded signal (recommended in WAV file)
+# Product - binary file decoded from signal (now it is always PNG file)
+ReceptionResultCategory = Literal["signal", "product"]
+
 def get_recipe(sat: SatelliteConfiguration):
     '''
     Returns path to recipe file assigned with the specified satellite.
@@ -74,11 +79,13 @@ def get_recipe(sat: SatelliteConfiguration):
     return recipes[recipe]
 
 
-def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) -> Iterable[Tuple[Literal["signal", "product"], str]]:
+def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
+        -> Tuple[Iterable[Tuple[ReceptionResultCategory, str]], str]:
     '''
     Execute recipe for specified satellite and return results.
 
     Return collection of tuples with category and path.
+    Second item in result is path to temporary observation directory.
     If no recipe found then throw LookupError.
 
     We use "signal" category for raw, unprocessed received signal file
@@ -86,7 +93,8 @@ def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) -> Itera
     You may get multiple files with the same category.
 
     Caller is responsible for cleaning up the results.
-    You need delete or move returned files when you don't need them.
+    You need delete or move returned files when you don't need them. You should
+    also delete the temporary observation directory.
     '''
     recipe_function = get_recipe(sat)
 
