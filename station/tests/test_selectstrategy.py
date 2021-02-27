@@ -72,4 +72,4 @@ class TestSelectStrategy(unittest.TestCase):
         self.assertEqual(len(observations), len(expected))
         for (result_name, _, result_range), (expected_name, exprected_range) in zip(observations, expected):
             self.assertEqual(result_name, expected_name)
-        self.assertEqual(result_range, exprected_range)
+            self.assertEqual(result_range, exprected_range)

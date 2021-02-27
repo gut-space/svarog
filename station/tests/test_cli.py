@@ -6,7 +6,7 @@ import unittest
 # It must be set before import "utils"
 environ["AQUARIUS_CONFIG_DIR"] = "tests/config"
 
-from utils import CONFIG_DIRECTORY
+from utils.globalvars import CONFIG_DIRECTORY
 
 CLI = "./cli.py"
 

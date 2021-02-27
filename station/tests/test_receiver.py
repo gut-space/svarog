@@ -33,7 +33,7 @@ class TestReceiver(unittest.TestCase):
         self.assertIsNone(rating)
 
     def test_rating_for_none_arguments(self):
-        rating = receiver.get_rating_for_product(None, None)
+        rating = receiver.get_rating_for_product(None, None)  # type: ignore
         self.assertIsNone(rating)
 
     def test_single_layer_rating_called_with_multi_layer_product(self):

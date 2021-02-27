@@ -7,7 +7,10 @@ import typing
 
 from matplotlib.pyplot import imread
 
-from utils import first, open_config, get_satellite, from_iso_format, safe_call
+from utils.functional import first
+from utils.models import get_satellite
+from utils.dates import from_iso_format
+from utils.configuration import open_config
 from submitobs import submit_observation, SubmitRequestData
 from recipes import factory
 from quality_ratings import get_rate_by_name

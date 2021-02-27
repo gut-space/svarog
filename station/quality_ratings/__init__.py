@@ -1,5 +1,4 @@
 import importlib
-import functools
 import os
 
 
@@ -40,4 +39,4 @@ def get_rate_names():
     return [n for n in candidates if _is_rate(n)]
 
 
-__all__ = [get_rate_by_name, get_rate_names]
+__all__ = ["get_rate_by_name", "get_rate_names"]
