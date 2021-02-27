@@ -52,7 +52,7 @@ def cmd():
     aos_datetime = datetime.datetime.utcnow()
     los_datetime = from_iso_format(los)
 
-    results = factory.execute_recipe(satellite, los_datetime)
+    results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
 
     # Post-processing
     save_mode = satellite["save_to_disk"]
@@ -84,9 +84,8 @@ def cmd():
         for _, path in products:
             move_to_satellite_directory(root_directory, name, path)
 
-    for _, path in results:
-        if os.path.exists(path):
-            os.remove(path)
+    shutil.rmtree(tmp_directory, ignore_errors=True)
+
 
 if __name__ == '__main__':
     try:
