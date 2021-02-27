@@ -5,7 +5,7 @@ import signal
 
 import sh
 
-from helpers import set_sh_defaults
+from recipes.helpers import set_sh_defaults
 
 
 @set_sh_defaults
@@ -46,7 +46,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         signal_path
     )
 
-    return {
-        "signal": signal_path,
-        "product": product_path
-    }
+    return [
+        ("SIGNAL", signal_path),
+        ("PRODUCT", product_path)
+    ]
