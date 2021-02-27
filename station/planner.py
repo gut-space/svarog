@@ -7,8 +7,11 @@ from orbit_predictor.locations import Location
 from datetimerange import DateTimeRange
 
 from selectstrategy import strategy_factory, Observation
-from utils import COMMENT_PASS_TAG, set_satellite_defaults, open_config, get_receiver_command, \
-                open_crontab, utc_to_local, get_location, Configuration
+from utils.globalvars import COMMENT_PASS_TAG
+from utils.models import set_satellite_defaults, get_location, Configuration
+from utils.cron import get_receiver_command, open_crontab
+from utils.configuration import open_config
+from utils.dates import utc_to_local
 from orbitdb import OrbitDatabase
 
 RECEIVER_COMMAND = get_receiver_command()

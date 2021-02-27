@@ -23,7 +23,7 @@ def create_strategy(sort_key: Callable[[Observation], Hashable],
     def strategy(data: Iterable[Tuple[T, PredictedPass]]) -> Sequence[Observation]:
         entries = _to_observations(data)
 
-        entries.sort(key=sort_key)
+        entries.sort(key=sort_key)  # type: ignore
         
         result = []
         while len(entries) != 0:

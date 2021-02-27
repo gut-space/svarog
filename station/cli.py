@@ -14,9 +14,12 @@ from deepdiff import DeepHash
 
 import planner
 from orbitdb import OrbitDatabase
-from utils import COMMENT_PLAN_TAG, COMMENT_PASS_TAG, COMMENT_UPDATE_TAG, SatelliteConfiguration, first, get_location, \
-                get_planner_command, get_receiver_command, get_satellite, open_config, save_config, \
-                APP_NAME, open_crontab, LOG_FILE, from_iso_format
+from utils.models import SatelliteConfiguration, get_location, get_satellite
+from utils.configuration import open_config, save_config
+from utils.functional import first
+from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG
+from utils.dates import from_iso_format
+from utils.cron import  get_planner_command, get_receiver_command, open_crontab
 from recipes.factory import get_recipe_names
 from quality_ratings import get_rate_names
 

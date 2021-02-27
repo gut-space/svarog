@@ -9,7 +9,9 @@ import time
 from orbit_predictor.sources import NoradTLESource
 from orbit_predictor.predictors.base import CartesianPredictor
 
-from utils import CONFIG_DIRECTORY, APP_NAME, safe_filename, open_config
+from utils.globalvars import CONFIG_DIRECTORY, APP_NAME
+from utils.configuration import open_config
+from utils.filenames import safe_filename
 
 CELESTRAK = [
     r"https://celestrak.com/NORAD/elements/active.txt"

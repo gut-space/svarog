@@ -9,7 +9,8 @@ from matplotlib import pyplot as plt
 import plotille
 
 from orbitdb import OrbitDatabase
-from utils import open_config, get_location
+from utils.configuration import open_config
+from utils.models import get_location
 
 COLOR_BLUE = 25
 COLOR_RED = 1

@@ -2,6 +2,7 @@ import argparse
 import os.path
 from typing import Tuple
 
+
 def exist_file(x: str) -> str:
     """
     'Type' for argparse - checks that file exists but does not open.
@@ -13,6 +14,7 @@ def exist_file(x: str) -> str:
     if not os.path.isfile(x):
         raise argparse.ArgumentTypeError("%s isn't a file" % (x,))
     return x
+
 
 def input_output_parser(program: str, input_description: str, output_description: str) -> Tuple[str, str]:
     parser = argparse.ArgumentParser(program)

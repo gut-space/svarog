@@ -6,7 +6,8 @@ import sys
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 
-from utils import open_config, from_iso_format
+from utils.configuration import open_config
+from utils.dates import from_iso_format
 from hmac_token import get_authorization_header_value
 from orbitdb import OrbitDatabase
 
@@ -60,7 +61,7 @@ def submit_observation(data: SubmitRequestData):
     '''
     _, filename = os.path.split(data.image_path)
 
-    form_data: dict = {
+    form_data = {
         "aos": data.aos.isoformat(),
         "tca": data.tca.isoformat(),
         "los": data.los.isoformat(),
