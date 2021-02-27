@@ -13,8 +13,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     signal_path = os.path.join(working_dir, "signal.wav")
     product_path = os.path.join(working_dir, "product.png")
     
-    rtl_fm_proc = sh.rtl_fm(
-        "-d", 0,
+    fm_proc = sh.rx_fm(
         "-f", frequency,
         "-s", 48000,
         "-g", 49.6,
@@ -29,7 +28,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     )
 
     with suppress(sh.TimeoutException):
-        sh.sox(rtl_fm_proc,
+        sh.sox(fm_proc,
             "-t", "raw",
             "-b16",
             "-es",
