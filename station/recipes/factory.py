@@ -97,7 +97,7 @@ def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) -> Itera
     record_interval = los - now
 
     output = recipe_function(reception_directory, sat["freq"], record_interval)
-    return output
+    return output, reception_directory
 
 
 def get_recipe_names() -> List[str]:
