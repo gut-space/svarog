@@ -15,30 +15,36 @@ else:
 '''
 The different satellites require different software and configuration.
 This is a recipe-based solution. "Recipe" is a script which is responsible
-for receive signal and decode it.
+for the signal reception and its decoding.
 
-As input each recipe gets three parameters:
+Each recipe takes three parameters:
 
 * Working directory - it is writable, clean and temporary directory.
-* Frequency - it is frequency for SDR.
-* Duration - after this time script should stop SDR
+* Frequency - transmission frequency in MHz
+* Duration - after this time script should stop SDR, in seconds
 
 As output the script returns a dictionary where key is a category
-and value is a path or paths to file(s).
-Now we use "signal" for initial WAV file and
-"product" or "products" for decoded imagery.
-I think that we will need a category for waterfall
-and telemetry (raw and/or decoded) in future.
+and value is a path or paths to file(s). Currently the following categories
+are supported:
+- "signal" for initial audio file in WAV format
+- "product" or "products" for decoded image
 
-User should have a possibility to execute recipe with separation of station core.
-(Without need to initialize the station).
+In the future additional categories will be added. Most likely there will be:
+- "waterfall" presenting the frequency spectrum changing over time
+- "telemetry" for any decoded telemetry data
+- "logs" for detailed decoding notes
+
+Other categories are likely to appear.
+
+User should have a possibility to execute recipe in stand alone mode, i.e. without
+the whole station code (without any need to initialize the station).
 
 Recipe isn't responsible for clean up. The working directory should be deleted
-after file proceeding. If some files should be keep then they should be moved
-in safe place.
+after file processing. If some files should be kept, then they should be moved
+to a safe place.
 
 User has a possibility to select recipe by "recipe" parameter in satellite
-config. Now it is optional and script try to deduce recipe based on satellite. 
+config. Now it is optional and script try to deduce recipe based on satellite.
 (For example if recipe isn't provided and name starts with NOAA then we use
 recipe for NOAA).
 
@@ -51,9 +57,9 @@ os.makedirs(BASE_DIR, exist_ok=True)
 
 def get_recipe(sat: SatelliteConfiguration):
     '''
-    Returns path to recipe file assigned with passed satellite.
+    Returns path to recipe file assigned with the specified satellite.
     If recipe doesn't exist throw LookupError.
-    
+
     Function check "recipe" field in passed configuration for recipe.
     If it is empty then check built-in list with compatible recipes.
     '''
@@ -70,16 +76,16 @@ def get_recipe(sat: SatelliteConfiguration):
 
 def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) -> Iterable[Tuple[Literal["signal", "product"], str]]:
     '''
-    Execute recipe for passed satellite and return results.
+    Execute recipe for specified satellite and return results.
 
     Return collection of tuples with category and path.
     If no recipe found then throw LookupError.
 
-    We use "signal" category for not processed, received signal file
-    and "product" for finish data (e. q. imagery) extracted from signal.
+    We use "signal" category for raw, unprocessed received signal file
+    and "product" for finished data (e. q. imagery) extracted from signal.
     You may get multiple files with the same category.
 
-    Caller is responsible for cleanup results.
+    Caller is responsible for cleaning up the results.
     You need delete or move returned files when you don't need them.
     '''
     recipe_function = get_recipe(sat)
