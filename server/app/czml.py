@@ -8,6 +8,12 @@ from pprint import pprint
 
 def get_czml(id):
 
+
+    try:
+        id = int(id)
+    except:
+        return '{ "error": "Invalid observation \'%s\', expected number" }' % id
+
     # First we need to get the observation and sat data from a database.
     repository = Repository()
 
