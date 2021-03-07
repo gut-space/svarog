@@ -35,6 +35,8 @@ source venv/bin/activate
 ./aquarius-web.py
 ```
 
+This will open http://localhost:8080. Most of the UI is accessible here, except the Cesium visualization.
+
 2. In another console:
 
 ```shell
@@ -42,3 +44,5 @@ cd cesium
 npm install
 npm run-script run
 ```
+
+This will open http://localhost:9000. Here's only the Cesium visualization is available.
