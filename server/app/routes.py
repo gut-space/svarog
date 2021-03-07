@@ -21,5 +21,8 @@ def send_js(path):
 @app.route('/czml/<id>')
 def send_viewer(id):
 
-    return Response(get_czml(id), mimetype="application/json")
+    # This is required for handling debug deployment, where Cesium is running on localhost:9000,
+    # and the Flask is on localhost:8080.
+    headers = {'Access-Control-Allow-Origin': '*'}
 
+    return Response(get_czml(id), mimetype="application/json", headers = headers)

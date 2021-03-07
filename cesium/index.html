@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Aquarius</title>
+    <script src="./Cesium/Cesium.js"></script>
+    <script src="./bundle.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="./Cesium/Widgets/widgets.css">
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        table,
+        #flight-info {
+            background: rgba(42, 42, 42, 0.8);
+            padding: 4px;
+            border-radius: 4px;
+            color: aliceblue;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="buttonContainer" style="position:absolute; left: 0px; z-index:1;">
+        <button class="cesium-button button-czml-load" data-file="http://localhost:8080/czml/1276">Observation 1276</button>
+        <button class="cesium-button button-clear-all">Clear</button>
+        <button class="cesium-button button-frame-selector" data-names="Inertial (ECI),Fixed (ECEF)">Reference frame:Fixed (ECEF)</button>
+    </div>
+    <div id="cesiumContainer">
+    </div>
+</body>
+
+</html>

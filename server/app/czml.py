@@ -21,13 +21,6 @@ def get_czml(id):
 
     station = repository.read_station(obs['station_id'])
 
-    print("#### OBS")
-    pprint(obs)
-    print("#### SAT")
-    pprint(sat)
-    print("#### station")
-    pprint(station)
-
     # Now make sure the observation has its TLE data recorded.
     if obs['tle'] is None:
         # We don't have TLE data. Oh well. We'll bail out for now. We can't simply get the
@@ -50,7 +43,7 @@ def get_czml(id):
     extractor.add_orbit(orb, id_name=name, path_width=2, label_text=str(id), label_fill_color=[125, 80, 120, 255])
 
     if station is not None:
-        extractor.add_ground_station([ station['lon'] * u.degree, station['lat'] * u.degree ],
+        extractor.add_ground_station([ station['lat'] * u.degree, station['lon'] * u.degree ],
             label_text = station['name'],
             id_description= station['descr'])
 
