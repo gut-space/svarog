@@ -35,7 +35,8 @@ source venv/bin/activate
 ./aquarius-web.py
 ```
 
-In another console:
+2. In another console:
+
 ```shell
 cd cesium
 npm install
