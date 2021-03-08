@@ -62,11 +62,11 @@ class CzmlTests(unittest.TestCase):
         shutil.rmtree(IMAGE_ROOT, ignore_errors=True)
         os.remove(LOG_FILE)
 
-    def test_czml_valid(self):
+    def test_czml_obs_valid(self):
         """This tests a valid observation. Checks if observation 1276 can be returned as CZML
            and if its content looks reasonable."""
 
-        response = self.app.get('/czml/1276', follow_redirects=True)
+        response = self.app.get('/czml/obs/1276', follow_redirects=True)
 
         # Check if it looks ok and has JSON format
         self.assertEqual(response.status_code, 200)
@@ -104,11 +104,11 @@ class CzmlTests(unittest.TestCase):
            - missing observation number"""
 
         # There's no observation 12345.
-        response = self.app.get('/czml/12345', follow_redirects=True)
+        response = self.app.get('/czml/obs/12345', follow_redirects=True)
         self.check_error_response(response, 'Unable to find observation 12345')
 
         # This observation number is clearly invalid.
-        response = self.app.get('/czml/1111one', follow_redirects=True)
+        response = self.app.get('/czml/obs/1111one', follow_redirects=True)
         self.check_error_response(response, 'Invalid observation \'1111one\', expected number')
 
     def check_error_response(self, resp, exp_error):

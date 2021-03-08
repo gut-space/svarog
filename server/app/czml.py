@@ -1,13 +1,16 @@
 
 from poliastro.czml.extract_czml import CZMLExtractor
-from app.repository import ObservationId, Repository, Observation
+from poliastro.twobody import Orbit
+from app.repository import ObservationId, Repository, Observation, Satellite
 from tletools import TLE
 from astropy.time import Time
 from astropy import units as u
 from pprint import pprint
 
-def get_czml(id):
-
+def get_obs_czml(id):
+    """Generates CZML file that describe the observation, specified by id. ID must be an integer.
+       This returns a CZML file that contains at least 4 CZML packets: document description,
+       custom parameters describing Earth spheroid, satellite pass, ground station."""
 
     try:
         id = int(id)
@@ -46,7 +49,10 @@ def get_czml(id):
     # Ok, we got all the data. It's now time to generate CZML file.
     num_samples = 80
     extractor = CZMLExtractor(start_epoch, end_epoch,num_samples)
-    extractor.add_orbit(orb, id_name=name, path_width=2, label_text=str(id), label_fill_color=[125, 80, 120, 255])
+
+    descr = get_obs_descr(start_epoch, end_epoch, orb, obs, sat)
+
+    extractor.add_orbit(orb, id_name=name, id_description=descr, path_width=2, label_text=str(id), label_fill_color=[125, 80, 120, 255])
 
     if station is not None:
         extractor.add_ground_station([ station['lat'] * u.degree, station['lon'] * u.degree ],
@@ -68,3 +74,32 @@ def get_czml(id):
 
 
     return txt + "]\n"
+
+def get_obs_descr(start_epoch: Time, end_epoch: Time, orb: Orbit, obs: Observation, sat: Satellite) -> str:
+    """Generates satellite pass textual description."""
+
+    name = sat['sat_name']
+    norad_id = sat['sat_id']
+    tle = obs['tle']
+
+    RE = orb.attractor.R
+
+    descr = "<p>NORAD ID = <b>%d</b></p>\n" % norad_id
+    descr += "<p>Transmission parameters<br/>\n"
+    descr += "Observation number = %s<br/>" % obs['obs_id']
+    descr += "AOS (Acquisition of signal) = %s<br/>\n" % start_epoch
+    descr += "LOS (Loss of signal) = %s</p>\n" % end_epoch
+
+
+    descr = descr + "<p>Orbit parameters<br/>\n{r_p:.1f} x {r_a:.1f} ({per_abs:.1f} x {apo_abs:.1f}) <br/>\n".format(r_p = orb.r_p, r_a=orb.r_a, per_abs=orb.r_p - RE, apo_abs=orb.r_a - RE)
+    descr = descr + "Perigee = <b>{per:.1f}</b> (altitude {alt:.1f})<br/>".format(per = orb.r_p, alt = orb.r_p - RE)
+    descr = descr + "Apogee = <b>{apo:.1f}</b> (altitude {alt:.1f})<br/>".format(apo = orb.r_a, alt = orb.r_a - RE)
+    descr = descr + "Major semi-axis <i>a</i> = <b>%4.2f %s</b><br/>" % (orb.a.value, orb.a.unit)
+    descr = descr + "Eccentricity <i>e</i> = <b>%s</b><br/>" % orb.ecc
+    descr = descr + "Inclination <i>i</i> = <b>%4.2f %s</b><br/>" % (orb.inc.value, orb.inc.unit)
+    descr = descr + "Right Ascension of the Ascending Node <i>raan</i> = <b>%4.2f %s</b><br/>" % (orb.raan.value, orb.raan.unit)
+    descr = descr + "Argument of perigee <i>argp</i> = <b>%4.2f %s</b><br/>" % (orb.argp.value, orb.argp.unit)
+    descr = descr + "Period = <b>{period:.1f}</b><br/>".format(period = orb.period)
+    descr = descr + "Epoch = %s<br/></p>" % str(orb.epoch)[:16]
+
+    return descr
