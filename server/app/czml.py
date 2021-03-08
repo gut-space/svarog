@@ -1,11 +1,12 @@
 
 from poliastro.czml.extract_czml import CZMLExtractor
 from poliastro.twobody import Orbit
-from app.repository import ObservationId, Repository, Observation, Satellite
+from app.repository import ObservationId, Repository, Observation, Satellite, Station
 from tletools import TLE
 from astropy.time import Time
 from astropy import units as u
 from pprint import pprint
+from app.utils import coords
 
 def get_obs_czml(id):
     """Generates CZML file that describe the observation, specified by id. ID must be an integer.
@@ -57,7 +58,7 @@ def get_obs_czml(id):
     if station is not None:
         extractor.add_ground_station([ station['lat'] * u.degree, station['lon'] * u.degree ],
             label_text = station['name'],
-            id_description= station['descr'])
+            id_description= get_station_descr(station))
 
     # I'm sure there's much easier way to do the conversion, but all the examples
     # for czml3 only show how to convert a single packet. For pass visualization, we will
@@ -101,5 +102,14 @@ def get_obs_descr(start_epoch: Time, end_epoch: Time, orb: Orbit, obs: Observati
     descr = descr + "Argument of perigee <i>argp</i> = <b>%4.2f %s</b><br/>" % (orb.argp.value, orb.argp.unit)
     descr = descr + "Period = <b>{period:.1f}</b><br/>".format(period = orb.period)
     descr = descr + "Epoch = %s<br/></p>" % str(orb.epoch)[:16]
+
+    return descr
+
+def get_station_descr(station: Station) -> str:
+    """Generates a description of the ground station"""
+    descr = "<p><b>Description:</b><br/>" + station['descr'] + "</p>\n"
+
+    descr += "<p><b>Coordinates</b>: " + coords(station['lon'], station['lat']) + "</p>\n"
+    descr += "<p><b>Configuration</b>:<br/>" + station['config'] + "</p>"
 
     return descr
