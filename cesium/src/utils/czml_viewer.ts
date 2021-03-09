@@ -9,9 +9,11 @@
 
 import * as Cesium from "cesium";
 
+const CZML_URL = 'http://localhost:8080/czml/obs/';
+
 export function czmlViewer(viewer: Cesium.Viewer) {
 
-    // This updates constellation buttons
+    // This updates the CZML load buttons
     const czmlButtons = [...document.querySelectorAll(".button-czml-load")] as HTMLButtonElement[];
     czmlButtons.forEach(btn => {
         const f = btn.dataset["file"] as string;
@@ -19,13 +21,32 @@ export function czmlViewer(viewer: Cesium.Viewer) {
         btn.onclick = () => loadCzml(viewer, f);
     });
 
-    // Find all clear-all buttons
-    const clearButtons = [...document.querySelectorAll(".button-clear-all")] as HTMLButtonElement[];
-    clearButtons.forEach(btn => {
-        btn.onclick = () => {
+    // This adds load observation onclick callback to Show observation
+    const czmlLoad = document.getElementById("load-obs") as HTMLButtonElement;
+    czmlLoad.onclick = () => {
+        let obs_id = (document.getElementById("obs-id") as HTMLInputElement).value;
+        loadCzml(viewer, CZML_URL + obs_id);
+    };
+
+    // Find the clear button and set the callback to clear all datasources (remove all loaded observations)
+    const clearButton = document.getElementById("clear") as HTMLButtonElement;
+    if (clearButton) {
+        clearButton.onclick = () => {
             viewer.dataSources.removeAll();
-        }
-    })
+        };
+    }
+
+    // Find if there's observation number passed in URL. If there is, load the CZML file.
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.has('obs_id')) {
+        console.log("Loading observation " + urlParams.get('obs_id'));
+        loadCzml(viewer, CZML_URL + urlParams.get('obs_id'));
+
+        // Also set up the input field to the observation id we just loaded.
+        const obs_id = document.getElementById("obs-id") as HTMLInputElement;
+        obs_id.value = urlParams.get('obs_id') as string;
+    }
 }
 
 function loadCzml(viewer: Cesium.Viewer, czml: string) {

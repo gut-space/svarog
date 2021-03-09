@@ -39,8 +39,11 @@
 
 <body>
     <div id="buttonContainer" style="position:absolute; left: 0px; z-index:1;">
-        <button class="cesium-button button-czml-load" data-file="http://localhost:8080/czml/obs/1276">Observation 1276</button>
-        <button class="cesium-button button-clear-all">Clear</button>
+        <!-- The following buttons can be used for debugging CZML observation loading.
+            <button class="cesium-button button-czml-load" data-file="http://localhost:8080/czml/obs/1276">Observation 1276</button>
+            <button class="cesium-button" id="clear">Clear</button> -->
+        <input class="cesium" value="Observation id" type="number" id="obs-id"></input>
+        <button class="cesium-button" id="load-obs">Load observation</button>
         <button class="cesium-button button-frame-selector" data-names="Inertial (ECI),Fixed (ECEF)">Reference frame:Fixed (ECEF)</button>
     </div>
     <div id="cesiumContainer">
