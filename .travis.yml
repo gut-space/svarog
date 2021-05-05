@@ -25,11 +25,11 @@ install:
   - pip install pytest
 
 before_script:
-  - psql -c 'create database satnogs;' -U postgres
-  - cp server/.satnogs.ini.travis server/satnogs.ini
+  - psql -c 'create database svarog;' -U postgres
+  - cp server/.svarog.ini.travis server/svarog.ini
   - cd server && python migrate_db.py && cd ..
-  - psql -f server/tests/db-data.psql satnogs
-  - mkdir -p ~/.config/satnogs-gut
+  - psql -f server/tests/db-data.psql svarog
+  - mkdir -p ~/.config/svarog-gut
 
 script:
   - cd station && pytest -v ; cd ..

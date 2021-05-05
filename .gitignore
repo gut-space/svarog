@@ -4,7 +4,7 @@ __pycache__
 venv
 .DS_Store
 .vscode/
-/server/satnogs.ini
+/server/svarog.ini
 /server/app/data
 /server/.env/bin/
 /server/.env/
@@ -12,5 +12,5 @@ venv
 /server/build/
 /server/cache_tmp/
 /server/backups/
-/server/satnogs_server.egg-info/
+/server/svarog_server.egg-info/
 /server/dist/

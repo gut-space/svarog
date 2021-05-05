@@ -2,7 +2,7 @@
 
 # Users Management
 
-Users information has been introduced in [schema update 08](../server/db/satnogs-08.psql). There's a new table that holds
+Users information has been introduced in [schema update 08](../server/db/svarog-08.psql). There's a new table that holds
 user-id, username, salted SHA256 digest, and user role. Until we add flask-admin (or some other management panel), the
 process of adding new users is manual.
 
@@ -11,7 +11,7 @@ This is pretty basic for now. One day we will add a capability for the user regi
 To add a new user:
 
 1. log into the server using ssh
-2. psql satnogs
+2. psql svarog
 3. add entry for new user
 
 ```sql

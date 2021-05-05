@@ -5,9 +5,9 @@ from typing import Tuple, List
 try:
     from app.repository import Repository
 except KeyError:
-    exit("Unable to load satnogs.ini - make sure the file is present and has all entries.")
+    exit("Unable to load svarog.ini - make sure the file is present and has all entries.")
 
-def list_migrations(directory: str, extension=".psql", prefix="satnogs-") -> List[Tuple[int, str]]:
+def list_migrations(directory: str, extension=".psql", prefix="svarog-") -> List[Tuple[int, str]]:
     '''
     List all files in @directory meet the convention:
         [@prefix][XX][@extension]
@@ -47,7 +47,7 @@ def migrate(config=None, migration_directory="db"):
         If None then read INI file
     migration_directory: str
         Directory with .psql files. Files must to keep naming convention:
-            satnogs-XX.psql
+            svarog-XX.psql
         where XX is number of database revision.
 
     Returns

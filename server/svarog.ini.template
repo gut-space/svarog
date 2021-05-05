@@ -1,11 +1,11 @@
 [database]
 host = localhost
-database = satnogs
+database = svarog
 user = postgres
 password = postgres
 
 [storage]
-image_root = /home/satnogs/data
+image_root = /home/svarog/data
 
 [security]
 ignore_hmac_validation_errors = false
