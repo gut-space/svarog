@@ -456,11 +456,15 @@ class Repository:
             return 1
 
         version_query = 'SELECT "version" FROM "schema" LIMIT 1'
-        cursor.execute(version_query)
-        row = cursor.fetchone()
-        if row is None:
-            raise Exception("Database version not set")
-        return row["version"]
+        try:
+            cursor.execute(version_query)
+            row = cursor.fetchone()
+            if row is None:
+                raise Exception("Database version not set")
+            return row["version"]
+        except:
+            print("Failed to select schema version, assuming 0")
+            return 0
 
     @use_cursor
     def execute_raw_query(self, query):
