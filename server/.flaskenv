@@ -1,1 +1,1 @@
-FLASK_APP=satnogs-web.py
+FLASK_APP=svarog-web.py

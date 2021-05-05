@@ -11,7 +11,7 @@ app = Flask(__name__, template_folder='../templates')
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.dirname(root_dir)
-ini_path = os.path.join(root_dir, 'satnogs.ini')
+ini_path = os.path.join(root_dir, 'svarog.ini')
 
 try:
 

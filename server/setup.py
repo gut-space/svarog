@@ -17,9 +17,9 @@ setup(name='aquarius-server',
 )
 
 # STEP 2: ensure the config is exists
-config_path = "satnogs.ini"
+config_path = "svarog.ini"
 if not path.exists(config_path):
-    shutil.copyfile("satnogs.ini.template", config_path)
+    shutil.copyfile("svarog.ini.template", config_path)
 
 # STEP 3: ensure the database is updated.
 def backup_database():

@@ -1,6 +1,6 @@
 [doc](../README.md) > Architecture
 
-# Satnogs-GDN Architecture
+# Svarog Architecture
 
 ![satnogs architecture](automation-server-arch.png)
 

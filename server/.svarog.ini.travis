@@ -1,6 +1,6 @@
 [database]
 host = localhost
-database = satnogs
+database = svarog
 user = postgres
 password = ""
 
