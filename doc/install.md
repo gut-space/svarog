@@ -103,7 +103,7 @@ Server installation is a manual process. It is assumed that you already have run
 1. **Get the latest code**
 
 ```
-git clone https://github.com/gut-space/satnogs
+git clone https://github.com/gut-space/svarog
 ```
 
 2. **Install PostgreSQL**:
@@ -112,9 +112,9 @@ git clone https://github.com/gut-space/satnogs
 apt install postgresql postgresql-client
 su - postgres
 psql
-CREATE DATABASE satnogs;
-CREATE USER satnogs WITH PASSWORD 'secret'; -- make sure to use an actual password here
-GRANT ALL PRIVILEGES ON DATABASE satnogs TO satnogs;
+CREATE DATABASE svarog;
+CREATE USER svarog WITH PASSWORD 'secret'; -- make sure to use an actual password here
+GRANT ALL PRIVILEGES ON DATABASE satnogs TO svarog;
 ```
 
 Make sure to either run `setup.py` or run DB schema migration manually: `python3 migrate_db.py`.
@@ -122,20 +122,20 @@ Make sure to either run `setup.py` or run DB schema migration manually: `python3
 3. **Modify your apache configuration**
 
 The general goal is to have an apache2 running with WSGI scripting capability that runs Flask. See an [example
-apache2 configuation](apache2/satnogs.conf). You may want to tweak the paths and TLS configuration to use LetsEncrypt
+apache2 configuation](apache2/svarog.conf). You may want to tweak the paths and TLS configuration to use LetsEncrypt
 or another certificate of your choice. Make sure the paths are actually pointing to the right directory.
 
-Also, you should update the /etc/sudoers file to allow ordinary user (satnogs) to restart apache server.
+Also, you should update the /etc/sudoers file to allow ordinary user (svarog) to restart apache server.
 You should use `visudo` command to add the following line:
 
 ```
-%satnogs ALL= NOPASSWD: /bin/systemctl restart apache2
+%svarog ALL= NOPASSWD: /bin/systemctl restart apache2
 ```
 
 4. **Install Flask dependencies**
 
 ```
-cd satnogs/server
+cd svarog/server
 python3 -m virtualenv venv
 source venv/bin/activate
 python setup.py install
@@ -152,5 +152,5 @@ You can start flask manually to check if it's working. This is not needed once y
 
 ```
 cd server
-./satnogs-web.py
+./svarog-web.py
 ```
