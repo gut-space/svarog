@@ -167,7 +167,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertDictEqual(observation_file, db_observation_file) # type: ignore
 
         db_observation = repository.read_observation(obs_id)
-        self.assertAlmostEquals(db_observation["rating"], 0.66, places=2)
+        self.assertAlmostEqual(db_observation["rating"], 0.66, places=2)
 
         repository.delete_observation(obs_id)
 
