@@ -4,7 +4,7 @@ from subprocess import Popen, PIPE
 import unittest
 
 # It must be set before import "utils"
-environ["AQUARIUS_CONFIG_DIR"] = "tests/config"
+environ["SVAROG_CONFIG_DIR"] = "tests/config"
 
 from utils.globalvars import CONFIG_DIRECTORY
 
@@ -99,7 +99,7 @@ class TestCli(unittest.TestCase):
     def test_cli_help(self):
         """Checks if help is printed and has reasonable information."""
 
-        exp = [ "usage: aquarius [-h] {clear,logs,plan,pass,config}",
+        exp = [ "usage: svarog [-h] {clear,logs,plan,pass,config}",
                 "positional arguments:",
                 "{clear,logs,plan,pass,config}",
                 "clear               Clear all scheduled reception events",
@@ -128,9 +128,9 @@ class TestCli(unittest.TestCase):
         # This is not perfect, but it's better than nothing. It checks if the crontab file contains the following strings in
         # order. In fact, the entries should be:
         #
-        # 55 3 * * * /home/thomson/devel/aquarius/station/update.sh # aquarius-update
-        # 0 4 * * * python3 /home/thomson/devel/aquarius/station/planner.py 86400 # aquarius-plan
-        # However, the /home/thomson/devel/aquarius is very much deployment specific. So, we use a simplified approach
+        # 55 3 * * * /home/thomson/devel/svarog/station/update.sh # svarog-update
+        # 0 4 * * * python3 /home/thomson/devel/svarog/station/planner.py 86400 # svarog-plan
+        # However, the /home/thomson/devel/svarog is very much deployment specific. So, we use a simplified approach
         # and just check if the beginnings and ends match.
-        self.check_file("tests/config/crontab", ["55 3 * * *", "/station/update.sh # aquarius-update",
-                                                 "0 4 * * * python3", "station/planner.py 86400 # aquarius-plan"])
+        self.check_file("tests/config/crontab", ["55 3 * * *", "/station/update.sh # svarog-update",
+                                                 "0 4 * * * python3", "station/planner.py 86400 # svarog-plan"])

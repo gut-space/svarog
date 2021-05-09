@@ -5,7 +5,7 @@ import unittest
 from shutil import copy, rmtree
 
 # It must be set before import "utils"
-environ["AQUARIUS_CONFIG_DIR"] = "tests/config"
+environ["SVAROG_CONFIG_DIR"] = "tests/config"
 
 from utils.globalvars import CONFIG_DIRECTORY
 
@@ -27,7 +27,7 @@ class TestOrbitDb(unittest.TestCase):
     def test_get_tle(self):
         now = datetime.datetime.utcnow()
         tle = self.db.get_tle("NOAA 15", now)
-        
+
         self.assertIsNotNone(tle)
         self.assertEqual(len(tle), 2)
         tle_org = ("1 25338U 98030A   20093.30220133  .00000034  00000-0  32765-4 0  9993",
