@@ -17,14 +17,10 @@ beautifulsoup4==4.9.3
     # via astroquery
 certifi==2020.4.5
     # via requests
-cffi==1.14.5
-    # via cryptography
 chardet==3.0.4
     # via requests
 click==7.0
     # via flask
-cryptography==3.4.6
-    # via secretstorage
 cycler==0.10.0
     # via matplotlib
 flask-login==0.5.0
@@ -44,10 +40,6 @@ itsdangerous==1.1.0
     # via
     #   flask
     #   flask-wtf
-jeepney==0.6.0
-    # via
-    #   keyring
-    #   secretstorage
 jinja2==2.11.1
     # via flask
 jplephem==2.15
@@ -95,8 +87,6 @@ poliastro==0.14.0
     # via tle-tools
 psycopg2-binary==2.8.6
     # via -r requirements.in
-pycparser==2.20
-    # via cffi
 pyerfa==1.7.2
     # via astropy
 pyparsing==2.4.6
@@ -121,8 +111,6 @@ scipy==1.6.0
     # via poliastro
 scramp==1.1.0
     # via pg8000
-secretstorage==3.3.1
-    # via keyring
 sgp4==2.5
     # via orbit-predictor
 six==1.14.0
