@@ -55,7 +55,7 @@ python-dateutil==2.8.1
     #   typepy
 pytz==2019.3
     # via typepy
-pyyaml==5.3
+pyyaml==5.4
     # via -r requirements.in
 requests==2.23.0
     # via orbit-predictor
