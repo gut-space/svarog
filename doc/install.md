@@ -24,24 +24,25 @@ Also, the following tools are needed:
 2. medet - https://github.com/artlav/meteor_decoder, binaries available from: http://orbides.org/page.php?id=1023
 3. meteor-demod - https://github.com/dbdexter-dev/meteor_demod
 
-2. **Create satnogs user**:
+4. **Create svarog user (optional) **:
 
 ```
-# useradd satnogs
+# useradd svarog
 ```
 
-3. Now **switch to the satnogs user**:
+3. Now **switch to the svarog user (optional) **:
 ```
-su - satnogs
-```
-
-4. **Get the latest satnogs-gut code**. This and following steps should be done as satnogs user.
-
-```
-git clone https://github.com/gut-space/satnogs
+su - svarog
 ```
 
-5. **Install python dependencies**:
+1. **Get the latest svarog code**. This and following steps should be done as the user you want to run
+the process:
+
+```
+git clone https://github.com/gut-space/svarog
+```
+
+1. **Install python dependencies**:
 
 ```
 cd satnogs/station
@@ -49,7 +50,9 @@ python3 setup.py install
 ```
 
 This step will install necessary dependencies. It is a good practice to install them in virtual environment. However,
-since the scripts will be called using crontab, it would've complicated the setup.
+since the scripts will be called using crontab, it would've complicated the setup. If there is an exception
+complaining about `'install_requires' must be a string or list of strings...`, make sure you have recent pip
+version installed. You can update it by `pip install --upgrade pip pip-tools`.
 
 6. **Station management**
 
@@ -58,7 +61,7 @@ There is a command line tool used to manage the station. You can run it with:
 ```
 station/cli.py
 
-usage: satnogs-gut [-h] {clear,plan,config} ...
+usage: svarog [-h] {clear,plan,config} ...
 
 positional arguments:
   {clear,plan,config}  commands
