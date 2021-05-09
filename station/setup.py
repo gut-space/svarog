@@ -8,7 +8,8 @@ import sys
 
 def get_requirements_and_links():
     """Returns required packages list, parsed from requirements.txt. The tricky part is to
-       handle custom packages (-e http://"""
+       handle custom packages (-e git+https://...#egg=package-name). This is currently used
+       for installing angalog-signal-estimator"""
     REQUIREMENTS = []
     DEP_LINKS = []
 
@@ -38,6 +39,34 @@ def get_requirements_and_links():
         REQUIREMENTS.append(i)
 
     return REQUIREMENTS, DEP_LINKS
+
+def setup_aliases():
+
+    # First, we need to find the cli.py file. It's not as trivial, as typically the code
+    # can be invoked as python3 setup.py install from the station/ dir, but could also be
+    # station/setup.py install from a directory above it. But we don't want to spend too
+    # much wrestling with iths.
+    alias = 'alias station="python3 ' + os.getcwd() + '/cli.py"'
+
+    # Now find the true location of ~/.bash_aliases and check if there's an alias
+    # for station. Note we don't care if it ours or not. We wouldn't dare to overwrite
+    # user's preferences. User knows best *cough*.
+    ALIAS_FILE = os.path.join(os.getenv('HOME'), ".bash_aliases")
+    found = False
+    try:
+        for l in open(ALIAS_FILE).readlines():
+            if l.find("alias station") != -1:
+                found = True
+                print("alias station already set up: %s, skipping alias setup." % l)
+                return
+    except:
+        print(ALIAS_FILE + " not found")
+
+    # Ok, we're ready to rock! Add the alias.
+    f = open(ALIAS_FILE, "a")
+    f.write(alias + os.linesep)
+    f.close()
+    print("Alias %s written to %s file." % (alias, ALIAS_FILE))
 
 REQUIREMENTS, DEP_LINKS = get_requirements_and_links()
 
@@ -74,3 +103,9 @@ setup(name='svarog-station',
       install_requires=REQUIREMENTS,
       dependency_links=DEP_LINKS
 )
+
+setup_aliases()
+
+print("svarog-station installation complete. Log out, log in, and then:")
+print("$ station config")
+print("$ station plan")
