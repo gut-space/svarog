@@ -20,29 +20,29 @@ apt install python3-minimal git rtl-sdr sox imagemagick
 
 Also, the following tools are needed:
 
-1. noaa-apt - download Raspberry Pi binaries from https://noaa-apt.mbernardi.com.ar/download.html
-2. medet - https://github.com/artlav/meteor_decoder, binaries available from: http://orbides.org/page.php?id=1023
-3. meteor-demod - https://github.com/dbdexter-dev/meteor_demod
+    1. noaa-apt - download Raspberry Pi binaries from https://noaa-apt.mbernardi.com.ar/download.html
+    2. medet - https://github.com/artlav/meteor_decoder, binaries available from: http://orbides.org/page.php?id=1023
+    3. meteor-demod - https://github.com/dbdexter-dev/meteor_demod
 
-4. **Create svarog user (optional) **:
+2. **Create svarog user (optional)**:
 
 ```
 # useradd svarog
 ```
 
-3. Now **switch to the svarog user (optional) **:
+3. **Switch to the svarog user (optional)**:
 ```
 su - svarog
 ```
 
-1. **Get the latest svarog code**. This and following steps should be done as the user you want to run
+4. **Get the latest svarog code**. This and following steps should be done as the user you want to run
 the process:
 
 ```
 git clone https://github.com/gut-space/svarog
 ```
 
-1. **Install python dependencies**:
+5. **Install python dependencies**:
 
 ```
 cd satnogs/station
@@ -59,19 +59,20 @@ version installed. You can update it by `pip install --upgrade pip pip-tools`.
 There is a command line tool used to manage the station. You can run it with:
 
 ```
-station/cli.py
-
-usage: svarog [-h] {clear,plan,config} ...
+$ station/cli.py 
+usage: svarog [-h] {clear,logs,plan,pass,config} ...
 
 positional arguments:
-  {clear,plan,config}  commands
-    clear              Clear all schedule receiving
-    plan               Schedule planning receiving
-    config             Configuration
+  {clear,logs,plan,pass,config}
+                        commands
+    clear               Clear all scheduled reception events
+    logs                Show logs
+    plan                Schedule planned reception events
+    pass                Information about passes
+    config              Configuration
 
 optional arguments:
-  -h, --help           show this help message and exit
-
+  -h, --help            show this help message and exit
 ```
 
 You can use it to inspect your configuration, clear or schedule upcoming transmissions.
