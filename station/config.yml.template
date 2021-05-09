@@ -25,5 +25,5 @@ satellites:
 server:
   id: '1'
   secret: 0123456789abcdef0123456789abcdef
-  url: http://127.0.0.1:5000/receive
+  url: https://svarog.space/receive
 strategy: max-elevation
