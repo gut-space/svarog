@@ -62,6 +62,14 @@ def setup_aliases():
     except:
         print(ALIAS_FILE + " not found")
 
+    if os.getenv('USER') == 'root':
+        print("We're NOT going to set any aliases for root. Please manually edit your")
+        print(".bash_aliases file and add this line:")
+        print("")
+        print(alias)
+        print("")
+        return
+
     # Ok, we're ready to rock! Add the alias.
     f = open(ALIAS_FILE, "a")
     f.write(alias + os.linesep)
