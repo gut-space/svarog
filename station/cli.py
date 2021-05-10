@@ -17,7 +17,7 @@ from orbitdb import OrbitDatabase
 from utils.models import SatelliteConfiguration, get_location, get_satellite
 from utils.configuration import open_config, save_config
 from utils.functional import first
-from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG
+from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG, CONFIG_PATH
 from utils.dates import from_iso_format
 from utils.cron import  get_planner_command, get_receiver_command, open_crontab
 from recipes.factory import get_recipe_names
@@ -130,7 +130,8 @@ replan_config_parser_group.add_argument("-r", "--replan", action="store_true", h
 replan_config_parser_group.add_argument("--no-replan", action="store_false", help="No force plan now", dest="replan", default=False)
 config_subparsers = config_parser.add_subparsers(help="Configurations", dest="config_command")
 location_config_parser = config_subparsers.add_parser("location", help="Change groundstation location")
-# This section parses content of the config file (located in ~/.config/SatNOG-PG/config.yml
+
+# This section parses content of the config file (located in ~/.config/svarog/config.yml
 location_config_parser.add_argument("-lat", "--latitude", type=float, help="Latitude in degrees")
 location_config_parser.add_argument("-lng", "--longitude", type=float, help="Longitude in degrees")
 location_config_parser.add_argument("-ele", "--elevation", type=float, help="Elevation in meters")
@@ -168,6 +169,9 @@ server_config_parser = config_subparsers.add_parser("server", help="Manage crede
 server_config_parser.add_argument("-u", "--url", type=str, help="URL of content server")
 server_config_parser.add_argument("--id", type=str, help="Station ID")
 server_config_parser.add_argument("-s", "--secret", type=hex_bytes, help="HMAC secret shared with content server")
+logging_parser = config_subparsers.add_parser("logging", help="Station logging configuration")
+logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
+    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)", default="ERROR")
 
 args = parser.parse_args()
 command = args.command
@@ -289,6 +293,8 @@ elif command == "pass":
 elif command == "config":
     config_command = args.config_command
 
+    print("Loading config file %s" % CONFIG_PATH)
+
     config = open_config()
     section = config
     init_hash = get_hash(config)
@@ -305,6 +311,13 @@ elif command == "config":
             "save_to_disk",
             ("directory", "obsdir")
         ))
+    elif config_command == "logging":
+        print(config)
+        if not "logging" in config:
+            # Old configs may not have the logging defined. Add the section.
+            config["logging"] = { "level": "INFO" }
+        section = config["logging"]
+        update_config(section, args, (("loglevel", "level")) )
     elif config_command == "sat":
         section = config["satellites"]
         if args.name is not None:

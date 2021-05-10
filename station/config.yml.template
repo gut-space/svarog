@@ -4,6 +4,8 @@ location:
   latitude: 54.3
   longitude: 18.4
   name: Gdansk
+logging:
+  level: WARNING
 max_elevation_greater_than: 0
 norad:
 - https://celestrak.com/NORAD/elements/noaa.txt
