@@ -14,7 +14,8 @@ from utils.configuration import open_config
 from submitobs import submit_observation, SubmitRequestData
 from recipes import factory
 from quality_ratings import get_rate_by_name
-
+from dateutil import tz
+from sh import CommandNotFound
 
 def move_to_satellite_directory(root: str, sat_name: str, path: str):
     now = datetime.datetime.utcnow()
@@ -47,6 +48,13 @@ def get_rating_for_product(product_path: str, rate_name: typing.Optional[str]) \
 def cmd():
     _, name, los, *opts = sys.argv
 
+    logging.info("Starting receiver job: name=%s los=%s" % (name, los))
+    logging.debug("PATH=%s" % os.getenv('PATH'))
+
+    now = datetime.datetime.now()
+    now2 = now.replace(tzinfo=tz.tzlocal())
+    logging.debug("Now %s, in local timezone=%s" % (now, now2))
+
     satellite = get_satellite(config, name)
 
     aos_datetime = datetime.datetime.utcnow()
@@ -78,7 +86,6 @@ def cmd():
                     los_datetime, "", rating
                 )
             )
-                
 
     if save_mode in ("PRODUCT", "ALL"):
         for _, path in products:
@@ -90,6 +97,10 @@ def cmd():
 if __name__ == '__main__':
     try:
         cmd()
+    except CommandNotFound as e:
+        _, name, los, *opts = sys.argv
+        logging.error("Command not found: %s when executing receiver %s (LOS: %s)" % (e, name, los), exc_info=True)
+        logging.error("Make sure you have PATH set up correctly in your crontab. See https://stackoverflow.com/questions/10129381/crontab-path-and-user")
     except:
         _, name, los, *opts = sys.argv
         logging.error("Failed receiver %s (LOS: %s)" % (name, los), exc_info=True)
