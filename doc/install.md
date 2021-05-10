@@ -54,6 +54,9 @@ since the scripts will be called using crontab, it would've complicated the setu
 complaining about `'install_requires' must be a string or list of strings...`, make sure you have recent pip
 version installed. You can update it by `pip install --upgrade pip pip-tools`.
 
+One particularly useful setup action conducted is to set up convenient alias. Instead of typing `python3 station/cli.py`
+every time, you can simply type `station` instead.
+
 6. **Station management**
 
 There is a command line tool used to manage the station. You can run it with:
@@ -89,6 +92,14 @@ It will create a tempate config for you. The config file is stored in ~/.config/
 ```
 python station/cli.py config location -lat 54.34 -lng 23.23 -ele 154
 ```
+
+In particular, you may want to increase logging level to debug, to spot any problems: 
+
+```shell
+python cli.py config logging --level DEBUG
+```
+
+Once your station operates smoothly, you may trim this down to INFO, WARNING or even ERROR.
 
 8. **Schedule observations**
 
