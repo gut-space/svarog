@@ -51,10 +51,6 @@ def cmd():
     logging.info("Starting receiver job: name=%s los=%s" % (name, los))
     logging.debug("PATH=%s" % os.getenv('PATH'))
 
-    now = datetime.datetime.now()
-    now2 = now.replace(tzinfo=tz.tzlocal())
-    logging.debug("Now %s, in local timezone=%s" % (now, now2))
-
     satellite = get_satellite(config, name)
 
     aos_datetime = datetime.datetime.utcnow()
