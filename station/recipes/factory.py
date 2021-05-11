@@ -58,7 +58,7 @@ os.makedirs(BASE_DIR, exist_ok=True)
 # Categories of result the reception
 # Signal - recorded signal (recommended in WAV file)
 # Product - binary file decoded from signal (now it is always PNG file)
-ReceptionResultCategory = Literal["signal", "product"]
+ReceptionResultCategory = Literal["signal", "product", "log"]
 
 def get_recipe(sat: SatelliteConfiguration):
     '''
