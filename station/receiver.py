@@ -58,9 +58,20 @@ def cmd():
 
     results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
 
+    # We're entirely sure the recipe is honest and reported only files that were actually created. *cough*.
+    # However, is things go south and for some reason the recipe is not correct (e.g. the noaa-apt fails to
+    # create a .png file, because the input WAV file was junk), then we should filter out the files
+    # that do not exist.
     files_txt = ""
+    valid_results = []
     for a, b in results:
+        if not os.path.exists(b):
+            logging.warning("Recipe claims to provide %s file %s, but this file doesn't exist. Skipping.")
+            continue
         files_txt += a + ":" + b + ", "
+        valid_results.append((a,b))
+    results = valid_results
+
     logging.info("Recipe execution complete, generated %d result[s] (%s), stored in %s directory." % (len(results), files_txt, tmp_directory))
 
     # Post-processing
