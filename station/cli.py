@@ -131,7 +131,7 @@ replan_config_parser_group.add_argument("--no-replan", action="store_false", hel
 config_subparsers = config_parser.add_subparsers(help="Configurations", dest="config_command")
 location_config_parser = config_subparsers.add_parser("location", help="Change groundstation location")
 
-# This section parses content of the config file (located in ~/.config/svarog/config.yml
+# This section parses content of the config file (located in ~/.config/svarog/config.yml)
 location_config_parser.add_argument("-lat", "--latitude", type=float, help="Latitude in degrees")
 location_config_parser.add_argument("-lng", "--longitude", type=float, help="Longitude in degrees")
 location_config_parser.add_argument("-ele", "--elevation", type=float, help="Elevation in meters")
