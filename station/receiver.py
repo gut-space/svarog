@@ -66,9 +66,9 @@ def cmd():
     valid_results = []
     for a, b in results:
         if not os.path.exists(b):
-            logging.warning("Recipe claims to provide %s file %s, but this file doesn't exist. Skipping.")
+            logging.warning("Recipe claims to provide %s file %s, but this file doesn't exist. Skipping." % (a,b))
             continue
-        files_txt += a + ":" + b + ", "
+        files_txt += a + ":" + b + " "
         valid_results.append((a,b))
     results = valid_results
 
