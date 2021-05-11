@@ -71,8 +71,8 @@ def cmd():
     if root_directory is None:
         root_directory = "/tmp/observations"
 
-    signal = first(results, lambda r: r[0] == "signal")
-    products = filter(lambda r: r[0] == "product", results)
+    signal = first(results, lambda r: r[0] == "SIGNAL")
+    products = filter(lambda r: r[0] == "PRODUCT", results)
 
     if save_mode in ("SIGNAL", "ALL") and signal is not None:
         logging.info("Moving signal file %s to %s/%s dir" % (signal[1], root_directory, name))
