@@ -12,7 +12,8 @@ from recipes.helpers import set_sh_defaults
 def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     signal_path = os.path.join(working_dir, "signal.wav")
     product_path = os.path.join(working_dir, "product.png")
-    
+    log_path = os.path.join(working_dir, "noaa-apt.log")
+
     sample_rate = 48000
 
     fm_proc = sh.rx_fm(
@@ -56,12 +57,16 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             "rate", "11025"
         )
 
+    l = open(log_path, "w")
+
     sh.noaa_apt(
         "-o", product_path,
-        signal_path
+        signal_path,
+        _out=l
     )
 
     return [
         ("SIGNAL", signal_path),
-        ("PRODUCT", product_path)
+        ("PRODUCT", product_path),
+        ("LOG", log_path)
     ]
