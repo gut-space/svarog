@@ -58,7 +58,10 @@ def cmd():
 
     results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
 
-    logging.info("Recipe execution complete, generated %d result[s], stored in %s directory." % (len(results), tmp_directory))
+    files_txt = ""
+    for a, b in results:
+        files_txt += a + ":" + b + ", "
+    logging.info("Recipe execution complete, generated %d result[s] (%s), stored in %s directory." % (len(results), files_txt, tmp_directory))
 
     # Post-processing
     save_mode = satellite["save_to_disk"]
@@ -90,7 +93,7 @@ def cmd():
             )
 
     if save_mode in ("PRODUCT", "ALL"):
-        logging.info("Moving %d files to %s/%s dir" % (len(products), root_directory, name))
+        logging.info("Moving files to %s/%s dir" % (root_directory, name))
         for _, path in products:
             logging.info("Moving %s to %s/%s dir" % (path, root_directory, name))
             move_to_satellite_directory(root_directory, name, path)
