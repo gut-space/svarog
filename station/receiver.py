@@ -75,7 +75,7 @@ def cmd():
     products = filter(lambda r: r[0] == "PRODUCT", results)
 
     if save_mode in ("SIGNAL", "ALL") and signal is not None:
-        logging.info("Moving signal file %s to %s/%s dir" % (signal[1], root_directory, name))
+        logging.info("Moving signal file %s to %s%s dir" % (signal[1], root_directory, name))
         move_to_satellite_directory(root_directory, name, signal[1])
 
     if should_submit:
@@ -95,7 +95,7 @@ def cmd():
     if save_mode in ("PRODUCT", "ALL"):
         logging.info("Moving files to %s/%s dir" % (root_directory, name))
         for _, path in products:
-            logging.info("Moving %s to %s/%s dir" % (path, root_directory, name))
+            logging.info("Moving %s to %s%s dir" % (path, root_directory, name))
             move_to_satellite_directory(root_directory, name, path)
 
     logging.info("Removing directory %s" % tmp_directory)
