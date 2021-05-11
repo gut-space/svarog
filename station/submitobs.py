@@ -2,6 +2,7 @@
 import datetime
 import os
 import requests
+import logging
 import sys
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
@@ -74,7 +75,7 @@ def submit_observation(data: SubmitRequestData):
     if tle is not None:
         form_data["tle"] = tle
 
-    file_obj = open(data.image_path, 'rb') 
+    file_obj = open(data.image_path, 'rb')
     body: Dict[str, Any] = {
         "file": file_obj
     }
@@ -95,6 +96,8 @@ def submit_observation(data: SubmitRequestData):
             {}
         )
     }
+
+    logging.info("Submitting observation, url=%s file=%s" % (url, filename))
 
     requests.post(url, form_data, headers=headers, files=files)
 

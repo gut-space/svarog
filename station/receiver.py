@@ -58,6 +58,8 @@ def cmd():
 
     results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
 
+    logging.info("Recipe execution complete, generated %d result[s], stored in %s directory." % (len(results), tmp_directory))
+
     # Post-processing
     save_mode = satellite["save_to_disk"]
     should_submit = satellite["submit"]
@@ -70,12 +72,16 @@ def cmd():
     products = filter(lambda r: r[0] == "product", results)
 
     if save_mode in ("SIGNAL", "ALL") and signal is not None:
+        logging.info("Moving signal file %s to %s/%s dir" % (signal[1], root_directory, name))
         move_to_satellite_directory(root_directory, name, signal[1])
 
     if should_submit:
+        logging.info("Submitting results")
         product = first(products, lambda _: True)
         if product is not None:
+            logging.info("Getting rating for product %s" % product[1])
             rating = get_rating_for_product(product[1], satellite.get("rating"))
+            logging.info("Product %s got rating %s" % (product[1], rating))
             submit_observation(
                 SubmitRequestData(
                     product[1], name, aos_datetime, aos_datetime,
@@ -84,9 +90,12 @@ def cmd():
             )
 
     if save_mode in ("PRODUCT", "ALL"):
+        logging.info("Moving %d files to %s/%s dir" % (len(products), root_directory, name))
         for _, path in products:
+            logging.info("Moving %s to %s/%s dir" % (path, root_directory, name))
             move_to_satellite_directory(root_directory, name, path)
 
+    logging.info("Removing directory %s" % tmp_directory)
     shutil.rmtree(tmp_directory, ignore_errors=True)
 
 
