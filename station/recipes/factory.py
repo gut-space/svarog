@@ -2,7 +2,6 @@ import datetime
 import os
 import sys
 from typing import Iterable, List, Tuple
-import uuid
 
 from utils.models import SatelliteConfiguration
 from recipes import recipes
@@ -79,6 +78,12 @@ def get_recipe(sat: SatelliteConfiguration):
     return recipes[recipe]
 
 
+def get_unique_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
+    '''
+    Generates unique, but meaningful dir name.
+    '''
+    return los.strftime("%Y-%m-%d-%H%M") + "-" + sat["name"].lower().replace(" ", "-")
+
 def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
         -> Tuple[Iterable[Tuple[ReceptionResultCategory, str]], str]:
     '''
@@ -98,8 +103,7 @@ def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
     '''
     recipe_function = get_recipe(sat)
 
-    uid = uuid.uuid4()
-    reception_directory = os.path.join(BASE_DIR, str(uid))
+    reception_directory = os.path.join(BASE_DIR, get_unique_dir(sat, los))
     os.makedirs(reception_directory, exist_ok=True)
     now = datetime.datetime.utcnow()
     record_interval = los - now
