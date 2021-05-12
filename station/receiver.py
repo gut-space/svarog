@@ -78,16 +78,8 @@ def cmd():
     save_mode = satellite["save_to_disk"]
     should_submit = satellite["submit"]
 
-    root_directory = config.get("obsdir")
-    if root_directory is None:
-        root_directory = "/tmp/observations"
-
     signal = first(results, lambda r: r[0] == "SIGNAL")
     products = filter(lambda r: r[0] == "PRODUCT", results)
-
-    if save_mode in ("SIGNAL", "ALL") and signal is not None:
-        logging.info("Moving signal file %s to %s%s dir" % (signal[1], root_directory, name))
-        move_to_satellite_directory(root_directory, name, signal[1])
 
     if should_submit:
         logging.info("Submitting results")
@@ -96,6 +88,7 @@ def cmd():
             logging.info("Getting rating for product %s" % product[1])
             rating = get_rating_for_product(product[1], satellite.get("rating"))
             logging.info("Product %s got rating %s" % (product[1], rating))
+            # TODO: Submit ALL products and logs
             submit_observation(
                 SubmitRequestData(
                     product[1], name, aos_datetime, aos_datetime,
@@ -103,15 +96,13 @@ def cmd():
                 )
             )
 
-    if save_mode in ("PRODUCT", "ALL"):
-        logging.info("Moving files to %s/%s dir" % (root_directory, name))
-        for _, path in products:
-            logging.info("Moving %s to %s%s dir" % (path, root_directory, name))
-            move_to_satellite_directory(root_directory, name, path)
-
-    logging.info("Removing directory %s" % tmp_directory)
-    shutil.rmtree(tmp_directory, ignore_errors=True)
-
+    # Now, delete files we don't want to save
+    for type, f in products:
+        if type == save_mode or type == "ALL":
+            # don't delete this file
+            continue
+        logging.info("Deleting file %s (type %s), because save_mode is %s" % (f, type, save_mode))
+        os.remove(f)
 
 if __name__ == '__main__':
     try:
