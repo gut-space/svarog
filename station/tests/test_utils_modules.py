@@ -10,7 +10,7 @@ class TestUtilsModules(unittest.TestCase):
         function = moduleUtils.get_function_in_module(module, "rate")
         self.assertIsNotNone(function)
         self.assertTrue(callable(function))
-        self.assertEquals(function.__name__, "rate")
+        self.assertEqual(function.__name__, "rate")
 
     def test_find_non_exist_function_in_module(self):
         import quality_ratings.analog as module
@@ -20,7 +20,7 @@ class TestUtilsModules(unittest.TestCase):
     def test_find_exist_module_in_directory(self):
         module = moduleUtils.get_module_in_directory("quality_ratings", "analog")
         self.assertIsNotNone(module)
-        self.assertEquals(module.__name__, "quality_ratings.analog")
+        self.assertEqual(module.__name__, "quality_ratings.analog")
         self.assertIsInstance(module, ModuleType)
 
     def test_find_non_exist_module_in_directory(self):
@@ -30,7 +30,7 @@ class TestUtilsModules(unittest.TestCase):
     def test_list_modules_in_directory(self):
         modules = moduleUtils.get_modules_in_directory("quality_ratings")
         modules = list(modules)
-        self.assertGreater(len(modules), 0)        
+        self.assertGreater(len(modules), 0)
         for module in modules:
             self.assertIsNotNone(module)
             self.assertTrue(module.__name__.startswith("quality_ratings."))
@@ -49,11 +49,11 @@ class TestUtilsModules(unittest.TestCase):
             function, module = entry
             self.assertIsNotNone(function)
             self.assertTrue(callable(function))
-            self.assertEquals(function.__name__, "rate")
+            self.assertEqual(function.__name__, "rate")
             self.assertIsNotNone(module)
-            self.assertEquals(module.__name__, "quality_ratings.analog")
+            self.assertEqual(module.__name__, "quality_ratings.analog")
             self.assertIsInstance(module, ModuleType)
-    
+
     def test_list_functions_in_directory(self):
         entries = moduleUtils.get_functions_in_directory(
             "quality_ratings", "rate"
@@ -63,7 +63,7 @@ class TestUtilsModules(unittest.TestCase):
         for function, module in entries:
             self.assertIsNotNone(function)
             self.assertTrue(callable(function))
-            self.assertEquals(function.__name__, "rate")
+            self.assertEqual(function.__name__, "rate")
             self.assertIsNotNone(module)
             self.assertIsInstance(module, ModuleType)
 
