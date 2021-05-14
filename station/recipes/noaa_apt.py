@@ -18,7 +18,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     sample_rate = 48000
 
     l = open(log_path, "w")
-    l.write("---rx_fm log-------\n")
+    l.write("---rtl_fm log-------\n")
 
     with suppress(sh.TimeoutException):
         sh.rtl_fm(
@@ -38,11 +38,13 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             raw_path,
             _timeout=duration.total_seconds(),
             _timeout_signal=signal.SIGTERM,
-            _out=l
-        )
-    l.close()
 
-    l = open(log_path, "a")
+            # rtl_fm and rx_fm both print messages on stderr
+            _err=l
+        )
+
+    #l.close()
+    #l = open(log_path, "a")
 
     l.write("---sox log-------\n")
 
@@ -65,8 +67,9 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         "rate", "11025",
         _out=l
     )
-    l.close()
-    l = open(log_path, "a")
+
+    #l.close()
+    #l = open(log_path, "a")
 
     l.write("---noaa-apt log-------\n")
 
