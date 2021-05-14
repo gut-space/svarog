@@ -19,6 +19,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     l = open(log_path, "w")
     l.write("---rtl_fm log-------\n")
+    l.flush()
 
     with suppress(sh.TimeoutException):
         sh.rtl_fm(
@@ -42,11 +43,13 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             # rtl_fm and rx_fm both print messages on stderr
             _err=l
         )
+    l.flush()
 
     #l.close()
     #l = open(log_path, "a")
 
     l.write("---sox log-------\n")
+    l.flush()
 
     sh.sox(# Type of input
         "-t", "raw",
@@ -67,23 +70,28 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         "rate", "11025",
         _out=l
     )
+    l.flush()
 
     #l.close()
     #l = open(log_path, "a")
 
     l.write("---noaa-apt log-------\n")
+    l.flush()
 
     sh.noaa_apt(
         "-o", product_path,
         signal_path,
         _out=l
     )
+    l.flush()
 
     try:
         os.remove(raw_path)
     except FileNotFoundError:
         l.write("noaa_apt recipe: Tried to delete %(raw_path)s, but the file was not found.\n")
         pass
+
+    l.close()
 
     return [
         ("SIGNAL", signal_path),
