@@ -99,7 +99,15 @@ def submit_observation(data: SubmitRequestData):
 
     logging.info("Submitting observation, url=%s file=%s" % (url, filename))
 
-    requests.post(url, form_data, headers=headers, files=files)
+    resp = requests.post(url, form_data, headers=headers, files=files)
+    if (resp.status_code >= 400):
+        logging.warn("Response status: %d" % resp.status_code)
+    else:
+        logging.info("Response status: %d" % resp.status_code)
+    if (resp.status_code != 200):
+        logging.info("Submission details: headers=%s" % headers)
+        logging.info("form=%s" % form_data)
+        logging.info("Response details: %s" % repr(resp))
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
