@@ -10,6 +10,7 @@ from recipes.helpers import set_sh_defaults
 
 @set_sh_defaults
 def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
+    raw_path = os.path.join(working_dir, "signal.raw")
     signal_path = os.path.join(working_dir, "signal.wav")
     product_path = os.path.join(working_dir, "product.png")
     log_path = os.path.join(working_dir, "session.log")
@@ -17,7 +18,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     sample_rate = 48000
 
     l = open(log_path, "w")
-    l.write("---rx_fm log-------")
+    l.write("---rx_fm log-------\n")
 
     with suppress(sh.TimeoutException):
         sh.rtl_fm(
@@ -34,7 +35,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             # dc blocking filter (?)
             "-E", "DC",
             # Output to pipe, optional in this command
-            "signal.raw",
+            raw_path,
             _timeout=duration.total_seconds(),
             _timeout_signal=signal.SIGTERM,
             _out=l
@@ -43,7 +44,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     l = open(log_path, "a")
 
-    l.write("---sox log-------")
+    l.write("---sox log-------\n")
 
     sh.sox(# Type of input
         "-t", "raw",
@@ -56,8 +57,8 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         "-c1",
         # Verbosity level - 1 - failure messages
         "-V1",
-        # Read from stdin (from pipe)
-        "signal.raw",
+        # Read from the raw file (instead of stdin via pipe)
+        raw_path,
         # Output path
         signal_path,
         # Resampling rate
@@ -67,7 +68,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     l.close()
     l = open(log_path, "a")
 
-    l.write("---noaa-apt log-------")
+    l.write("---noaa-apt log-------\n")
 
     sh.noaa_apt(
         "-o", product_path,
@@ -75,7 +76,11 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         _out=l
     )
 
-    os.remove("signal.raw")
+    try:
+        os.remove(raw_path)
+    except FileNotFoundError:
+        l.write("noaa_apt recipe: Tried to delete %(raw_path)s, but the file was not found.\n")
+        pass
 
     return [
         ("SIGNAL", signal_path),
