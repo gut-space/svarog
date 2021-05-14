@@ -55,6 +55,7 @@ def cmd():
 
     aos_datetime = datetime.datetime.utcnow()
     los_datetime = from_iso_format(los)
+    tca_datetime = aos_datetime + (los_datetime - aos_datetime)/2
 
     results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
 
@@ -91,7 +92,7 @@ def cmd():
             # TODO: Submit ALL products and logs
             submit_observation(
                 SubmitRequestData(
-                    product[1], name, aos_datetime, aos_datetime,
+                    product[1], name, aos_datetime, tca_datetime,
                     los_datetime, "", rating
                 )
             )
