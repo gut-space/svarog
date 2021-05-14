@@ -312,7 +312,6 @@ elif command == "config":
             ("directory", "obsdir")
         ))
     elif config_command == "logging":
-        print(config)
         if not "logging" in config:
             # Old configs may not have the logging defined. Add the section.
             config["logging"] = { "level": "INFO" }
