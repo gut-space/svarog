@@ -48,8 +48,7 @@ def get_rating_for_product(product_path: str, rate_name: typing.Optional[str]) \
 def cmd():
     _, name, los, *opts = sys.argv
 
-    logging.info("Starting receiver job: name=%s los=%s" % (name, los))
-    logging.debug("PATH=%s" % os.getenv('PATH'))
+    logging.info("Starting receiver job: name=%s los=%s, PATH=%s" % (name, los, os.getenv('PATH')))
 
     satellite = get_satellite(config, name)
 
@@ -57,10 +56,10 @@ def cmd():
     los_datetime = from_iso_format(los)
     tca_datetime = aos_datetime + (los_datetime - aos_datetime)/2
 
-    results, tmp_directory = factory.execute_recipe(satellite, los_datetime)
+    results, dir = factory.execute_recipe(satellite, los_datetime)
 
-    # We're entirely sure the recipe is honest and reported only files that were actually created. *cough*.
-    # However, is things go south and for some reason the recipe is not correct (e.g. the noaa-apt fails to
+    # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
+    # However, is things go south and for some reason the recipe is mistaken (e.g. the noaa-apt fails to
     # create a .png file, because the input WAV file was junk), then we should filter out the files
     # that do not exist.
     files_txt = ""
@@ -73,7 +72,7 @@ def cmd():
         valid_results.append((a,b))
     results = valid_results
 
-    logging.info("Recipe execution complete, generated %d result[s] (%s), stored in %s directory." % (len(results), files_txt, tmp_directory))
+    logging.info("Recipe execution complete, generated %d result[s] (%s), stored in %s directory." % (len(results), files_txt, dir))
 
     # Post-processing
     save_mode = satellite["save_to_disk"]
