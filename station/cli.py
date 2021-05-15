@@ -105,6 +105,9 @@ log_parser = subparsers.add_parser(
     'logs', help='Show logs'
 )
 
+log_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
+    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
+
 plan_parser = subparsers.add_parser('plan', help='Schedule planned reception events')
 plan_parser.add_argument("--cron", type=str, help='Cron format required. Default "0 4 * * *" for 4:00 AM')
 plan_parser.add_argument("--force", action="store_true", default=False, help="Perform planning now. (default: %(default)s)")
@@ -171,7 +174,7 @@ server_config_parser.add_argument("--id", type=str, help="Station ID")
 server_config_parser.add_argument("-s", "--secret", type=hex_bytes, help="HMAC secret shared with content server")
 logging_parser = config_subparsers.add_parser("logging", help="Station logging configuration")
 logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
-    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)", default="ERROR")
+    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
 
 args = parser.parse_args()
 command = args.command
@@ -189,6 +192,18 @@ if command == "clear":
     print("Cleared all existing jobs")
 
 elif command == "logs":
+
+    # if log level is specified ("station logs --level DEBUG"), set it and we're done.
+    if args.level is not None:
+        config = open_config()
+        section = config["logging"]
+        update_config(section, args, (("loglevel", "level")) )
+        print("Updated logging level to %s" % args.level)
+        save_config(config)
+        print("Configuration changed successfully")
+        sys.exit(0)
+
+    # if not ("station logs"), print the log file contents.
     if LOG_FILE is None:
         print("Log on console. History not available.")
     else:
@@ -317,6 +332,7 @@ elif command == "config":
             config["logging"] = { "level": "INFO" }
         section = config["logging"]
         update_config(section, args, (("loglevel", "level")) )
+
     elif config_command == "sat":
         section = config["satellites"]
         if args.name is not None:
