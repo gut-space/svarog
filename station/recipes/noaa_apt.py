@@ -21,9 +21,12 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     l.write("---rtl_fm log-------\n")
     l.flush()
 
+    # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
         sh.rtl_fm(
+            # Specify frequency (in Hz, e.g. 137MHz)
             "-f", frequency,
+            # Specify sampling rate (e.g. 48000 Hz)
             "-s", sample_rate,
             # Maximal possible value. Probably is wrong for other SDR then rtl-sdr
             "-g", 49.6,
@@ -31,6 +34,8 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             "-p", 1,
             # Higher quality downsampling - possible value 0 or 9. 9 is experimental.
             "-F", 9,
+            # Enable bias-T
+            "-T",
             # How arctan is computed. We don't test other options.
             "-A", "fast",
             # dc blocking filter (?)
@@ -45,12 +50,10 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         )
     l.flush()
 
-    #l.close()
-    #l = open(log_path, "a")
-
     l.write("---sox log-------\n")
     l.flush()
 
+    # Run sox - this convert raw samples into audible WAV
     sh.sox(# Type of input
         "-t", "raw",
         # Sample size in bits
@@ -60,8 +63,8 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         "-r", sample_rate,
         # Number of channels of audio data - 1 - mono
         "-c1",
-        # Verbosity level - 1 - failure messages
-        "-V1",
+        # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
+        "-V3",
         # Read from the raw file (instead of stdin via pipe)
         raw_path,
         # Output path
@@ -72,12 +75,10 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     )
     l.flush()
 
-    #l.close()
-    #l = open(log_path, "a")
-
     l.write("---noaa-apt log-------\n")
     l.flush()
 
+    # Run noaa_apt - this decodes APT from the audio file into PNG image.
     sh.noaa_apt(
         "-o", product_path,
         signal_path,
