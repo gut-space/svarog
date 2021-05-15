@@ -21,10 +21,14 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     product_raw_path = product_raw_prefix_path + ".bmp"
 
     # Record signal
-    fm_proc = sh.rx_fm(
+    fm_proc = sh.rtl_fm(
         # Modulation raw
         "-M", "raw",
+        # Set frequency (in Hz, e.g. 137MHz)
         "-f", frequency,
+        # Enable bias-T
+        "-T",
+        # Specify sampling rate (e.g. 48000 Hz)
         "-s", 48000,
         # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
         "-g", 48,
@@ -46,6 +50,8 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             "-b", 16,
             # Signed integer encoding
             "-e", "s",
+            # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
+            "-V3",
             # Read from stdin (from pipe)
             "-",
             # Type of output
