@@ -192,18 +192,7 @@ if command == "clear":
     print("Cleared all existing jobs")
 
 elif command == "logs":
-
-    # if log level is specified ("station logs --level DEBUG"), set it and we're done.
-    if args.level is not None:
-        config = open_config()
-        section = config["logging"]
-        update_config(section, args, (("loglevel", "level")) )
-        print("Updated logging level to %s" % args.level)
-        save_config(config)
-        print("Configuration changed successfully")
-        sys.exit(0)
-
-    # if not ("station logs"), print the log file contents.
+    # Try to print the log file contents.
     if LOG_FILE is None:
         print("Log on console. History not available.")
     else:
