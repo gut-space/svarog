@@ -17,9 +17,12 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     sample_rate = 48000
 
-    l = open(log_path, "w")
-    l.write("---rtl_fm log-------\n")
-    l.flush()
+    # Let's log the operations done by the tools to a log file. We need to flush it
+    # frequently, because this file stream is also used capture tools output. Without
+    # flush, the logging order gets completely messed up.
+    logfile = open(log_path, "w")
+    logfile.write("---rtl_fm log-------\n")
+    logfile.flush()
 
     # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
@@ -46,12 +49,12 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             _timeout_signal=signal.SIGTERM,
 
             # rtl_fm and rx_fm both print messages on stderr
-            _err=l
+            _err=logfile
         )
-    l.flush()
+    logfile.flush()
 
-    l.write("---sox log-------\n")
-    l.flush()
+    logfile.write("---sox log-------\n")
+    logfile.flush()
 
     # Run sox - this convert raw samples into audible WAV
     sh.sox(# Type of input
@@ -71,31 +74,25 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         signal_path,
         # Resampling rate
         "rate", "11025",
-        _out=l
+        _out=logfile
     )
-    l.flush()
+    logfile.flush()
 
-    l.write("---noaa-apt log-------\n")
-    l.flush()
+    logfile.write("---noaa-apt log-------\n")
+    logfile.flush()
 
     # Run noaa_apt - this decodes APT from the audio file into PNG image.
     sh.noaa_apt(
         "-o", product_path,
         signal_path,
-        _out=l
+        _out=logfile
     )
-    l.flush()
-
-    try:
-        os.remove(raw_path)
-    except FileNotFoundError:
-        l.write("noaa_apt recipe: Tried to delete %(raw_path)s, but the file was not found.\n")
-        pass
-
-    l.close()
+    logfile.flush()
+    logfile.close()
 
     return [
         ("SIGNAL", signal_path),
         ("PRODUCT", product_path),
-        ("LOG", log_path)
+        ("LOG", log_path),
+        ("RAW", raw_path)
     ]
