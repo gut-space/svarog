@@ -104,15 +104,19 @@ def submit_observation(data: SubmitRequestData):
         logging.warn("Response status: %d" % resp.status_code)
     else:
         logging.info("Response status: %d" % resp.status_code)
+
+    # Logging extra details in case of failed submission.
     if (resp.status_code != 200):
-        logging.info("Submission details: headers=%s" % headers)
-        logging.info("form=%s" % form_data)
-        logging.info("Response details: %s" % repr(resp))
+        # On info, just log the field names in what we sent. On debug, log also the content and the whole response.
+        logging.info("Submission details: headers: %s, form: %s" % ",".join(headers.keys()), ",".join(form_data.keys()) )
+        logging.debug("headers=%s" % headers)
+        logging.debug("form=%s" % form_data)
+        logging.debug("Response details: %s" % repr(resp))
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("Not enough parameters. At least 3 are needed: "
-            "filename.png sat_name aos")
+            "filename.png sat_name aos [tca] [los] [notes]")
         exit(1)
 
     filename=sys.argv[1]
