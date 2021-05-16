@@ -134,11 +134,11 @@ def authorize_station(f):
     '''
     @wraps(f)
     def decorated_function(*args, **kws):
-        logging.info("Verifying request.")
+        logging.debug("Verifying request.")
         err, id_ = _verify_request()
         if err is not None:
             if app.config["security"].get("ignore_hmac_validation_errors", "false").lower() != "true":
-                logging.warn("Authorization failed %s" % err)
+                logging.info("Authorization failed %s" % err)
                 abort(401, description="Authorization failed: %s" % (err,))
         return f(id_, *args, **kws)
     return decorated_function
