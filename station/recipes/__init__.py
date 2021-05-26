@@ -1,5 +1,6 @@
 import recipes.noaa_apt
 import recipes.meteor_qpsk
+import recipes.noaa_apt_gr
 
 # Each recipe should be registered in this dictionary
 recipes = {
