@@ -30,12 +30,12 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     # frequently, because this file stream is also used capture tools output. Without
     # flush, the logging order gets completely messed up.
     logfile = open(log_path, "w")
-    logfile.write("---rtl_fm log-------\n")
+    logfile.write("---satnogs_noaa_apt_decoder-------\n")
     logfile.flush()
 
     # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
-        sh.satnogs_noaa_apt_decoder.py(
+        sh.satnogs_noaa_apt_decoder(
             # specify the device used for reception (driver=rtlsdr or driver=airspy works)
             "--soapy-rx-device", soapy_rx_device,
             # the receiving frequency
@@ -43,7 +43,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             # specify the gain
             "--gain", gain,
             # number of samples/s
-            "--samp-rate-rx=", sample_rate_rx,
+            "--samp-rate-rx", sample_rate_rx,
             # How arctan is computed. We don't test other options.
             "--bw", bandwidth,
             # now set up the files
