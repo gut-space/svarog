@@ -2,6 +2,7 @@
 import datetime
 from os import getcwd, path, makedirs, environ
 import shutil
+import sys
 
 from setuptools import setup, find_packages
 
@@ -20,6 +21,12 @@ setup(name='svarog-server',
 config_path = "svarog.ini"
 if not path.exists(config_path):
     shutil.copyfile("svarog.ini.template", config_path)
+
+    # The chance that the template would actually work are pathetic. Need to tell the user to
+    # tweak it to his/her specific needs.
+    print("NOTE: Template config file copied over to %s" % config_path)
+    print("NOTE: Please edit it to match your configuration and rerun the setup script again.")
+    sys.exit(-1)
 
 # STEP 3: ensure the database is updated.
 def backup_database():
