@@ -30,7 +30,7 @@ class ApplicationUser(UserMixin):
         self.auth = False
 
     def check_digest(self, digest: str):
-        """This compares hashes. It's almost useless (execept perhaps for testing) as the hashes
+        """This compares hashes. It's almost useless (except perhaps for testing) as the hashes
         are salted. So they're almost always different. This sets the auth field (true if provided
         password is correct)."""
         self.auth = self.digest == digest
@@ -52,15 +52,23 @@ class ApplicationUser(UserMixin):
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
+    repository = Repository()
+
     if current_user.is_authenticated:
-        return render_template("login.html", user = current_user)
+        stations = repository.owned_stations(current_user.get_id())
+
+        # list of stations
+        l = ""
+        for s in stations:
+            l += s['name'] + "(" + str(s['station_id']) + ") "
+        app.logger.info("Authenticated user %s, owner of %s" % (current_user.username, l))
+
+        return render_template("login.html", user = current_user, stations=stations)
 
     form = LoginForm()
 
     if form.validate_on_submit():
         app.logger.info("Login requested for user %s, pass=%s, remember_me=%s" % (form.username.data, form.password.data, form.remember.data))
-
-        repository = Repository()
 
         user = repository.read_user(user=form.username.data)
 
