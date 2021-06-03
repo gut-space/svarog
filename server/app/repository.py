@@ -91,6 +91,14 @@ class User(TypedDict):
     email: str
     role: UserRole
 
+# Lists all stations owned by specific user
+class Stations(TypedDict):
+    stations: List[Tuple[str, StationId]] # station name, station_id
+
+# List all users that own a particular station
+class StationOwners(TypedDict):
+    owners: List[Tuple[str, int]] # username, user_id
+
 # Utils
 def without_keys(d, keys: Sequence[str]):
     return {x: d[x] for x in d if x not in keys}
@@ -135,7 +143,7 @@ class _TransactionContext(TypedDict):
 
 def use_cursor(f):
     '''
-    Decorator who ensures that connection is establish and has created cursor.
+    Decorator who ensures that connection is established and has created cursor.
 
     If no transaction is pending then it will be create before execution and commit
     (if execution not throw exceptions) and close after.
@@ -330,6 +338,17 @@ class Repository:
         cursor = self._cursor
         cursor.execute(q)
         return cursor.fetchone()["count"]
+
+    @use_cursor
+    def owned_stations(self, user_id: int) -> Stations:
+
+        q = ("SELECT s.name, s.station_id "
+             "from stations s, station_owners "
+             "WHERE s.station_id = station_owners.station_id and station_owners.user_id = %s "
+             "ORDER BY s.station_id desc")
+        cursor = self._cursor
+        cursor.execute(q, (user_id,))
+        return cursor.fetchall()
 
     @use_cursor
     def read_stations(self, limit=100, offset=0) -> Sequence[Station]:
