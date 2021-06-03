@@ -3,7 +3,7 @@
 This system consists of two elements: station (which is intended to run on a Raspberry Pi with an SDR dongle, but can
 be run on any Linux box) and a server (which is intended to be run in a place with good uplink connectivity). If
 you are interested in running your own station, you most likely want to deploy just the station and use existing
-server. Please contact someone from the satnogs team and we'll hook you up.
+server. Please contact someone from the Svarog team and we'll hook you up.
 
 # Station installation
 
@@ -45,7 +45,7 @@ git clone https://github.com/gut-space/svarog
 5. **Install python dependencies**:
 
 ```
-cd satnogs/station
+cd svarog/station
 python3 setup.py install
 ```
 
@@ -87,7 +87,7 @@ Run the cli command first:
 python station/cli.py
 ```
 
-It will create a tempate config for you. The config file is stored in ~/.config/satnogs-gut/config.yml. The recommended way of tweaking it is to use the cli.py command itself. For example, to set up your location, you can do:
+It will create a tempate config for you. The config file is stored in ~/.config/svarog/config.yml. The recommended way of tweaking it is to use the cli.py command itself. For example, to set up your location, you can do:
 
 ```
 python station/cli.py config location -lat 54.34 -lng 23.23 -ele 154
@@ -103,7 +103,7 @@ Once your station operates smoothly, you may trim this down to INFO, WARNING or 
 
 8. **Schedule observations**
 
-Once your station coordinates are set, you can tell satnogs to schedule observations:
+Once your station coordinates are set, you can tell Svarog to schedule observations:
 
 ```
 python station/cli.py plan --force
@@ -129,7 +129,7 @@ su - postgres
 psql
 CREATE DATABASE svarog;
 CREATE USER svarog WITH PASSWORD 'secret'; -- make sure to use an actual password here
-GRANT ALL PRIVILEGES ON DATABASE satnogs TO svarog;
+GRANT ALL PRIVILEGES ON DATABASE svarog TO svarog;
 ```
 
 Make sure to either run `setup.py` or run DB schema migration manually: `python3 migrate_db.py`.
