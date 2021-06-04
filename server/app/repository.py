@@ -8,7 +8,7 @@ from functools import wraps
 from typing import Any, List, NewType, Sequence, Union, Optional, Tuple
 from enum import Enum
 import sys
-from collections import defaultdict
+from collections import UserList, defaultdict
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -343,11 +343,18 @@ class Repository:
     def owned_stations(self, user_id: int) -> Stations:
 
         q = ("SELECT s.name, s.station_id "
-             "from stations s, station_owners "
+             "FROM stations s, station_owners "
              "WHERE s.station_id = station_owners.station_id and station_owners.user_id = %s "
              "ORDER BY s.station_id desc")
         cursor = self._cursor
         cursor.execute(q, (user_id,))
+        return cursor.fetchall()
+
+    @use_cursor
+    def station_owners(self, station_id: int) -> StationOwners:
+        q = ("SELECT u.username, u.id FROM users u, station_owners o WHERE u.id = o.user_id AND o.station_id = %s")
+        cursor = self._cursor
+        cursor.execute(q, (station_id,))
         return cursor.fetchall()
 
     @use_cursor
