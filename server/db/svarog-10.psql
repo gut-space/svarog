@@ -13,7 +13,7 @@ CREATE TABLE station_owners (
 CREATE INDEX fk_station_owners_user_id ON station_owners (user_id);
 CREATE INDEX fk_station_owners_station_id ON station_owners (station_id);
 
-# Make sure that each (user, station) combination appears only once.
+-- Make sure that each (user, station) combination appears only once.
 CREATE UNIQUE INDEX ON station_owners (station_id, user_id);
 
 UPDATE schema SET version = 10;
