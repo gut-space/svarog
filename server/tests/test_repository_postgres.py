@@ -393,3 +393,32 @@ class RepositoryPostgresTests(unittest.TestCase):
 
         self.assertRaises(LookupError, repository.user_role_to_enum,
             'moderator') # no such role
+
+    @use_repository
+    def test_station_owners(self, repository: Repository):
+        """Tests that the owners of a station can be returned properly. This query is used on
+           the station page to list its owners."""
+        owners1 = repository.station_owners(1) # List owners of station id 1
+        owners5 = repository.station_owners(5) # List owners of station id 5 (no such station, so should be empty list)
+
+        # See tests/db-data.psql for details (station_owners table)
+        self.assertEqual(len(owners1), 4)
+        self.assertEqual(owners1[0]['username'], 'asimov')
+        self.assertEqual(owners1[0]['id'], 1)
+        self.assertEqual(owners1[1]['username'], 'baxter')
+        self.assertEqual(owners1[1]['id'], 2)
+        self.assertEqual(owners1[2]['username'], 'clarke')
+        self.assertEqual(owners1[2]['id'], 3)
+        self.assertEqual(owners1[3]['username'], 'admin')
+        self.assertEqual(owners1[3]['id'], 5)
+
+        # No such station, so no owners
+        self.assertEqual(len(owners5), 0)
+
+    @use_repository
+    def test_owned_stations(self, repository: Repository):
+        """Tests that it's possible to get a list of stations a given user is allowed to manage."""
+        stations = repository.owned_stations(5) # get the list of stations that user with user_id=5 owns.
+        self.assertEqual(len(stations), 1)
+        self.assertEqual(stations[0]['name'], 'TKiS-1')
+        self.assertEqual(stations[0]['station_id'], 1)
