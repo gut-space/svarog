@@ -6,8 +6,8 @@
 CREATE TABLE station_owners (
     user_id int NOT NULL,
     station_id int NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_station FOREIGN KEY(station_id) REFERENCES stations(station_id)
+    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_station FOREIGN KEY(station_id) REFERENCES stations(station_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE INDEX fk_station_owners_user_id ON station_owners (user_id);
