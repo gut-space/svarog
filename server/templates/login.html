@@ -35,7 +35,7 @@ Login
 <p>Your role is {{ user.role.name }}.</p>
 <p>You are the owner of the following {{ stations|length }} station(s):
 {% for s in stations %}
-    <a href="/station/{{ s.station_id }}">{{s.name}} (id: {{s.station_id}})</a>
+    <a class="param" href="/station/{{ s.station_id }}">{{s.name}} (id: {{s.station_id}})</a>
 {% endfor %}
 </p>
 <p><a href="/logout">logout</a></p>
