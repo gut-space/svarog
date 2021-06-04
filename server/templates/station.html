@@ -15,6 +15,11 @@
                     [List]
                 </a>
             </li>
+            <li>Station admins:
+            {% for o in owners %}
+                <span class="param"">{{o.username}} (id: {{o.id}})</span>
+            {% endfor %}
+            </li>
         </ul>
     </p>
     <p>

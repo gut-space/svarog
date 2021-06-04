@@ -10,8 +10,10 @@ def station(station_id = None):
     if station is None:
         abort(404, "Station not found")
     statistics = repository.read_station_statistics(station["station_id"])
-    
+
     photos = repository.read_station_photos(station_id)
+
+    owners = repository.station_owners(station_id)
 
     x = {}
     x['station_id'] = station['station_id']
@@ -31,4 +33,4 @@ def station(station_id = None):
         y['sort'] = photo['sort']
         files.append(y)
 
-    return render_template('station.html', station = x, files = files)
+    return render_template('station.html', station = x, files = files, owners = owners)
