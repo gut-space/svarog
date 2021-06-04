@@ -8,6 +8,17 @@
         <img src="/data/thumbs/{{ obs.thumbnail }}" />
     </div>
 
+    {% if owner %}
+    <div>
+    <fieldset style="border: 1px solid green; color: black; text-align: left; width: 800px; height: 80px; padding: 10px;">
+        <legend style="width: 7em; font-size: 12px; padding: 0px 5px 0px 5px; border: 0px; margin-bottom: 0px">Admin
+        Panel</legend>
+        The following actions are available, because you're the owner of the station:<br/>
+        <div class="param">Delete Observation</div>
+    </fieldset>
+    </div>
+    {% endif %}
+
     <h4>Transmission parameters</h4>
     <p>
         <dl>
@@ -39,7 +50,7 @@
     <h4>Pass plots</h4>
 
     <img width="45%" class="tle-plot" alt="Azimuth/elevation by time" src="/data/charts/by_time-{{ obs.obs_id }}.png" />
-    <img width="45%" class="tle-plot" alt="Azimuth/elevation polar" src="/data/charts/polar-{{ obs.obs_id }}.png" />
+    <img width="45%" style="float: right" class="tle-plot" alt="Azimuth/elevation polar" src="/data/charts/polar-{{ obs.obs_id }}.png" />
 
     <h4>Orbital parameters</h4>
     <p>
