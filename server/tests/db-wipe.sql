@@ -1,0 +1,10 @@
+DROP TABLE station_owners;
+DROP TABLE station_photos;
+DROP VIEW observation_ratings;
+DROP TABLE observation_files;
+DROP TABLE observations;
+DROP TABLE stations;
+DROP TABLE satellites;
+DROP TABLE users;
+DROP TABLE schema;
+DROP TYPE user_type;
