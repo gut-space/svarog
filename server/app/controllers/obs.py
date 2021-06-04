@@ -5,6 +5,7 @@ from app.repository import ObservationId, Repository, Observation
 from app.pagination import use_pagination
 from math import floor
 from app.utils import strfdelta
+from flask_login import current_user
 
 from tletools import TLE
 from astropy import units as u
@@ -40,8 +41,24 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
     # Now tweak some observation parameters to make them more human readable
     observation = human_readable_obs(observation)
 
+    # Now determine if there is a logged user and if there is, if this user is the owner of this
+    # station. If he is, we should show the admin panel.
+    user_id = 0
+    owner = False
+    if current_user.is_authenticated:
+        user_id = current_user.get_id()
+
+        # Check if the current user is the owner of the station.
+        station_id = station['station_id']
+
+        owners = repository.station_owners(station_id)
+        for o in owners:
+            if o['id'] == user_id:
+                owner = True
+                break
+
     return 'obs.html', dict(obs = observation, files=files,
-        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station)
+        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station, owner = owner)
 
 def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
