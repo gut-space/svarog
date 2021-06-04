@@ -356,7 +356,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         nonexistent = repository.read_user(user="notfound")
         self.assertIsNone(nonexistent)
 
-        nonexistent = repository.read_user(user=5)
+        nonexistent = repository.read_user(user=6)
         self.assertIsNone(nonexistent)
 
         user1 = repository.read_user(user="clarke")
