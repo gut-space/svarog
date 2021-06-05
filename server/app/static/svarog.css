@@ -75,3 +75,36 @@ dd {
     color: black;
     border-radius: 5px;
 }
+
+.danger {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: crimson;
+    color: black;
+    border-radius: 5px;
+}
+
+legend.admin {
+    width: 7em;
+    font-size: 12px;
+    padding: 0px 5px 0px 5px;
+    border: 0px;
+    margin-bottom: 0px;
+}
+
+fieldset.admin {
+    border: 1px solid red;
+    color: black;
+    text-align: left;
+    width: 800px;
+    height: 80px;
+    padding: 10px;
+}

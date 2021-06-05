@@ -8,17 +8,6 @@
         <img src="/data/thumbs/{{ obs.thumbnail }}" />
     </div>
 
-    {% if owner %}
-    <div>
-    <fieldset style="border: 1px solid green; color: black; text-align: left; width: 800px; height: 80px; padding: 10px;">
-        <legend style="width: 7em; font-size: 12px; padding: 0px 5px 0px 5px; border: 0px; margin-bottom: 0px">Admin
-        Panel</legend>
-        The following actions are available, because you're the owner of the station:<br/>
-        <div class="param">Delete Observation</div>
-    </fieldset>
-    </div>
-    {% endif %}
-
     <h4>Transmission parameters</h4>
     <p>
         <dl>
@@ -123,4 +112,18 @@ In other words, how rotated the orbital plane is around the the polar N-S axis."
         </div>
     {% endfor %}
     {% include 'pagination.html' %}
+
+    {% if owner %}
+    <div>
+    <fieldset class="admin">
+        <legend class="admin">Admin
+        Panel</legend>
+        The following actions are available, because you're the owner of the station:<br/>
+        <form method="post" action="/obs/delete/{{ obs.obs_id }}"><input type="button" class="danger" value="Delete Observation"
+        onclick="if (window.confirm('You\'re about to permanently delete observation {{ obs.obs_id }}. This cannot be undone.' +
+        'Are you sure?')) { submit(); }"></form>
+    </fieldset>
+    </div>
+    {% endif %}
+
 {% endblock %}
