@@ -38,10 +38,10 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     # flush, the logging order gets completely messed up.
     logfile = open(log_path, "w")
     logfile.write("---satnogs_noaa_apt_decoder-------\n")
-    logfile.write("soapy_rx_device=%s" % soapy_rx_device)
-    logfile.write("sample_rate_rx=%d" % sample_rate_rx)
-    logfile.write("gain=%f" % gain)
-    logfile.write("bandwidth=%d" % bandwidth)
+    logfile.write("soapy_rx_device=%s\n" % soapy_rx_device)
+    logfile.write("sample_rate_rx=%d\n" % sample_rate_rx)
+    logfile.write("gain=%f\n" % gain)
+    logfile.write("bandwidth=%d\n" % bandwidth)
     logfile.flush()
 
     waterfall_dat = waterfall_path + ".dat"
