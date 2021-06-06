@@ -124,11 +124,11 @@ def obs_delete(obs_id: ObservationId = None):
     repository = Repository()
     observation = repository.read_observation(obs_id)
     if observation is None:
-        return render_template('obs_delete.html', status="There is no observation %s" % obs_id, obs_id=obs_id)
+        return render_template('obs_delete.html', status= ["There is no observation %s" % obs_id], obs_id=obs_id)
 
     # Second, check if the guy is logged in.
     if not current_user.is_authenticated:
-        return render_template('obs_delete.html', status = "You are not logged in, you can't delete anything.", obs_id=obs_id)
+        return render_template('obs_delete.html', status = ["You are not logged in, you can't delete anything."], obs_id=obs_id)
 
     # Ok, at least this guy is logged in. Let's check who he is.
     user_id = current_user.get_id()
@@ -140,8 +140,8 @@ def obs_delete(obs_id: ObservationId = None):
     owner = repository.is_station_owner(user_id, station_id)
 
     if not owner:
-        return render_template('obs_delete.html', status = "You are not the owner of station %s, you can't delete observation %s."
-               % (station.name, obs_id), obs_id=obs_id)
+        return render_template('obs_delete.html', status = ["You are not the owner of station %s, you can't delete observation %s."
+               % (station.name, obs_id)], obs_id=obs_id)
 
     # If you got that far, this means the guy is logged in, he's the owner and is deleting his own observation.
 
@@ -155,41 +155,42 @@ def obs_delete_real(repository: Repository, obs_id: ObservationId):
 
     root = app.config["storage"]['image_root']
 
-    status = ""
+    status = []
 
     for f in files:
         path = os.path.join(root, f['filename'])
         try:
             os.remove(f['filename'])
-            status += " Product %s deleted successfully." % path
+            status.append("Product %s deleted successfully." % path)
         except FileNotFoundError:
-            status += " Product %s was not found." % path
+            status.append("Product %s was not found." % path)
 
         try:
             fname = os.path.join(root, "thumbs", f['filename'])
             os.remove(fname)
-            status += " Thumbnail file %s deleted successfully." % fname
+            status.append("Thumbnail file %s deleted successfully." % fname)
         except FileNotFoundError:
-            status += " Thumbnail file %s was not found." % fname
+            status.append("Thumbnail file %s was not found." % fname)
 
 
     # Step 2: delete pass charts
     try:
         f = os.path.join(root, "charts", "by_time-%s.png" % obs_id)
         os.remove(f)
-        status += " Timing charts %s deleted successfully." % f
-    except OSError:
+        status.append("Timing charts %s deleted successfully." % f)
+    except OSError as e:
+        status.append("Timing char %s was not found: %s" % (f, e))
         pass
     try:
         f = os.path.join(root, "charts", "polar-%s.png" % obs_id)
         os.remove(f)
-        status += " Polar directions chart %s deleted successfully." % f
-    except OSError:
-        pass
+        status.append("Polar directions chart %s deleted successfully." % f)
+    except OSError as e:
+        status.append("Polar directions chars %s was not found: %s" % (f, e))
 
     # Step 3: delete thumbnail, if exists
     repository.delete_observation(obs_id)
 
-    status += " DB operation complete. ";
+    status.append("DB removal complete.")
 
     return status

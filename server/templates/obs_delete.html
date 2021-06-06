@@ -3,6 +3,11 @@
 {% block content %}
     <h3>Observation Deletion {{ obs_id }}</h3>
 
-    <p><b>STATUS:</b> {{ status }}</p>
+    <p><b>STATUS:</b></p>
+    <ul>
+    {% for l in status %}
+        <li>{{ l }} </li>
+    {% endfor %}
+    </ul>
     <p>Now move to <a href="/obslist">a list of observations.</a></p>
 {% endblock %}
