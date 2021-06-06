@@ -181,13 +181,13 @@ def obs_delete_real(repository: Repository, obs_id: ObservationId):
     try:
         f = os.path.join(root, "charts", "by_time-%s.png" % obs_id)
         os.remove(f)
-        status += " Timing charts %s deleted successfully." % path
+        status += " Timing charts %s deleted successfully." % f
     except OSError:
         pass
     try:
         f = os.path.join(root, "charts", "polar-%s.png" % obs_id)
         os.remove(f)
-        status += " Polar directions chart %s deleted successfully." % path
+        status += " Polar directions chart %s deleted successfully." % f
     except OSError:
         pass
 
