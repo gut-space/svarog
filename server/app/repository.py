@@ -8,7 +8,7 @@ from functools import wraps
 from typing import Any, List, NewType, Sequence, Union, Optional, Tuple
 from enum import Enum
 import sys
-from collections import UserList, defaultdict
+from collections import defaultdict
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
