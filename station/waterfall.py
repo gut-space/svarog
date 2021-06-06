@@ -39,7 +39,6 @@ class Waterfall():
         fmin = np.min(self.data['freq'] / 1000.0)
         fmax = np.max(self.data['freq'] / 1000.0)
 
-        self.logger.write(f"vmin=%{vmin} vmax={vmax} tmin={tmin} tmax={tmax} fmin={fmin} fmax={fmax}")
         if vmin is None or vmax is None:
             vmin = -100
             vmax = -50
@@ -76,23 +75,27 @@ class Waterfall():
         :rtype: dict
         """
 
-        datafile = open(datafile_path, mode='rb')
+        waterfall = {}
 
-        waterfall = {
-            'timestamp': np.fromfile(datafile, dtype='|S32', count=1)[0],
-            'nchan': np.fromfile(datafile, dtype='>i4', count=1)[0],
-            'samp_rate': np.fromfile(datafile, dtype='>i4', count=1)[0],
-            'nfft_per_row': np.fromfile(datafile, dtype='>i4', count=1)[0],
-            'center_freq': np.fromfile(datafile, dtype='>f4', count=1)[0],
-            'endianess': np.fromfile(datafile, dtype='>i4', count=1)[0]
-        }
-        self.logger.write("Waterfall details: " + repr(waterfall) + "\n")
-        data_dtypes = np.dtype([('tabs', 'int64'), ('spec', 'float32', (waterfall['nchan'], ))])
-        waterfall['data'] = np.fromfile(datafile, dtype=data_dtypes)
-        if waterfall['data'].size == 0:
-            raise EOFError
+        with open(datafile_path, mode='rb') as datafile:
 
-        datafile.close()
+            waterfall = {
+                'timestamp': np.fromfile(datafile, dtype='|S32', count=1)[0],
+                'nchan': np.fromfile(datafile, dtype='>i4', count=1)[0],
+                'samp_rate': np.fromfile(datafile, dtype='>i4', count=1)[0],
+                'nfft_per_row': np.fromfile(datafile, dtype='>i4', count=1)[0],
+                'center_freq': np.fromfile(datafile, dtype='>f4', count=1)[0],
+                'endianess': np.fromfile(datafile, dtype='>i4', count=1)[0]
+            }
+
+            # Let's disable the logging for now.
+            # self.logger.write("Waterfall details: " + repr(waterfall) + "\n")
+            data_dtypes = np.dtype([('tabs', 'int64'), ('spec', 'float32', (waterfall['nchan'], ))])
+            waterfall['data'] = np.fromfile(datafile, dtype=data_dtypes)
+            if waterfall['data'].size == 0:
+                raise EOFError
+
+            datafile.close()
 
         return waterfall
 
@@ -151,6 +154,5 @@ if __name__ == '__main__':
         outfile = outfile[:outfile.rfind(".")]
         outfile += ".png"
 
-    print("infile=%s outfile=%s" % (infile, outfile))
     w = Waterfall(infile)
     w.plot(outfile)
