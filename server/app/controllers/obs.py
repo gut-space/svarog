@@ -141,15 +141,11 @@ def obs_delete(obs_id: ObservationId = None):
     station = repository.read_station(observation["station_id"])
     station_id = station['station_id']
 
-    owners = repository.station_owners(station_id)
-    owner = False
-    for o in owners:
-        if o['id'] == user_id:
-            owner = True
-            break
+    owner = repository.is_station_owner(user_id, station_id)
 
     if not owner:
-        return render_template('obs_delete.html', status = "You are not the owner of station %s, you can't delete observation %s." % (station.name, obs_id), obs_id=obs_id)
+        return render_template('obs_delete.html', status = "You are not the owner of station %s, you can't delete observation %s."
+               % (station.name, obs_id), obs_id=obs_id)
 
     # If you got that far, this means the guy is logged in, he's the owner and is deleting his own observation.
 
