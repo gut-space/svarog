@@ -422,3 +422,13 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(len(stations), 1)
         self.assertEqual(stations[0]['name'], 'TKiS-1')
         self.assertEqual(stations[0]['station_id'], 1)
+
+    @use_repository
+    def test_is_station_owner(self, repository: Repository):
+        """Tests if the ownership relation can be checked properly. The input data is defined in the db-data.psql file.
+           Here it's copied for convenience: (1,1), (2,1), (3,1), (5,1), (4,2)"""
+        cases = [ [1,1, True], [2,2,False], [2,1, True], [3,1,True], [4,1,False], [5,1,True], [4,2,True] ]
+
+        for c in cases:
+            # Checking if user {c[0]} owns the station {c[1]}, expected result {c[2]}
+            self.assertEqual(repository.is_station_owner(c[0], c[1]), c[2])

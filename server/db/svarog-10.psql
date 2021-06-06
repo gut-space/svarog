@@ -1,7 +1,7 @@
 -- This schema version introduces station ownership relation.
 -- For each station, there can be an arbitrary number of users that are owners.
 -- In the future, the owner will be able to some administrative actions, such as
--- deleting observation, edit station details etc.
+-- deleting observation, edit station details, etc.
 
 CREATE TABLE station_owners (
     user_id int NOT NULL,

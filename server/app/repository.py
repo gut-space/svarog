@@ -358,6 +358,15 @@ class Repository:
         return cursor.fetchall()
 
     @use_cursor
+    def is_station_owner(self, user_id: int, station_id: StationId) -> bool:
+        """Returns true if the specified user is the station owner, and false otherwise"""
+        q = ("SELECT true FROM station_owners WHERE user_id = %s AND station_id = %s")
+        cursor = self._cursor
+        cursor.execute(q, (user_id, station_id,))
+        # The query returns 0 or 1 rows.
+        return bool(cursor.rowcount)
+
+    @use_cursor
     def read_stations(self, limit=100, offset=0) -> Sequence[Station]:
         q = ("SELECT s.station_id, s.name, s.lon, s.lat, s.descr, s.config, s.registered "
             "FROM stations s "
