@@ -28,7 +28,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     #  --samp-rate-rx=3000000 --antenna RX --gain 45 --bw 41000
 
     # TODO: Some of those parameters should be configurable.
-    soapy_rx_device = "driver=airspy"
+    soapy_rx_device = "driver=airspy,bias=1"
     sample_rate_rx = 3000000 # number of samples per second
     gain = 45 # 45 is max for airspy, rtlsdr can go up to 49.6
     bandwidth = 36000 # specify the received bandwidth in Hz
