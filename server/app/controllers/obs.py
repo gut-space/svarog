@@ -52,14 +52,10 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
         # Check if the current user is the owner of the station.
         station_id = station['station_id']
 
-        owners = repository.station_owners(station_id)
-        for o in owners:
-            if o['id'] == user_id:
-                owner = True
-                break
+        owner = repository.is_station_owner(user_id, station_id)
 
     return 'obs.html', dict(obs = observation, files=files,
-        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station, owner = owner)
+        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station, is_owner = owner)
 
 def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
