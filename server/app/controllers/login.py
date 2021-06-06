@@ -58,9 +58,7 @@ def login():
         stations = repository.owned_stations(current_user.get_id())
 
         # list of stations
-        l = ""
-        for s in stations:
-            l += s['name'] + "(" + str(s['station_id']) + ") "
+        l = " ".join(f"{s['name']}({s['station_id']})" for s in stations)
         app.logger.info("Authenticated user %s, owner of %s" % (current_user.username, l))
 
         return render_template("login.html", user = current_user, stations=stations)
