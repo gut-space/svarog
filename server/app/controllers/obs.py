@@ -150,47 +150,35 @@ def obs_delete(obs_id: ObservationId = None):
 
 def obs_delete_db_and_disk(repository: Repository, obs_id: ObservationId):
 
-    # Step 1: delete products
-    files = repository.read_observation_files(obs_id)
+    app.logger.info("About to delete observation %s and all its files" % obs_id)
 
+    # Step 1: Create a list of files to be deleted. There may be several products.
+    products = repository.read_observation_files(obs_id)
+    obs = repository.read_observation(obs_id)
+    files = [[f['filename'], "product"] for f in products]
+
+    # Step 2: thumbnail is stored with the observation. There's at most one thumbnail.
+    files.append([os.path.join("thumbs", obs['thumbnail']), "thumbnail"])
+
+    # Step 3: And there are two charts: alt-az pass chart and polar pass chart.
+    files.append([os.path.join("charts", "by_time-%s.png" % obs_id), "pass chart"])
+    files.append([os.path.join("charts", "polar-%s.png" % obs_id), "polar pass chart"])
+
+    # All those files are stored in this dir
     root = app.config["storage"]['image_root']
 
     status = []
-
     for f in files:
-        path = os.path.join(root, f['filename'])
+        path = os.path.join(root, f[0])
+        app.logger.info("Trying to delete [%s]" % path)
         try:
-            os.remove(f['filename'])
-            status.append("Product %s deleted successfully." % path)
-        except FileNotFoundError:
-            status.append("Product %s was not found." % path)
+            os.remove(path)
+            status.append("Deleted %s file %s." % (f[1], f[0]))
+        except Exception as ex:
+            status.append("Failed to delete %s file: %s, reason: %s" % (f[1], path, repr(ex)))
 
-        try:
-            fname = os.path.join(root, "thumbs", f['filename'])
-            os.remove(fname)
-            status.append("Thumbnail file %s deleted successfully." % fname)
-        except FileNotFoundError:
-            status.append("Thumbnail file %s was not found." % fname)
-
-
-    # Step 2: delete pass charts
-    try:
-        f = os.path.join(root, "charts", "by_time-%s.png" % obs_id)
-        os.remove(f)
-        status.append("Timing charts %s deleted successfully." % f)
-    except OSError as e:
-        status.append("Timing char %s was not found: %s" % (f, e))
-        pass
-    try:
-        f = os.path.join(root, "charts", "polar-%s.png" % obs_id)
-        os.remove(f)
-        status.append("Polar directions chart %s deleted successfully." % f)
-    except OSError as e:
-        status.append("Polar directions chars %s was not found: %s" % (f, e))
-
-    # Step 3: delete thumbnail, if exists
+    # Step 4: delete entries in the db
     repository.delete_observation(obs_id)
-
     status.append("DB removal complete.")
 
     return status
