@@ -343,8 +343,8 @@ class Repository:
     def owned_stations(self, user_id: int) -> Stations:
 
         q = ("SELECT s.name, s.station_id "
-             "FROM stations s, station_owners "
-             "WHERE s.station_id = station_owners.station_id and station_owners.user_id = %s "
+             "FROM stations s "
+             "JOIN station_owners ON s.station_id = station_owners.station_id WHERE station_owners.user_id = %s "
              "ORDER BY s.station_id desc")
         cursor = self._cursor
         cursor.execute(q, (user_id,))
@@ -352,7 +352,7 @@ class Repository:
 
     @use_cursor
     def station_owners(self, station_id: int) -> StationOwners:
-        q = ("SELECT u.username, u.id FROM users u, station_owners o WHERE u.id = o.user_id AND o.station_id = %s")
+        q = ("SELECT u.username, u.id FROM users u JOIN station_owners o ON u.id = o.user_id WHERE o.station_id = %s")
         cursor = self._cursor
         cursor.execute(q, (station_id,))
         return cursor.fetchall()
