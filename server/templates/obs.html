@@ -114,10 +114,9 @@ In other words, how rotated the orbital plane is around the the polar N-S axis."
     {% include 'pagination.html' %}
 
     {% if is_owner %}
-    <div>
-    <fieldset class="admin">
-        <legend class="admin">Admin
-        Panel</legend>
+    <div class="admin">
+    <fieldset>
+        <legend>Admin Panel</legend>
         The following actions are available, because you're the owner of the station:<br/>
         <form method="post" action="/obs/delete/{{ obs.obs_id }}"><input type="submit" class="danger" value="Delete Observation"
         onclick="return window.confirm('You\'re about to permanently delete observation {{ obs.obs_id }}. This cannot be undone.' +

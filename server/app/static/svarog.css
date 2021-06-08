@@ -92,7 +92,7 @@ dd {
     border-radius: 5px;
 }
 
-legend.admin {
+.admin legend {
     width: 7em;
     font-size: 12px;
     padding: 0px 5px 0px 5px;
@@ -100,7 +100,7 @@ legend.admin {
     margin-bottom: 0px;
 }
 
-fieldset.admin {
+.admin fieldset {
     border: 1px solid red;
     color: black;
     text-align: left;
