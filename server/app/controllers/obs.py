@@ -145,10 +145,10 @@ def obs_delete(obs_id: ObservationId = None):
 
     # If you got that far, this means the guy is logged in, he's the owner and is deleting his own observation.
 
-    status = obs_delete_real(repository, obs_id)
+    status = obs_delete_db_and_disk(repository, obs_id)
     return render_template('obs_delete.html', status = status, obs_id=obs_id)
 
-def obs_delete_real(repository: Repository, obs_id: ObservationId):
+def obs_delete_db_and_disk(repository: Repository, obs_id: ObservationId):
 
     # Step 1: delete products
     files = repository.read_observation_files(obs_id)
