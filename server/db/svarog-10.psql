@@ -6,14 +6,12 @@
 CREATE TABLE station_owners (
     user_id int NOT NULL,
     station_id int NOT NULL,
+    PRIMARY KEY (user_id, station_id),
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT fk_station FOREIGN KEY(station_id) REFERENCES stations(station_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE INDEX fk_station_owners_user_id ON station_owners (user_id);
 CREATE INDEX fk_station_owners_station_id ON station_owners (station_id);
-
--- Make sure that each (user, station) combination appears only once.
-CREATE UNIQUE INDEX ON station_owners (station_id, user_id);
 
 UPDATE schema SET version = 10;
