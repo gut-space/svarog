@@ -62,6 +62,7 @@ is_allowed_file = lambda f: f.mimetype in ALLOWED_FILE_TYPES and \
     'los': fields.DateTime(required=True),
     'sat': fields.Str(required=True),
     'notes': fields.Str(required=False),
+    'rating': fields.Float(required=False),
     'tle': fields.List(fields.Str, required=False,
         validate=[
             # TLE must contains exact two lines
@@ -142,6 +143,8 @@ def receive(station_id: str, args: RequestArguments):
             'station_id': StationId(station_id),
             'tle': tle
         }
+
+        app.logger.info("Received observation: station_id=%s sat_id=%s notes=%s rating=%s" % (station_id, sat_id, args.get('notes'), args.get('rating')))
 
         obs_id = repository.insert_observation(observation)
         observation["obs_id"] = obs_id
