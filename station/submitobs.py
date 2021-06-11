@@ -116,7 +116,7 @@ def submit_observation(data: SubmitRequestData):
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("Not enough parameters. At least 3 are needed: "
-            "filename.png sat_name aos [tca] [los] [notes]")
+            "filename.png sat_name aos [tca] [los] [notes] [rating]")
         exit(1)
 
     filename=sys.argv[1]
