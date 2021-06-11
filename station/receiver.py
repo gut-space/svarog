@@ -85,8 +85,8 @@ def cmd():
         logging.info("Submitting results")
         product = first(products, lambda _: True)
         if product is not None:
-            logging.info("Getting rating for product %s" % product[1])
-            rating = get_rating_for_product(product[1], satellite.get("rating"))
+            logging.info("Getting rating for product %s (rating algorithm is %s)" % (product[1], satellite.get("rate")))
+            rating = get_rating_for_product(product[1], satellite.get("rate"))
             logging.info("Product %s got rating %s" % (product[1], rating))
             # TODO: Submit ALL products and logs
             submit_observation(
