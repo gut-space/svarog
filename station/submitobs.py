@@ -101,7 +101,7 @@ def submit_observation(data: SubmitRequestData):
 
     resp = requests.post(url, form_data, headers=headers, files=files)
     if (resp.status_code >= 400):
-        logging.warn("Response status: %d" % resp.status_code)
+        logging.warning("Response status: %d" % resp.status_code)
     else:
         logging.info("Response status: %d" % resp.status_code)
 
@@ -122,17 +122,21 @@ if __name__ == '__main__':
     filename=sys.argv[1]
     sat_name=sys.argv[2]
     aos=tca=los=from_iso_format(sys.argv[3])
-    notes="..."
+    notes = ""
+    rating = None
 
     if len(sys.argv) >= 5:
-        TCA = sys.argv[4]
+        tca = from_iso_format(sys.argv[4])
 
     if len(sys.argv) >= 6:
-        LOS = sys.argv[5]
+        los = from_iso_format(sys.argv[5])
 
     if len(sys.argv) >= 7:
-        NOTES = sys.argv[6]
+        notes = sys.argv[6]
+
+    if len(sys.argv) >= 8:
+        rating = float(sys.argv[7])
 
     submit_observation(
-        SubmitRequestData(filename, sat_name, aos, tca, los, notes, None)
+        SubmitRequestData(filename, sat_name, aos, tca, los, notes, rating)
     )
