@@ -430,8 +430,10 @@ class Repository:
         cursor = self._cursor
         cursor.execute(query, (station_id,))
         row = cursor.fetchone()
-        if row is None:
+        # If there's no such station or the station's configuration is broken (i.e. doesn't have any secret set)
+        if row is None or row["secret"] is None:
             return None
+
         return bytes(row["secret"])
 
     def user_role_to_enum(self, role: str) -> UserRole:
