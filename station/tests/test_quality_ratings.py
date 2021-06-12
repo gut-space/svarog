@@ -33,6 +33,27 @@ class TestQualityRatings(unittest.TestCase):
         rating = rate(img)
         self.assertAlmostEqual(0.5, rating, 1)
 
+    def test_analog_rating_on_gaussian_noise_small_sigma_floating_img(self):
+        img = np.random.normal(scale=1, size=(1000, 1000))
+        img = img.astype(float) / 255.
+        rate = quality_ratings.get_rate_by_name("analog")
+        rating = rate(img)
+        self.assertAlmostEqual(1.0, rating, 2)
+
+    def test_analog_rating_on_gaussian_noise_big_sigma_floating_img(self):
+        img = np.random.normal(scale=20, size=(1000, 1000))
+        img = img.astype(float) / 255.
+        rate = quality_ratings.get_rate_by_name("analog")
+        rating = rate(img)
+        self.assertAlmostEqual(0.0, rating, 2)
+
+    def test_analog_rating_on_gaussian_noise_medium_sigma_floating_img(self):
+        img = np.random.normal(scale=12.7, size=(1000, 1000))
+        img = img.astype(float) / 255.
+        rate = quality_ratings.get_rate_by_name("analog")
+        rating = rate(img)
+        self.assertAlmostEqual(0.5, rating, 1)
+
     def test_analog_rating_on_blank(self):
         '''Image doesn't contain any noise - good quality'''
         img = np.zeros((1000, 1000))
@@ -89,3 +110,4 @@ class TestQualityRatings(unittest.TestCase):
         rate = quality_ratings.get_rate_by_name("digital")
         rating = rate(img)
         self.assertAlmostEqual(0.75, rating, 3)
+
