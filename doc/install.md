@@ -111,6 +111,10 @@ python station/cli.py plan --force
 
 This should be done once. CLI will update the crontab jobs and will periodically add new ones. The `--force` command will conduct the scheduling now, rather than wait for 4am to do scheduling.
 
+9. **Run unit-tests (devs only)**
+
+Developers may be interested in running unit tests. The best way to do that is to call a command `python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python version).
+
 # Server installation
 
 Server installation is a manual process. It is assumed that you already have running apache server. Here are the steps needed to get it up and running.
