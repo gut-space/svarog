@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "3.7"
   - "3.8"
   - "3.9"
 
@@ -33,8 +32,8 @@ before_script:
   - mkdir -p ~/.config/svarog-gut
 
 script:
-  - cd station && pytest -v ; cd ..
-  - cd server && PYTHONTEST=. pytest -v ; cd ..
+  - cd station && pytest -v && cd ..
+  - cd server && PYTHONTEST=. pytest -v && cd ..
   - find . -name '*.sh' | xargs shellcheck ${SHELLCHECK_OPTS}
 
 notifications:
