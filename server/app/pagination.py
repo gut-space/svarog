@@ -174,7 +174,7 @@ def use_page(*param_names:Iterable[str]):
         for param_name in param_names:
             argmap[param_name] = webargs.fields.Int(missing=1, 
                 validate=webargs.validate.Range(min=1))
-        return use_kwargs(argmap)(f)
+        return use_kwargs(argmap, location="query")(f)
     return use_page_decorator
 
 class PaginationConfiguration(TypedDict):
