@@ -75,7 +75,7 @@ is_allowed_file = lambda f: f.mimetype in ALLOWED_FILE_TYPES and \
                 error="Second TLE line length expected {min}-{max}. Actual: {input}")
                 (tle[1]),
         ])
-})
+}, location="form")
 def receive(station_id: str, args: RequestArguments):
     '''
     Receive observation from station.

@@ -20,7 +20,8 @@ from webargs.flaskparser import use_kwargs
     'has_tle': fields.Bool()
 }, validate=lambda kwargs: "aos_before" not in kwargs or
                         "los_after" not in kwargs or
-                        kwargs["aos_before"] >= kwargs["los_after"])
+                        kwargs["aos_before"] >= kwargs["los_after"],
+   location="querystring")
 def obslist(limit_and_offset, **filters):
     '''This function retrieves observations list from a local database and
         displays it.'''
@@ -33,7 +34,7 @@ def obslist(limit_and_offset, **filters):
         # @aos_before day 23:59:59.999 hour. For handle it we add 1 day to
         # @aos_before day before send to repository.
         filters["aos_before"] = aos_before_org + timedelta(days=1)
-        
+
     repository = Repository()
     obslist = repository.read_observations(filters, **limit_and_offset)
     satellites_list = repository.read_satellites()
@@ -51,6 +52,6 @@ def obslist(limit_and_offset, **filters):
         filters["aos_before"] = aos_before_org
 
     # When database will contain many satellites and stations then we need
-    # refactor this code to lazy, async read satellites and stations. 
+    # refactor this code to lazy, async read satellites and stations.
     return 'obslist.html', dict(obslist=obslist, item_count=observation_count,
         satellites=satellites_list, stations=stations_list, filters=filters)
