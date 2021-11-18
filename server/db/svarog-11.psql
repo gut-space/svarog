@@ -1,0 +1,6 @@
+-- This schema version changes the config columns from varchar to jsonb.
+
+ALTER TABLE observations ALTER COLUMN config TYPE jsonb USING json_build_object('text',config);
+ALTER TABLE stations ALTER COLUMN config TYPE jsonb USING json_build_object('text',config);
+
+UPDATE schema SET version = 11;
