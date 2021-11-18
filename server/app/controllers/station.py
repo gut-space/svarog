@@ -20,7 +20,8 @@ def station(station_id = None):
     x['name'] = station['name']
     x['coords'] = utils.coords(station['lon'], station['lat'])
     x['descr'] = station['descr']
-    x['config'] = station['config']
+
+    x['config'] = station['config']['text']
     x['registered'] = station['registered']
     x['lastobs'] = statistics["last_los"]
     x['cnt'] = statistics["observation_count"]
