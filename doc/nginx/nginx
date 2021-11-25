@@ -1,4 +1,4 @@
-# svaroge.space
+# svarog.space
 #
 # This is a site configuration for nginx. You probably want to put it in
 # /etc/nginx/sites-available and then add a link to in in /etc/nginx/sites-enabled
