@@ -62,7 +62,7 @@ every time, you can simply type `station` instead.
 There is a command line tool used to manage the station. You can run it with:
 
 ```
-$ station/cli.py 
+$ station/cli.py
 usage: svarog [-h] {clear,logs,plan,pass,config} ...
 
 positional arguments:
@@ -93,7 +93,7 @@ It will create a tempate config for you. The config file is stored in ~/.config/
 python station/cli.py config location -lat 54.34 -lng 23.23 -ele 154
 ```
 
-In particular, you may want to increase logging level to debug, to spot any problems: 
+In particular, you may want to increase logging level to debug, to spot any problems:
 
 ```shell
 python cli.py config logging --level DEBUG
@@ -138,20 +138,7 @@ GRANT ALL PRIVILEGES ON DATABASE svarog TO svarog;
 
 Make sure to either run `setup.py` or run DB schema migration manually: `python3 migrate_db.py`.
 
-3. **Modify your apache configuration**
-
-The general goal is to have an apache2 running with WSGI scripting capability that runs Flask. See an [example
-apache2 configuation](apache2/svarog.conf). You may want to tweak the paths and TLS configuration to use LetsEncrypt
-or another certificate of your choice. Make sure the paths are actually pointing to the right directory.
-
-Also, you should update the /etc/sudoers file to allow ordinary user (svarog) to restart apache server.
-You should use `visudo` command to add the following line:
-
-```
-%svarog ALL= NOPASSWD: /bin/systemctl restart apache2
-```
-
-4. **Install Flask dependencies**
+3. **Install Flask dependencies**
 
 ```
 cd svarog/server
@@ -173,3 +160,41 @@ You can start flask manually to check if it's working. This is not needed once y
 cd server
 ./svarog-web.py
 ```
+
+4. **Set up your HTTP server**
+
+Svarog has been run successfully with both Apache and Nginx. The very subjective experience of
+one of Svarog authors is that Apache's WSGI configuration is much more fragile, but is somewhat
+simpler due to fewer components. On the other hand, using Nginx requires additional application
+server (Unit), but it is much more robust and flexible. Other stacks are most likely possible,
+but were not tried.
+
+Depending on your choice, please follow either 4A or 4B sections.
+
+4A. **Apache configuration**
+
+The general goal is to have an apache2 running with WSGI scripting capability that runs Flask. See an [example
+apache2 configuation](apache2/svarog.conf). You may want to tweak the paths and TLS configuration to use LetsEncrypt
+or another certificate of your choice. Make sure the paths are actually pointing to the right directory.
+There is an example WSGI script in [svarog.wsgi](apache2/svarog.wsgi). It requires some tuning specific to your deloyment.
+
+Also, you should update the /etc/sudoers file to allow ordinary user (svarog) to restart apache server.
+You should use `visudo` command to add the following line:
+
+```
+%svarog ALL= NOPASSWD: /bin/systemctl restart apache2
+```
+
+4B. **NGINX + UNIT Configuration**
+
+An alternative to apache is to run Nginx with Unit application server. Example configuration
+for nginx is available [here](nginx/nginx). This file should in general be copied to
+`/etc/nginx/sites-available/svarog` and then linked to `/etc/nginx/sites-enabled/svarog`.
+Make sure you tweak it to your specific deployment.
+
+This deployment requires Unit app server to run and be configured with the [unit config](nginx/unit.json)
+file. The configuration can be uploaded using command similar to this:
+
+```curl -X PUT --data-binary @nginx/unit.json --unix-socket /var/run/control.unit.sock http://localhost/config```
+
+Please consult with [Unit docs](https://unit.nginx.org/configuration/) for details.
