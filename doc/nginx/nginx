@@ -1,0 +1,42 @@
+# svaroge.space
+#
+# This is a site configuration for nginx. You probably want to put it in
+# /etc/nginx/sites-available and then add a link to in in /etc/nginx/sites-enabled
+#
+# For it to work, you need to have unit (https://unit.nginx.org/) running
+# See the related unit.json for Unit configuration.
+server {
+	listen 80;
+	listen [::]:80;
+
+	# SSL configuration
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	ssl_certificate /etc/letsencrypt/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/privkey.pem;
+
+	index index.html;
+
+	server_name svarog.space;
+
+	location ^~ /data/ {
+	    rewrite ^/data/(.*)$ /$1 break;
+	    root /home/svarog/data;
+	}
+
+	location ^~ /viewer {
+	    root /home/svarog/public_html;
+	    index index.html;
+	    try_files $uri $uri/ $uri/index.html =405;
+	}
+
+	access_log /home/svarog/logs/nginx-access.log;
+	error_log /home/svarog/logs/nginx-error.log debug;
+
+	location / {
+
+		proxy_pass http://127.0.0.1:1234;
+		proxy_set_header Host $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+}
