@@ -104,10 +104,15 @@
                 </a>
             </td>
             <td>
+                {% if obs.config.freq is defined %}
                 {{ "%.3f MHz"|format(obs.config.freq) }}
+                {% else %} ???
+                {% endif %}
             </td>
             <td>
+                {% if obs.config.proto is defined %}
                 {{ obs.config.proto }}
+                {% endif %}
             </td>
             <td>
                 <a href="/obs/{{ obs.obs_id }}">
