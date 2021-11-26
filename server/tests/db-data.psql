@@ -9,8 +9,8 @@ INSERT INTO satellites VALUES
 (33591, 'NOAA 19', 'https://www.n2yo.com/satellite/?s=33591');
 
 INSERT INTO public.stations (station_id, name, lon, lat, descr, config, registered, firstobs, lastobs, secret) VALUES
-(1, 'TKiS-1', 18.5317870000000013, 54.3524689999999993, 'The TKiS-1 station was created by Slawek Figiel, Tomek Mrugalski and Ewelina Omernik as part of the group project during \ntheir MSc studies at Gdansk University of Technology.', 'WiMo TA-1 antenna (omni), RTL-SDR v3, Raspberry Pi 4B', '2019-12-15 08:54:53', '2019-12-15 08:54:53', '2020-02-16 18:26:01.722841', '\x0123456789abcdef'),
-(2, 'ETI-1', 18.6132530000000003, 54.3708900000000028, 'Planned ground station at ETI faculty of Gdansk University of Technology', 'Configuration is TBD', '2020-02-16 21:15:20.615274)', NULL, NULL, NULL);
+(1, 'TKiS-1', 18.5317870000000013, 54.3524689999999993, 'The TKiS-1 station was created by Slawek Figiel, Tomek Mrugalski and Ewelina Omernik as part of the group project during \ntheir MSc studies at Gdansk University of Technology.', '{ "antenna": "WiMo TA-1", "antenna-type":"crossed dipole", "sdr":"RTL-SDR v3" }', '2019-12-15 08:54:53', '2019-12-15 08:54:53', '2020-02-16 18:26:01.722841', '\x0123456789abcdef'),
+(2, 'ETI-1', 18.6132530000000003, 54.3708900000000028, 'Planned ground station at ETI faculty of Gdansk University of Technology', '{"text":"Configuration is TBD"}', '2020-02-16 21:15:20.615274)', NULL, NULL, NULL);
 
 INSERT INTO public.observations (obs_id, aos, tca, los, sat_id, thumbnail, notes, config, tle, station_id) VALUES
 (750, '2020-03-08 15:35:02.042786', '2020-03-08 15:40:01.234567', '2020-03-08 15:51:33.972692', 33591, 'thumb-eb38486b-cd40-4879-81e9-31131766e84b-NOAA 19_2020-03-08T15:51:33.972692_apt.png', NULL, NULL, NULL, 1),
