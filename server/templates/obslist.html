@@ -68,6 +68,8 @@
         <th class="text-center"><abbr title="Two Line Element">TLE</abbr></th>
         <th class="text-center">Rating</th>
         <th>Station</th>
+        <th>Frequency</th>
+        <th>Protocol</th>
         <th>Image</th>
     </tr>
     {% for obs in obslist %}
@@ -78,9 +80,7 @@
                 <abbr title="TCA is equal to AOS, which looks suspicious. Corrected rough estimate is shown below in parentheses.">
                     <span class="glyphicon text-warning glyphicon-question-sign"></span></abbr>
                 <br/>({{ (obs.aos + (obs.los - obs.aos)/2)|datetime }})
-                {% endif %}
-            </td>
-            <td>{{ obs.los|datetime }}</td>
+                {% endif %} </td><td> {{ obs.los|datetime }}</td>
             <td>
                 <a href="https://www.n2yo.com/satellite/?s={{ obs.sat_id }}">
                     {{ obs.sat_name }}
@@ -102,6 +102,12 @@
                 <a href="/station/{{ obs.station_id }}">
                     {{ obs.station_name }}
                 </a>
+            </td>
+            <td>
+                {{ "%.3f MHz"|format(obs.config.freq) }}
+            </td>
+            <td>
+                {{ obs.config.proto }}
             </td>
             <td>
                 <a href="/obs/{{ obs.obs_id }}">
