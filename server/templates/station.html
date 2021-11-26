@@ -26,7 +26,12 @@
         <b>About the station</b>: {{ station.descr }}
     </p>
     <p>
-        <b>Current configuration:</b> {{ station.config }}
+        <b>Current configuration:</b>
+        <ul>
+        {% for c in station.config %}
+            <li>{{ c }}: {{ station.config[c] }}</li>
+        {% endfor %}
+        </ul>
     </p>
 
     {% if files is defined %}
