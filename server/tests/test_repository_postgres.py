@@ -50,6 +50,10 @@ class RepositoryPostgresTests(unittest.TestCase):
         migration_numbers = []
         for filename in os.listdir(directory):
             base, _ = os.path.splitext(filename)
+
+            # Skip any files that do not conform to the upgrade script naming convention
+            if base[:7] != "svarog-":
+                continue
             _, number_raw = base.split('-')
             number = int(number_raw)
             migration_numbers.append(number)
@@ -181,7 +185,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(station['name'], 'TKiS-1')
         self.assertEqual(station['lon'], 18.531787)
         self.assertEqual(station['lat'], 54.352469)
-        self.assertEqual(station['config'], 'WiMo TA-1 antenna (omni), RTL-SDR v3, Raspberry Pi 4B')
+        self.assertEqual(station['config'], {'sdr':'RTL-SDR v3', 'antenna': 'WiMo TA-1', 'antenna-type':'crossed dipole'})
         self.assertEqual(station['registered'], datetime.datetime(2019, 12, 15, 8, 54, 53))
         self.assertEqual(count, 4) # Number of observations
         self.assertEqual(last_obs_date, datetime.datetime(2020, 4, 12, 9, 17, 6, 466954)) # Last observation.
@@ -194,7 +198,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(station['lon'], 18.613253)
         self.assertEqual(station['lat'], 54.37089)
         self.assertEqual(station['descr'], 'Planned ground station at ETI faculty of Gdansk University of Technology')
-        self.assertEqual(station['config'], 'Configuration is TBD')
+        self.assertEqual(station['config'], {'text':'Configuration is TBD'})
         self.assertEqual(station['registered'], datetime.datetime(2020, 2, 16, 21, 15, 20, 615274))
         self.assertEqual(count, 0) # Number of observations
         self.assertEqual(last_obs_date, None) # Last observation.
