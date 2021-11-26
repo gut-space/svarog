@@ -8,7 +8,7 @@
         <img src="/data/thumbs/{{ obs.thumbnail }}" />
     </div>
 
-    <h4>Transmission parameters</h4>
+    <h4>General parameters</h4>
     <p>
         <dl>
             <dt class="param">
@@ -34,6 +34,14 @@
                 norad id {{ obs.sat_id }}</dd>
             <dt class="param">Ground station</dt><dd><a href="/station/{{ obs.station_id }}">{{station.name}}</a></dd>
         </dl>
+    </p>
+    <h4>Configuration</h4>
+    <p>
+        {% for c in obs.config %}
+        {% if obs.config[c] %}
+        <dt class="param">{{ c }}</dt><dd>{{ obs.config[c] }}</dd>
+        {% endif %}
+        {% endfor %}
     </p>
     {% if obs.tle %}
     <h4>Pass plots</h4>

@@ -29,7 +29,9 @@
         <b>Current configuration:</b>
         <ul>
         {% for c in station.config %}
-            <li>{{ c }}: {{ station.config[c] }}</li>
+        {% if station.config[c] %}
+        <li>{{ c }}: {{ station.config[c] }}</li>
+        {% endif %}
         {% endfor %}
         </ul>
     </p>
