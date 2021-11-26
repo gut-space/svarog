@@ -220,7 +220,7 @@ class Repository:
     def read_observations(self, filters: ObservationFilter={}, limit:int=100,
             offset:int=0) -> Sequence[Observation]:
         q = ("SELECT o.obs_id, o.aos, o.tca, o.los, o.sat_id, o.thumbnail, "
-                "o.station_id, o.notes, o.tle, r.rating "
+                "o.station_id, o.notes, o.tle, r.rating, o.config "
             "FROM observations o "
             "LEFT JOIN observation_ratings r ON o.obs_id = r.obs_id "
             "WHERE (%(obs_id)s IS NULL OR o.obs_id = %(obs_id)s) AND "
