@@ -37,11 +37,13 @@
     </p>
     <h4>Configuration</h4>
     <p>
+        {% if obs.config %}
         {% for c in obs.config %}
         {% if obs.config[c] %}
         <dt class="param">{{ c }}</dt><dd>{{ obs.config[c] }}</dd>
         {% endif %}
         {% endfor %}
+        {% endif %}
     </p>
     {% if obs.tle %}
     <h4>Pass plots</h4>
