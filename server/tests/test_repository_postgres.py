@@ -135,6 +135,7 @@ class RepositoryPostgresTests(unittest.TestCase):
             'los': datetime.datetime(2020, 3, 21, 12, 30, 0),
             'sat_id': SatelliteId(28654),
             'thumbnail': 'thumb-123.png',
+            'config': None,
             'notes': None,
             'station_id': StationId(1),
             'tle': [
