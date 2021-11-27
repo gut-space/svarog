@@ -78,7 +78,7 @@ def setup_aliases():
 
 REQUIREMENTS, DEP_LINKS = get_requirements_and_links()
 
-EXTERNAL_DEPENDENCIES = ["noaa-apt", "rx_fm", "sox", "meteor-demod", "medet", "convert"]
+EXTERNAL_DEPENDENCIES = ["noaa-apt", "rtl_fm", "sox", "meteor-demod", "medet", "convert"]
 
 RECIPE_DIR = "recipes"
 
