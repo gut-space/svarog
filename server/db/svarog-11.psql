@@ -5,30 +5,30 @@ ALTER TABLE stations ALTER COLUMN config TYPE jsonb USING json_build_object('tex
 
 -- Now we need to migrate existing data. This is really specific to station 1.
 -- Let's add protocol transmission. So far we were able to receive APT and LRPT.
-update observations set config = config || '{"proto": "APT" }' where sat_id in (25338, 28654, 33591) AND station_id = 1;
-update observations set config = config || '{"proto": "LRPT" }' where sat_id in (40069, 44387) AND station_id = 1;
+UPDATE observations SET config = config || '{"protocol": "APT" }' WHERE sat_id IN (25338, 28654, 33591) AND station_id = 1;
+UPDATE observations SET config = config || '{"protocol": "LRPT" }' WHERE sat_id IN (40069, 44387) AND station_id = 1;
 
 -- All transmissions received so far were done using crossed dipole
-update observations set config = config || '{"antenna": "WiMo TA-1", "antenna-type": "crossed dipole" }' WHERE station_id = 1;
+UPDATE observations SET config = config || '{"antenna": "WiMo TA-1", "antenna-type": "crossed dipole" }' WHERE station_id = 1;
 
 -- Add frequencies. We haven't done any Doppler magic, so everything was received on base frequencies.
-update observations set config = config || '{"freq": 137.62 }' WHERE sat_id = 25338 and station_id = 1; -- NOAA 15
-update observations set config = config || '{"freq": 137.912 }' WHERE sat_id = 28654 and station_id = 1; -- NOAA 18
-update observations set config = config || '{"freq": 137.1 }' WHERE sat_id = 33591 and station_id = 1; -- NOAA 19
-update observations set config = config || '{"freq": 137.1 }' WHERE sat_id = 40069 and station_id = 1; -- METEOR M-2
+UPDATE observations SET config = config || '{"frequency": 137.62 }' WHERE sat_id = 25338 AND station_id = 1; -- NOAA 15
+UPDATE observations SET config = config || '{"frequency": 137.912 }' WHERE sat_id = 28654 AND station_id = 1; -- NOAA 18
+UPDATE observations SET config = config || '{"frequency": 137.1 }' WHERE sat_id = 33591 AND station_id = 1; -- NOAA 19
+UPDATE observations SET config = config || '{"frequency": 137.1 }' WHERE sat_id = 40069 AND station_id = 1; -- METEOR M-2
 
 -- Now set the SDR being used. I don't remember the exact date when AirSpy was installed. However, shortly afterwards
 -- the PR for adding generic RX recipe (PR#50) was merged. The merge was on 2021-06-09, so let's assume
 -- that's the date of AirSpy upgrade.
 
-UPDATE observations set config = config || '{"sdr": "RTL-SDRv3"}' WHERE station_id = 1 and aos<'2021-06-09'::date;
-UPDATE observations set config = config || '{"sdr": "AirSpy Mini"}' WHERE station_id = 1 and aos>='2021-06-09'::date;
+UPDATE observations set config = config || '{"receiver": "RTL-SDRv3"}' WHERE station_id = 1 AND aos<'2021-06-09'::date;
+UPDATE observations set config = config || '{"receiver": "AirSpy Mini"}' WHERE station_id = 1 AND aos>='2021-06-09'::date;
 
 -- The last METEOR observation recorded is from 2021-03-26. That's because the newly installed LNA + filter
 -- (Nooelec NOAA) has a filter that is wide enough for NOAA, but too narrow for Meteor.
 UPDATE observations SET config = config || '{"lna":"Nooelec NOAA", "filter":"Nooelec NOAA"}'
     WHERE station_id =1 AND aos>='2021-03-26'::date;
-UPDATE observations SET config = config || '{"lna": null, "filter": null}'
+UPDATE observations SET config = config || '{"lna": "none", "filter": "none"}'
     WHERE station_id =1 AND aos<'2021-03-26'::date;
 
 -- Not related to the schema update. When registering new stations, let's set the registered to now, unless
