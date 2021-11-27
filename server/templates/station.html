@@ -29,7 +29,7 @@
         <b>Current configuration:</b>
         <ul>
         {% for c in station.config %}
-        {% if station.config[c] %}
+        {% if station.config[c] is defined %}
         <li>{{ c }}: {{ station.config[c] }}</li>
         {% endif %}
         {% endfor %}
