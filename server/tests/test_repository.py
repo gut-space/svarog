@@ -5,6 +5,14 @@ from app.repository import Repository
 
 class RepositoryTests(unittest.TestCase):
 
+    def setUp(self):
+        """This is run before each test."""
+        pass
+
+    def tearDown(self):
+        """This is run after each test."""
+        pass
+
     @mock.patch("psycopg2.connect")
     def test_db_version(self, mock_connect):
         repostory = Repository({})
