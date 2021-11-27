@@ -51,8 +51,9 @@ class RepositoryPostgresTests(unittest.TestCase):
         for filename in os.listdir(directory):
             base, _ = os.path.splitext(filename)
 
-            # Skip any files that do not conform to the upgrade script naming convention
-            if base[:7] != "svarog-":
+            # Skip any files that do not conform to the upgrade script naming convention.
+            # It's pretty common to put some other temporary scripts in this dir, e.g. drop.psql
+            if not base.startswith("svarog-"):
                 continue
             _, number_raw = base.split('-')
             number = int(number_raw)

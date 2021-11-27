@@ -104,14 +104,14 @@
                 </a>
             </td>
             <td>
-                {% if obs.config.freq is defined %}
-                {{ "%.3f MHz"|format(obs.config.freq) }}
+                {% if obs.config.frequency is defined %}
+                {{ "%.3f MHz"|format(obs.config.frequency) }}
                 {% else %} ???
                 {% endif %}
             </td>
             <td>
-                {% if obs.config.proto is defined %}
-                {{ obs.config.proto }}
+                {% if obs.config.protocol is defined %}
+                {{ obs.config.protocol }}
                 {% endif %}
             </td>
             <td>
