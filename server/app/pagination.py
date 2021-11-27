@@ -125,11 +125,11 @@ class Pagination:
 def use_page(*param_names:Iterable[str]):
     def use_page_decorator(f):
         '''
-        Decorator for retrive page number from request. Part of medium-level
+        Decorator for retrieving page number from request. Part of medium-level
         pagination solution.
 
         Checklist (what you need to do to use it correctly):
-        1. Add this decorator to your action (with parenthness)
+        1. Add this decorator to your action (with parentheses)
         2. Take as function argument "page"
         3. Create object of Pagination class
         4. Calculate limit and offset
@@ -172,7 +172,7 @@ def use_page(*param_names:Iterable[str]):
         '''
         argmap = {}
         for param_name in param_names:
-            argmap[param_name] = webargs.fields.Int(missing=1, 
+            argmap[param_name] = webargs.fields.Int(missing=1,
                 validate=webargs.validate.Range(min=1))
         return use_kwargs(argmap, location="query")(f)
     return use_page_decorator
@@ -242,7 +242,7 @@ def use_pagination(
             return 'action.html', dict(items=items, #5 don't use render_template
                                        item_count=count)   #6 include item_count
 
-    >>> # Somewhere in action .html template. 
+    >>> # Somewhere in action .html template.
     >>> {% include 'pagination.html' %}                    #7 include pagination
 
     >>> # Many pagination
@@ -283,7 +283,7 @@ def use_pagination(
     '''
     configurations: Sequence[PaginationConfiguration]
     items_per_page: Optional[int] = None
-    
+
     if type(per_page_or_config) == int:
         items_per_page = per_page_or_config # type: ignore
         configurations = args
@@ -315,11 +315,11 @@ def use_pagination(
             paginations = [Pagination(items_per_page=c["items_per_page"],
                                       param_name=c["page_param"])
                             for c in configurations]
-            many_lao = [pagination.limit_and_offset(page) 
+            many_lao = [pagination.limit_and_offset(page)
                 for page, pagination in zip(pages, paginations)]
             limit_and_offset = many_lao[0] if is_single_configuration else many_lao
 
-            template, context = f(*args, **kwargs, 
+            template, context = f(*args, **kwargs,
                 limit_and_offset=limit_and_offset)
 
             item_counts = [context[c["count_name"]] for c in configurations]
