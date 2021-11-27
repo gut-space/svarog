@@ -31,4 +31,8 @@ UPDATE observations SET config = config || '{"lna":"Nooelec NOAA", "filter":"Noo
 UPDATE observations SET config = config || '{"lna": null, "filter": null}'
     WHERE station_id =1 AND aos<'2021-03-26'::date;
 
+-- Not related to the schema update. When registering new stations, let's set the registered to now, unless
+-- explicitly specified another date.
+ALTER TABLE stations ALTER COLUMN registered SET DEFAULT now();
+
 UPDATE schema SET version = 11;
