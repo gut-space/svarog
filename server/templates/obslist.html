@@ -105,7 +105,7 @@
             </td>
             <td>
                 {% if obs.config.frequency is defined %}
-                {{ "%.3f MHz"|format(obs.config.frequency) }}
+                {{ "%.3f MHz"|format(obs.config.frequency/1000000) }}
                 {% else %} ???
                 {% endif %}
             </td>

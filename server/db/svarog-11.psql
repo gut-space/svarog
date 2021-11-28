@@ -12,10 +12,10 @@ UPDATE observations SET config = config || '{"protocol": "LRPT" }' WHERE sat_id 
 UPDATE observations SET config = config || '{"antenna": "WiMo TA-1", "antenna-type": "crossed dipole" }' WHERE station_id = 1;
 
 -- Add frequencies. We haven't done any Doppler magic, so everything was received on base frequencies.
-UPDATE observations SET config = config || '{"frequency": 137.62 }' WHERE sat_id = 25338 AND station_id = 1; -- NOAA 15
-UPDATE observations SET config = config || '{"frequency": 137.912 }' WHERE sat_id = 28654 AND station_id = 1; -- NOAA 18
-UPDATE observations SET config = config || '{"frequency": 137.1 }' WHERE sat_id = 33591 AND station_id = 1; -- NOAA 19
-UPDATE observations SET config = config || '{"frequency": 137.1 }' WHERE sat_id = 40069 AND station_id = 1; -- METEOR M-2
+UPDATE observations SET config = config || '{"frequency": 137.62e6 }' WHERE sat_id = 25338 AND station_id = 1; -- NOAA 15
+UPDATE observations SET config = config || '{"frequency": 137.912e6 }' WHERE sat_id = 28654 AND station_id = 1; -- NOAA 18
+UPDATE observations SET config = config || '{"frequency": 137.1e6 }' WHERE sat_id = 33591 AND station_id = 1; -- NOAA 19
+UPDATE observations SET config = config || '{"frequency": 137.1e6 }' WHERE sat_id = 40069 AND station_id = 1; -- METEOR M-2
 
 -- Now set the SDR being used. I don't remember the exact date when AirSpy was installed. However, shortly afterwards
 -- the PR for adding generic RX recipe (PR#50) was merged. The merge was on 2021-06-09, so let's assume
