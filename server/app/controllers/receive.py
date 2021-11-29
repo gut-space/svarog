@@ -47,7 +47,13 @@ class RequestArguments(TypedDict):
     rating: Optional[float]
 
 ALLOWED_FILE_TYPES = {
-    "image/png": ".png"
+    "image/png": ".png",
+    "image/jpeg": ".jpg",
+    "image/gif": ".gif",
+    "application/json": ".json",
+    "text/plain": ".txt",
+    "text/plain": ".log",
+    "text/plain": ".csv"
 }
 
 get_extension = lambda p: os.path.splitext(p)[1]
@@ -104,6 +110,7 @@ def receive(station_id: str, args: RequestArguments):
     file_entries: List[Tuple[str, WebFileLike]] = []
     for idx, (_, file_) in items:
         if not is_allowed_file(file_):
+            app.logger.warning(f"File {file_.filename} is not allowed due to its type ({file_.mimetype}) or extension")
             continue
         org_filename = secure_filename(file_.filename)
         filename = "%s-%d-%s" % (uid, idx, org_filename)
