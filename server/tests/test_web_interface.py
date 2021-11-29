@@ -99,7 +99,7 @@ class BasicTests(unittest.TestCase):
             'tca': datetime.datetime(2020, 3, 28, 12, 15),
             'los': datetime.datetime(2020, 3, 28, 12, 30),
             'sat': 'NOAA 15',
-            'notes': 'note text',
+            'config': '{"text":"note text"}',
             "file0": open("tests/x.png", 'rb'),
             "file1": open("tests/x.png", 'rb'),
             "tle": [
