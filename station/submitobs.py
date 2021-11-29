@@ -74,6 +74,8 @@ def get_mime_type(filename: str) -> str:
     """
 
     # This is a list of file types that possibly could make sense in the Svarog project.
+    # When adding new types, don't forget to update ALLOWED_FILE_TYPES in
+    # server/app/controllers/receive.py
     known_types = {
         "csv": "text/plain",
         "gif": "image/gif",
