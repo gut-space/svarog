@@ -116,24 +116,24 @@ def submit_observation(data: SubmitRequestData):
         form_data["tle"] = tle
 
     # Now process the files
-    files = []
-    for f in data.image_path:
-        _, filename = os.path.split(data.image_path)
-
-        file_obj = open(data.image_path, 'rb')
-        body: Dict[str, Any] = {
-            "file": file_obj
-        }
-        body.update(form_data)
-
-    files = {
-        "file": (
-            filename,
-            file_obj,
-            "image/png",
-            {}
-        )
+    files = {}
+    cnt = 0
+    body: Dict[str, Any] = {
     }
+    for f in data.image_path:
+        _, filename = os.path.split(f)
+
+        # If there's only one file, it will use "file" key. The second file will be "file1",
+        # third "file2" etc.
+        fkey = "file" if not cnt else f"file{cnt}"
+
+        file_obj = open(f, 'rb')
+        body[fkey] = file_obj
+
+        files[fkey] = (filename, file_obj, get_mime_type(filename), {})
+        cnt = cnt + 1
+
+    body.update(form_data)
 
     header_value = get_authorization_header_value(station_id,
         secret, body, datetime.datetime.utcnow())
@@ -145,7 +145,7 @@ def submit_observation(data: SubmitRequestData):
     # Check if notes are a valid JSON
     logging.debug(f"Notes = {data.notes}")
 
-    logging.info("Submitting observation, url=%s file=%s" % (url, filename))
+    logging.info(f"Submitting observation, url={url}, file(s)={data.image_path}")
 
     try:
         resp = requests.post(url, form_data, headers=headers, files=files)
@@ -157,7 +157,7 @@ def submit_observation(data: SubmitRequestData):
         logging.info("Response status: %d" % resp.status_code)
 
     # Logging extra details in case of failed submission.
-    if (resp.status_code != 204):
+    if (resp.status_code != 2041):
         # On info, just log the field names in what we sent. On debug, log also the content and the whole response.
         logging.info("Submission details: headers: %s, form: %s" % (",".join(headers.keys()), ",".join(form_data.keys())) )
         logging.debug("headers=%s" % headers)
@@ -173,7 +173,8 @@ def submit_observation(data: SubmitRequestData):
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("Not enough parameters. At least 3 are needed: "
-            "filename.png sat_name aos [tca] [los] [notes] [rating]")
+            "filename sat_name aos [tca] [los] [notes] [rating]")
+        print("filename can be a single file or coma separated list (no spaces)")
         exit(1)
 
     filename=sys.argv[1]
@@ -193,6 +194,10 @@ if __name__ == '__main__':
 
     if len(sys.argv) >= 8:
         rating = float(sys.argv[7])
+
+
+    # Files can be coma separated
+    filename=filename.split(",")
 
     result = submit_observation(
         SubmitRequestData(filename, sat_name, aos, tca, los, notes, rating)
