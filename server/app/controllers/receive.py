@@ -115,6 +115,7 @@ def receive(station_id: str, args: RequestArguments):
         org_filename = secure_filename(file_.filename)
         filename = "%s-%d-%s" % (uid, idx, org_filename)
         file_entries.append((filename, file_))
+        app.logger.info(f"Received file {file_.filename}, to be stored as {filename}")
 
     # Select thumbnail source file
     thumbnail_source_entry = first(lambda f: f[1].mimetype.startswith("image/"), file_entries)
