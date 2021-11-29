@@ -45,7 +45,7 @@ class SubmitRequestData:
     rating: float?
         Rating of image
     """
-    image_path: list[str]
+    image_path: List[str]
     sat_name: str
     aos: datetime.datetime
     tca: datetime.datetime
