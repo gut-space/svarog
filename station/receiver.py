@@ -59,7 +59,7 @@ def cmd():
     results, dir = factory.execute_recipe(satellite, los_datetime)
 
     # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
-    # However, is things go south and for some reason the recipe is mistaken (e.g. the noaa-apt fails to
+    # However, if things go south and for some reason the recipe is mistaken (e.g. the noaa-apt fails to
     # create a .png file, because the input WAV file was junk), then we should filter out the files
     # that do not exist.
     files_txt = ""
@@ -89,9 +89,10 @@ def cmd():
             rating = get_rating_for_product(product[1], satellite.get("rate"))
             logging.info("Product %s got rating %s" % (product[1], rating))
             # TODO: Submit ALL products and logs
+            files = [ product[1] ]
             submit_observation(
                 SubmitRequestData(
-                    product[1], name, aos_datetime, tca_datetime,
+                    files, name, aos_datetime, tca_datetime,
                     los_datetime, "", rating
                 )
             )
