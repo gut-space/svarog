@@ -42,7 +42,7 @@ class RequestArguments(TypedDict):
     tca: datetime.datetime
     los: datetime.datetime
     sat: str
-    notes: Optional[str]
+    config: Optional[str]
     tle: Optional[List[str]]
     rating: Optional[float]
 
@@ -72,7 +72,7 @@ is_allowed_file = lambda f: get_extension(f.filename) in ALLOWED_FILE_TYPES and 
     'tca': fields.DateTime(required=True),
     'los': fields.DateTime(required=True),
     'sat': fields.Str(required=True),
-    'notes': fields.Str(required=False),
+    'config': fields.Str(required=False),
     'rating': fields.Float(required=False),
     'tle': fields.List(fields.Str, required=False,
         validate=[
@@ -104,6 +104,7 @@ def receive(station_id: str, args: RequestArguments):
 
     Satellite assigned to observation must exists in database.
     '''
+
     files: Dict[str, WebFileLike] = request.files
 
     if len(files) == 0:
@@ -152,12 +153,12 @@ def receive(station_id: str, args: RequestArguments):
             'los': args['los'],
             'sat_id': sat_id,
             'thumbnail': thumb_filename,
-            'notes': args.get('notes'),
+            'config': args.get('config'),
             'station_id': StationId(station_id),
             'tle': tle
         }
 
-        app.logger.info("Received observation: station_id=%s sat_id=%s notes=%s rating=%s" % (station_id, sat_id, args.get('notes'), args.get('rating')))
+        app.logger.info("Received observation: station_id=%s sat_id=%s config=%s rating=%s" % (station_id, sat_id, args.get('config'), args.get('rating')))
 
         obs_id = repository.insert_observation(observation)
         observation["obs_id"] = obs_id

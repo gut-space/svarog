@@ -4,6 +4,7 @@ import os
 import requests
 import sys
 import logging
+import json
 
 # This is awfully early. However, some of the later imports seem to define the basic config on its own.
 if __name__ == '__main__':
@@ -40,8 +41,8 @@ class SubmitRequestData:
         Time of Closest Approach
     los: datetime.datetime
         Loss of Signal (or Satellite)
-    notes: str
-        Any text note
+    config: dict
+        meta-data information in JSON format
     rating: float?
         Rating of image
     """
@@ -50,7 +51,7 @@ class SubmitRequestData:
     aos: datetime.datetime
     tca: datetime.datetime
     los: datetime.datetime
-    notes: str
+    config: Optional[str]
     rating: Optional[float]
 
 
@@ -110,8 +111,8 @@ def submit_observation(data: SubmitRequestData):
         "tca": data.tca.isoformat(),
         "los": data.los.isoformat(),
         "sat": data.sat_name,
-        "notes": data.notes,
-        "rating": data.rating
+        "rating": data.rating,
+        "config": data.config
     }
 
     tle = get_tle(data.sat_name, data.aos)
@@ -146,7 +147,7 @@ def submit_observation(data: SubmitRequestData):
     }
 
     # Check if notes are a valid JSON
-    logging.debug(f"Notes = {data.notes}")
+    logging.debug(f"Meta-data = {data.config}")
 
     logging.info(f"Submitting observation, url={url}, file(s)={data.image_path}")
 
@@ -183,7 +184,7 @@ if __name__ == '__main__':
     filename=sys.argv[1]
     sat_name=sys.argv[2]
     aos=tca=los=from_iso_format(sys.argv[3])
-    notes = ""
+    cfg = "{}"
     rating = None
 
     if len(sys.argv) >= 5:
@@ -193,17 +194,21 @@ if __name__ == '__main__':
         los = from_iso_format(sys.argv[5])
 
     if len(sys.argv) >= 7:
-        notes = sys.argv[6]
+        try:
+            # Just check if ths input is a valid JSON (but use it as text anyway)
+            json.loads(sys.argv[6])
+            cfg = sys.argv[6]
+        except:
+            logging.error(f"ERROR: The meta-data (config) was specified: {sys.argv[6]}, but it's not a valid JSON")
 
     if len(sys.argv) >= 8:
         rating = float(sys.argv[7])
 
-
-    # Files can be coma separated
+    # Files can be coma separated (or it could be just a single file)
     filename=filename.split(",")
 
     result = submit_observation(
-        SubmitRequestData(filename, sat_name, aos, tca, los, notes, rating)
+        SubmitRequestData(filename, sat_name, aos, tca, los, cfg, rating)
     )
 
     if result:

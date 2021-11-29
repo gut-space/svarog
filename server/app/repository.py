@@ -5,7 +5,7 @@ It is responsible for create and execute SQL queries and support transactional.
 
 from datetime import datetime
 from functools import wraps
-from typing import Any, List, NewType, Sequence, Union, Optional, Tuple
+from typing import Any, List, NewType, Sequence, Union, Optional, Tuple, Dict
 from enum import Enum
 import sys
 from collections import defaultdict
@@ -41,7 +41,7 @@ class Observation(TypedDict):
     los: datetime
     sat_id: SatelliteId
     thumbnail: str
-    notes: Optional[str]
+    config: Optional[Dict]
     station_id: StationId
     tle: Optional[List[str]]
 
@@ -250,9 +250,9 @@ class Repository:
         cursor = self._cursor
         cursor.execute(
             "INSERT INTO observations "
-                "(aos, tca, los, sat_id, thumbnail, notes, station_id, tle) "
+                "(aos, tca, los, sat_id, thumbnail, config, station_id, tle) "
             "VALUES (%(aos)s, %(tca)s, %(los)s, %(sat_id)s, %(thumbnail)s, "
-                    "%(notes)s, %(station_id)s, %(tle)s) "
+                    "%(config)s, %(station_id)s, %(tle)s) "
             "RETURNING obs_id;",
             {
                 'aos': observation["aos"].isoformat(),
@@ -260,7 +260,7 @@ class Repository:
                 'los': observation['los'].isoformat(),
                 'sat_id': observation['sat_id'],
                 'thumbnail': observation['thumbnail'],
-                'notes': observation['notes'],
+                'config': observation['config'],
                 'station_id': observation['station_id'],
                 'tle': observation['tle']
             }
