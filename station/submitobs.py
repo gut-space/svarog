@@ -76,6 +76,7 @@ def get_mime_type(filename: str) -> str:
     # This is a list of file types that possibly could make sense in the Svarog project.
     known_types = {
         "csv": "text/plain",
+        "gif": "image/gif",
         "jpeg": "image/jpeg",
         "jpg": "image/jpeg",
         "json": "application/json",
