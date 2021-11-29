@@ -91,6 +91,7 @@ def _save_to_png(figure: plt.Figure) -> io.BytesIO:
         @see https://stackoverflow.com/a/50728936'''
     output = io.BytesIO()
     FigureCanvas(figure).print_png(output)
+    plt.close(figure)
     return output
 
 def generate_polar_plot_png(location: Location, tle: Sequence[str],
