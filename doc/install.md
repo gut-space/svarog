@@ -62,7 +62,7 @@ every time, you can simply type `station` instead.
 There is a command line tool used to manage the station. You can run it with:
 
 ```
-$ station/cli.py 
+$ station/cli.py
 usage: svarog [-h] {clear,logs,plan,pass,config} ...
 
 positional arguments:
@@ -93,7 +93,7 @@ It will create a tempate config for you. The config file is stored in ~/.config/
 python station/cli.py config location -lat 54.34 -lng 23.23 -ele 154
 ```
 
-In particular, you may want to increase logging level to debug, to spot any problems: 
+In particular, you may want to increase logging level to debug, to spot any problems:
 
 ```shell
 python cli.py config logging --level DEBUG
@@ -111,9 +111,32 @@ python station/cli.py plan --force
 
 This should be done once. CLI will update the crontab jobs and will periodically add new ones. The `--force` command will conduct the scheduling now, rather than wait for 4am to do scheduling.
 
-9. **Run unit-tests (devs only)**
+9. **Tweak metadata**
+
+Metadata is set of additional parameters that describe your station. Typically these
+are parameters like type of SDR, antenna brand and type, maybe filters or LNA you're using,
+but this may be basically anything that you find important enough to be recorded.
+
+A good example of non-standard thing would be the antenna orientation. You may tweak it
+and then let the Svarog record observations. Later, you may turn it to some other
+position and after a while compare results.
+
+To generate the template to fill in use the following command:
+
+```
+python station/cli.py metadata
+```
+
+It will print the location of the file and its content. Feel free to tweak it as you see fit.
+You may want to add extra data. Any other type will be accepted as long as it's a valid JSON.
+Also, take a look at [submit_obs.py](submit_obs.md), which explains what the parameters mean.
+Some additional parameters are set by the Svarog station on its own.
+
+10. **Run unit-tests (devs only)**
 
 Developers may be interested in running unit tests. The best way to do that is to call a command `python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python version).
+
+
 
 # Server installation
 
