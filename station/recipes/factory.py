@@ -94,11 +94,11 @@ def get_unique_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
     return los.strftime("%Y-%m-%d-%H%M") + "-" + sat["name"].lower().replace(" ", "-")
 
 def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
-        -> Tuple[Iterable[Tuple[ReceptionResultCategory, str]], str]:
+        -> Tuple[Iterable[Tuple[ReceptionResultCategory, str]], str, dict]:
     '''
     Execute recipe for specified satellite and return results.
 
-    Return collection of tuples with category and path.
+    Return collection of tuples with category, path, and metadata.
     Second item in result is path to temporary observation directory.
     If no recipe found then throw LookupError.
 
@@ -120,8 +120,13 @@ def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
     now = datetime.datetime.utcnow()
     record_interval = los - now
 
+    metadata = {
+        "frequency": sat["freq"],
+        "recipe": str(recipe_function)
+    }
+
     output = recipe_function(reception_dir, sat["freq"], record_interval)
-    return output, reception_dir
+    return output, reception_dir, metadata
 
 
 def get_recipe_names() -> List[str]:
