@@ -46,10 +46,6 @@ class RequestArguments(TypedDict):
     tle: Optional[List[str]]
     rating: Optional[float]
 
-# The default thumbnail image (if it's not possible to generate a thumbnail, e.g. due to the
-# fact that uploaded files are of different type (text maybe)
-DEFAULT_THUMBNAIL = "no-thumb.png"
-
 # When adding new types, don't forget to update known_types list in station/submitobs.py
 ALLOWED_FILE_TYPES = {
     ".png": "image/png",
@@ -62,8 +58,7 @@ ALLOWED_FILE_TYPES = {
 }
 
 get_extension = lambda p: os.path.splitext(p)[1]
-is_allowed_file = lambda f: get_extension(f.filename) in ALLOWED_FILE_TYPES and \
-                            ALLOWED_FILE_TYPES[get_extension(f.filename)] == f.mimetype
+is_allowed_file = lambda f: ALLOWED_FILE_TYPES.get(get_extension(f.filename)) == f.mimetype
 
 @app.route('/receive', methods=["POST",])
 @authorize_station
@@ -126,8 +121,8 @@ def receive(station_id: str, args: RequestArguments):
     # Select thumbnail source file
     thumbnail_source_entry = first(lambda f: f[1].mimetype.startswith("image/"), file_entries)
     if thumbnail_source_entry is None:
-        app.logger.info(f"No suitable images for thumbnail, using the default image {DEFAULT_THUMBNAIL}")
-        thumb_filename = DEFAULT_THUMBNAIL
+        app.logger.info(f"No suitable images for thumbnail, using None")
+        thumb_filename = None
     else:
         thumb_source_filename, _ = thumbnail_source_entry
         thumb_filename = "thumb-%s-%s" % (str(uuid.uuid4()), thumb_source_filename)
@@ -187,7 +182,7 @@ def receive(station_id: str, args: RequestArguments):
             app.logger.error("Failed to write %s (image_root=%s): %s" % (path, root, e))
             return abort(503, "Unable to write file %s. Disk operation error." % filename)
 
-    if (thumb_filename != DEFAULT_THUMBNAIL):
+    if thumb_filename != None:
         # Make thumbnail (but only if suitable images were submitted, for text we're out of luck)
         thumb_source_path = os.path.join(root, thumb_source_filename)
         thumb_path = os.path.join(root, "thumbs", thumb_filename)
