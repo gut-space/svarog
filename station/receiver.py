@@ -16,6 +16,7 @@ from recipes import factory
 from quality_ratings import get_rate_by_name
 from dateutil import tz
 from sh import CommandNotFound
+from metadata import Metadata
 
 def move_to_satellite_directory(root: str, sat_name: str, path: str):
     now = datetime.datetime.utcnow()
@@ -56,7 +57,7 @@ def cmd():
     los_datetime = from_iso_format(los)
     tca_datetime = aos_datetime + (los_datetime - aos_datetime)/2
 
-    results, dir = factory.execute_recipe(satellite, los_datetime)
+    results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
 
     # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
     # However, if things go south and for some reason the recipe is mistaken (e.g. the noaa-apt fails to
@@ -81,6 +82,11 @@ def cmd():
     signal = first(results, lambda r: r[0] == "SIGNAL")
     products = filter(lambda r: r[0] == "PRODUCT", results)
 
+    # Use the metadata stored in file, but supplement it with details returned by the recipe
+    m = Metadata()
+    for x in metadata:
+        m.set(x, metadata[x])
+
     if should_submit:
         logging.info("Submitting results")
         product = first(products, lambda _: True)
@@ -93,7 +99,7 @@ def cmd():
             submit_observation(
                 SubmitRequestData(
                     files, name, aos_datetime, tca_datetime,
-                    los_datetime, "", rating
+                    los_datetime, m.getString(), rating
                 )
             )
 
