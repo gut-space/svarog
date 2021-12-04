@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from utils.globalvars import METADATA_FILE
 import json
 
@@ -24,6 +24,8 @@ class Metadata:
         self.loadFile()
 
     def loadFile(self):
+        """Loads file from disk. The filename was specified in constructor.
+           The content is parsed and loaded into self.storage"""
         try:
             with open(self.filename, 'r') as myfile:
                 data=myfile.read()
@@ -43,25 +45,30 @@ class Metadata:
         self.writeFile()
 
     def writeFile(self):
-        txt = json.dumps(self.storage, indent = 4)
+        """Writes content of the metadata to disk."""
         with open(self.filename, 'w') as outfile:
-            outfile.write(txt)
+            outfile.write(self.getString())
 
-    def getAll(self):
+    def getAll(self) -> Dict:
+        """Returns all metadata as dictionary"""
         return self.storage
+
+    def getString(self) -> Dict:
+        """Returns all metadata as a string"""
+        return json.dumps(self.storage, indent = 4)
 
     def get(self, key: str) -> Any:
         """Returns the parameter or empty string if missing"""
         return self.storage[key] if key in self.storage.keys() else ""
 
     def addDefaults(self):
-        self.add('antenna', 'unknown')
-        self.add('antenna-type', 'unknown')
-        self.add('receiver', 'RTL-SDR v3')
-        self.add('lna', 'none')
-        self.add('filter', 'none')
+        self.set('antenna', 'unknown')
+        self.set('antenna-type', 'unknown')
+        self.set('receiver', 'RTL-SDR v3')
+        self.set('lna', 'none')
+        self.set('filter', 'none')
 
-    def add(self, key: str, value: Any):
+    def set(self, key: str, value: Any):
         self.storage[key] = value
 
     def delete(self, key: str):

@@ -19,6 +19,7 @@ class TestMetadata(unittest.TestCase):
         return super().tearDown()
 
     def test_open_empty(self):
+        """If the file is not there, the default values should be loaded."""
         m = Metadata(TESTFILE)
 
         self.assertEqual(m.get('antenna'), 'unknown')
@@ -28,16 +29,24 @@ class TestMetadata(unittest.TestCase):
         self.assertEqual(m.get('filter'), 'none')
 
     def test_add_key(self):
+        """Check if it's possible to add and overwrite keys."""
         m = Metadata(TESTFILE)
-        m.add('foo', 'bar')
-        m.add('baz', 123)
+        m.set('foo', 'bar')
+        m.set('baz', 123)
 
         self.assertEqual(m.get('foo'), 'bar')
         self.assertEqual(m.get('baz'), 123)
 
+        # Check that set overwrites, if the key already exists
+        m.set('baz', 1)
+        m.set('baz', None)
+        m.set('baz', 123)
+        self.assertEqual(m.get('baz'), 123)
+
     def test_del_key(self):
+        """Check if deleting existing (and non-existing) keys is working ok."""
         m = Metadata(TESTFILE)
-        m.add('foo', 'bar')
+        m.set('foo', 'bar')
         self.assertEqual(m.get('antenna'), 'unknown') # default entry
         self.assertEqual(m.get('foo'), 'bar')  # user entry
 
@@ -47,8 +56,13 @@ class TestMetadata(unittest.TestCase):
         self.assertEqual(m.get('foo'), '')
         self.assertEqual(m.get('antenna'), '')
 
+        # Check that deleting non-existing key is OK
+        m.delete('foo')
+        m.delete('foo')
+        m.delete('foo')
+
     def test_file(self):
-        """Tests that the file can be written with proper content."""
+        """Tests that the file can be written and that the written context is correct."""
         try:
             os.remove(TESTFILE)
         except:
