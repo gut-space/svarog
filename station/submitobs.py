@@ -129,12 +129,12 @@ def submit_observation(data: SubmitRequestData):
 
         # If there's only one file, it will use "file" key. The second file will be "file1",
         # third "file2" etc.
-        fkey = "file" if not cnt else f"file{cnt}"
+        file_key = "file" if cnt==0 else f"file{cnt}"
 
         file_obj = open(f, 'rb')
-        body[fkey] = file_obj
+        body[file_key] = file_obj
 
-        files[fkey] = (filename, file_obj, get_mime_type(filename), {})
+        files[file_key] = (filename, file_obj, get_mime_type(filename), {})
         cnt = cnt + 1
 
     body.update(form_data)
