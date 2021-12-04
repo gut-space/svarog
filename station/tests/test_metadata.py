@@ -80,3 +80,17 @@ class TestMetadata(unittest.TestCase):
         self.assertIsNotNone(j['receiver'])
         self.assertIsNotNone(j['lna'])
         self.assertIsNotNone(j['filter'])
+
+    def test_string(self):
+        """Check if the returned string looks reasonable."""
+        m = Metadata(TESTFILE)
+        m.clear()
+        m.set('foo', 'bar')
+        m.set('baz', 123)
+
+        exp_txt = """{
+    "foo": "bar",
+    "baz": 123
+}"""
+
+        self.assertEqual(m.getString(), exp_txt)
