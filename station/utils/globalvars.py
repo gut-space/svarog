@@ -18,6 +18,7 @@ if CONFIG_DIRECTORY is None:
 
 CONFIG_PATH = os.path.join(CONFIG_DIRECTORY, "config.yml")
 LOG_FILE = os.path.join(CONFIG_DIRECTORY, "log") if not DEV_ENVIRONMENT else None
+METADATA_FILE = os.path.join(CONFIG_DIRECTORY, "metadata.json")
 
 if not os.path.exists(CONFIG_DIRECTORY):
     os.makedirs(CONFIG_DIRECTORY, exist_ok=True)
