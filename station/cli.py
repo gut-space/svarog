@@ -14,6 +14,7 @@ from deepdiff import DeepHash
 
 import planner
 from orbitdb import OrbitDatabase
+from metadata import Metadata
 from utils.models import SatelliteConfiguration, get_location, get_satellite
 from utils.configuration import open_config, save_config
 from utils.functional import first
@@ -175,6 +176,8 @@ server_config_parser.add_argument("-s", "--secret", type=hex_bytes, help="HMAC s
 logging_parser = config_subparsers.add_parser("logging", help="Station logging configuration")
 logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
     help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
+
+metadata_parser = subparsers.add_parser("metadata", help="Displays metadata")
 
 args = parser.parse_args()
 command = args.command
@@ -397,6 +400,12 @@ elif command == "config":
         if args.replan:
             planner.execute(get_interval(planner_job))
     pprint(section)
+elif command == "metadata":
+    m = Metadata()
+    m.writeFile() # write it to disk in case it was missing.
+    print(f"Metadata stored in {m.filename}. Please tweak its content as needed.")
+    print("Currently defined metadata:")
+    print(m.getString())
 
 else:
     parser.print_help()
