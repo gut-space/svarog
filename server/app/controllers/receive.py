@@ -141,6 +141,18 @@ def receive(station_id: str, args: RequestArguments):
             # Remove trailing character
             tle = [line.strip() for line in tle]
 
+        # Let's get metadata and try to run some sanity checks on it. Technically the whole thing
+        # is not mandatory, so we only complain if important parameters are missing, but we
+        # accept the observation anyway.
+        metadata = args.get('config')
+        mandatory_tags = [ "protocol", "frequency", "antenna", "antenna-type", "receiver", "lna", "filter"]
+        missing = []
+        for t in mandatory_tags:
+            if t not in metadata:
+                missing.append(t)
+        if len(missing):
+            app.logger.warning(f"Received observation from station {station_id} with missing tags: {' '.join(missing)}")
+
         observation: Observation = {
             'obs_id': ObservationId(0),
             'aos': args['aos'],
@@ -148,7 +160,7 @@ def receive(station_id: str, args: RequestArguments):
             'los': args['los'],
             'sat_id': sat_id,
             'thumbnail': thumb_filename,
-            'config': args.get('config'),
+            'config': metadata,
             'station_id': StationId(station_id),
             'tle': tle
         }
