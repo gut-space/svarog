@@ -78,22 +78,21 @@ def get_mime_type(filename: str) -> str:
     # When adding new types, don't forget to update ALLOWED_FILE_TYPES in
     # server/app/controllers/receive.py
     known_types = {
-        "csv": "text/plain",
-        "gif": "image/gif",
-        "jpeg": "image/jpeg",
-        "jpg": "image/jpeg",
-        "json": "application/json",
-        "log": "text/plain",
-        "png": "image/png",
-        "svg": "image/svg+xml",
-        "txt": "text/plain",
-        "wav": "audio/wav"
+        ".csv": "text/plain",
+        ".gif": "image/gif",
+        ".jpeg": "image/jpeg",
+        ".jpg": "image/jpeg",
+        ".json": "application/json",
+        ".log": "text/plain",
+        ".png": "image/png",
+        ".svg": "image/svg+xml",
+        ".txt": "text/plain",
+        ".wav": "audio/wav"
     }
 
     txt = filename.lower()
-    offset = txt.rfind('.')
-    ext = txt[offset+1:] if offset != -1 else ""
-    return known_types[ext] if ext in known_types else "application/octet-stream"
+    ext = os.path.splitext(txt)[1]
+    return known_types.get(ext, "application/octet-stream")
 
 def submit_observation(data: SubmitRequestData):
     '''
@@ -124,14 +123,14 @@ def submit_observation(data: SubmitRequestData):
     cnt = 0
     body: Dict[str, Any] = {
     }
-    for f in data.image_path:
-        _, filename = os.path.split(f)
+    for path in data.image_path:
+        _, filename = os.path.split(path)
 
         # If there's only one file, it will use "file" key. The second file will be "file1",
         # third "file2" etc.
         file_key = "file" if cnt==0 else f"file{cnt}"
 
-        file_obj = open(f, 'rb')
+        file_obj = open(path, 'rb')
         body[file_key] = file_obj
 
         files[file_key] = (filename, file_obj, get_mime_type(filename), {})
