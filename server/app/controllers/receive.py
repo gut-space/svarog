@@ -182,6 +182,7 @@ def receive(station_id: str, args: RequestArguments):
 
         transaction.commit()
 
+    app.logger.info(f"Received observation recorded as observation {obs_id}")
     # Save files in filesystem
     root = app.config["storage"]['image_root']
 
@@ -207,7 +208,7 @@ def receive(station_id: str, args: RequestArguments):
 
     # Make sure to return the observation id to the station. This may be useful if the station wants
     # to update the observation in some way (send additional info or perhaps decide to delete it in the future).
-    return 'Observation %d received.' % obs_id, 204
+    return {"observation": obs_id}, 201
 
 def make_charts(observation: Observation, station: Station,
         root:str=None):
