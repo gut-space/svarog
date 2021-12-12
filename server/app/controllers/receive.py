@@ -144,7 +144,7 @@ def receive(station_id: str, args: RequestArguments):
         # Let's get metadata and try to run some sanity checks on it. Technically the whole thing
         # is not mandatory, so we only complain if important parameters are missing, but we
         # accept the observation anyway.
-        metadata = args.get('config')
+        metadata = args.get('config') or "{}"
         mandatory_tags = [ "protocol", "frequency", "antenna", "antenna-type", "receiver", "lna", "filter"]
         missing = []
         for t in mandatory_tags:
