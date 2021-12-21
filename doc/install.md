@@ -201,13 +201,6 @@ apache2 configuation](apache2/svarog.conf). You may want to tweak the paths and 
 or another certificate of your choice. Make sure the paths are actually pointing to the right directory.
 There is an example WSGI script in [svarog.wsgi](apache2/svarog.wsgi). It requires some tuning specific to your deloyment.
 
-Also, you should update the /etc/sudoers file to allow ordinary user (svarog) to restart apache server.
-You should use `visudo` command to add the following line:
-
-```
-%svarog ALL= NOPASSWD: /bin/systemctl restart apache2
-```
-
 4B. **NGINX + UNIT Configuration**
 
 An alternative to apache is to run Nginx with Unit application server. Example configuration
@@ -221,3 +214,26 @@ file. The configuration can be uploaded using command similar to this:
 ```curl -X PUT --data-binary @nginx/unit.json --unix-socket /var/run/control.unit.sock http://localhost/config```
 
 Please consult with [Unit docs](https://unit.nginx.org/configuration/) for details.
+
+5. **Grant sudo privileges**
+
+Also, you should update the /etc/sudoers file to allow ordinary user (svarog) to restart (apache) or (nginx and unit) server.
+This will be used by the update script that's being run every day. You should use `visudo` command to add the following line:
+
+```
+%svarog ALL= NOPASSWD: /bin/systemctl restart apache2
+```
+
+or
+
+```
+%svarog ALL= NOPASSWD: /bin/systemctl restart nginx
+%svarog ALL= NOPASSWD: /bin/systemctl restart unit
+```
+
+Alternatively, you can allow restarting all services:
+```
+%svarog ALL= NOPASSWD: /bin/systemctl 
+```
+
+This is more convenient, but may be a bit risky from the security perspective.
