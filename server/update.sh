@@ -41,5 +41,7 @@ echo "Enabling venv at $VENV"
 . "$VENV"
 python setup.py install
 
-# Restart apache
-sudo systemctl restart apache2
+# Restart web server (make sure this corresponds to the actual server you're running)
+#sudo systemctl restart apache2
+sudo systemctl restart unit
+sudo systemctl restart nginx
