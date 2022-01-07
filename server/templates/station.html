@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block addToHead %}
+
+<script type="text/javascript" src="/static/gallery.js"></script>
+
+{% endblock %}
+
 {% block content %}
     <h3>Ground Station  {{ station.name }}</h3>
 
@@ -37,13 +43,16 @@
     </p>
 
     {% if files is defined %}
-    <table>
-    {% for f in files %}
-        <tr>
-            <td><a href="/data/stations/{{ station.station_id }}/{{ f.filename }}"><img src="/data/stations/{{ station.station_id }}/{{ f.filename }}" width=400></a></td>
-        </tr>
-    {% endfor %}
-    </table>
+
+    <div class="gallery-overlay"><img src="" id="gallery-top" hidden=True>
+        <span id="gallery-close" hidden=True onclick=do_close()><b><u>CLOSE (X)</u></b></span>
+    </div>
+
+    <div class="cx" style="background-color:#fff;">
+        {% for f in files %}
+        <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' width=200 onclick="clicked_img(this)" >
+        {% endfor %}
+    </div>
     {% endif %}
 
 {% endblock %}
