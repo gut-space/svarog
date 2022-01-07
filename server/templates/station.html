@@ -44,8 +44,10 @@
 
     {% if files is defined %}
 
-    <div class="gallery-overlay"><img src="" id="gallery-top" hidden=True>
-        <span id="gallery-close" hidden=True onclick=do_close()><b><u>CLOSE (X)</u></b></span>
+    <div class="gallery-overlay" id="gallery-overlay" hidden=True>
+        <img src="" id="gallery-top">
+        <span id="gallery-close" onclick=do_close()><b><u>CLOSE (X)</u></b></span>
+        <span id="gallery-descr">Image description</span>
     </div>
 
     <div class="cx" style="background-color:#fff;">

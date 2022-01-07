@@ -15,10 +15,10 @@ function clicked_img(img,fp){
         top.height=img.naturalHeight/img.naturalWidth*top.width;
     }
 
-    document.getElementById('gallery-close').hidden = false;
+    document.getElementById('gallery-overlay').hidden = false;
+    document.getElementById('gallery-descr').innerText = img.alt;
 }
 
 function do_close(){
-    document.getElementById('gallery-top').hidden=true;
-    document.getElementById('gallery-close').hidden=true;
+    document.getElementById('gallery-overlay').hidden=true;
 }
