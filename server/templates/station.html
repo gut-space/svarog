@@ -11,7 +11,6 @@
 
     <p>
         <ul>
-            <li>ID: {{ station.station_id }}</li>
             <li>Station location: {{ station.coords }} (see on
                 <a href="https://www.openstreetmap.org/search?query={{ station.coords }}">OpenStreetMap</a>,
                 <a href="https://www.google.com/maps/search/?api=1&query={{station.coords }}">Google Maps</a>)
@@ -29,13 +28,14 @@
                 <span class="param"">{{o.username}}</span>
             {% endfor %}
             </li>
+            <li>ID: {{ station.station_id }}</li>
         </ul>
     </p>
     <p>
-        <b>About the station</b>: {{ station.descr }}
+        <span class="section-title">About the station</span>: {{ station.descr }}
     </p>
     <p>
-        <b>Current configuration:</b>
+        <span class="section-title">Current configuration:</span>
         <ul>
         {% for c in station.config %}
         {% if station.config[c] is defined %}
@@ -48,7 +48,7 @@
     {% if files is defined %}
 
     <div class="gallery-overlay" id="gallery-overlay" hidden=True>
-        <img src="" id="gallery-top">
+        <img src="" id="gallery-image">
         <span id="gallery-close" onclick=do_close()><b><u>CLOSE (X)</u></b></span>
         <span id="gallery-descr">Image description</span>
     </div>
@@ -61,15 +61,17 @@
     {% endif %}
 
     {% if best_obs is defined %}
-    <div>Highest rated observations:</div>
+    <div class="section-title">Highest rated observations:</div>
+    <div>
         {% for o in best_obs %}
             <a href='/obs/{{o.obs_id}}'><img src='/data/thumbs/{{ o.thumbnail }}' width=200></a>
         {% endfor %}
     {% endif %}
+    </div>
 
 
     {% if latest_obs is defined %}
-    <div>Latest observations:</div>
+    <div class="section-title">Latest observations:</div>
         {% for o in latest_obs %}
             <a href='/obs/{{o.obs_id}}'><img src='/data/thumbs/{{ o.thumbnail }}' width=200></a>
         {% endfor %}
