@@ -218,7 +218,22 @@ class Repository:
 
     @use_cursor
     def read_observations(self, filters: ObservationFilter={}, limit:int=100,
-            offset:int=0) -> Sequence[Observation]:
+            offset:int=0, order:str="o.aos DESC", expr:str="TRUE") -> Sequence[Observation]:
+        '''Returns observations that match specified criteria.
+
+        Parameters
+        filters - a dictionary with optional filtering parameters
+        limit - max number of rows to return
+        offset - if returning not the first page
+        order - how to order the rows (optional)
+        expr - addtional custom expression passed to WHERE clause
+        '''
+
+        # Most of the parameters are substituted by psycopg2 cursor. Those are dynamic
+        # parameters, i.e. those are specified by the user (using filtering on a page).
+        # The other type of parameters expr and order are strictly defined by the Svarog
+        # code. And honestly, I was not able to make psycopg2 use them without adding
+        # extra quotes.
         q = ("SELECT o.obs_id, o.aos, o.tca, o.los, o.sat_id, o.thumbnail, "
                 "o.station_id, o.notes, o.tle, r.rating, o.config "
             "FROM observations o "
@@ -230,7 +245,7 @@ class Repository:
               "(%(station_id)s IS NULL OR o.station_id = %(station_id)s) AND "
               "(%(notes)s IS NULL OR o.notes ILIKE '%%' || %(notes)s || '%%') AND "
               "(%(has_tle)s IS NULL OR (o.tle IS NOT NULL) = %(has_tle)s) "
-            "ORDER BY o.aos DESC "
+              f"AND {expr} ORDER BY {order} "
             "LIMIT %(limit)s OFFSET %(offset)s")
         cursor = self._cursor
         query_kwargs = DefaultDictWithAnyKey(lambda: None)

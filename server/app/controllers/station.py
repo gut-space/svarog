@@ -15,6 +15,15 @@ def station(station_id = None):
 
     owners = repository.station_owners(station_id)
 
+    # Now get 3 latest observations from this station
+    filters = {
+        "station_id": station['station_id']
+    }
+    latest_obs = repository.read_observations(filters=filters, limit=3, offset=0)
+
+    # Get the 3 observations with the best rating
+    best_obs = repository.read_observations(filters=filters, limit=3, offset=0, order="r.rating DESC", expr="r.rating is not NULL")
+
     x = {}
     x['station_id'] = station['station_id']
     x['name'] = station['name']
@@ -34,4 +43,4 @@ def station(station_id = None):
         y['sort'] = photo['sort']
         files.append(y)
 
-    return render_template('station.html', station = x, files = files, owners = owners)
+    return render_template('station.html', station = x, files = files, owners = owners, latest_obs=latest_obs, best_obs=best_obs)
