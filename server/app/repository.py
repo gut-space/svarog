@@ -406,7 +406,8 @@ class Repository:
     @use_cursor
     def read_station_statistics(self, station_id: StationId) \
             -> Optional[StationStatistics]:
-        q = ("SELECT COUNT(o) AS observation_count, MAX(o.los) AS last_los "
+        q = ("SELECT COUNT(o) AS observation_count, MAX(o.los) AS last_los, "
+             "MIN(o.aos) AS first_aos "
              "FROM stations s "
              "LEFT JOIN observations o ON s.station_id = o.station_id "
              "WHERE s.station_id = %s "

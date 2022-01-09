@@ -14,7 +14,7 @@
             <li>ID: {{ station.station_id }}</li>
             <li>Station location: {{ station.coords }}</li>
             <li>Station registration time: {{ station.registered }}</li>
-            <li>First recorded transmission: TBD</li>
+            <li>First recorded transmission: {{ station.firstobs }}</li>
             <li>Most recent transmission: {{ station.lastobs }}</li>
             <li>Number of transmissions: {{ station.cnt }}
                 <a href="{{ url_for('obslist', station_id=station.station_id) }}">
