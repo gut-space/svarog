@@ -33,6 +33,7 @@ def station(station_id = None):
     x['config'] = station['config']
     x['registered'] = station['registered']
     x['lastobs'] = statistics["last_los"]
+    x['firstobs'] = statistics["first_aos"]
     x['cnt'] = statistics["observation_count"]
 
     files = []
