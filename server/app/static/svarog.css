@@ -117,7 +117,10 @@ dd {
     transform: translate(-50%, -50%);
 
     border: 5px solid #ccc;
+    background-color: white;
   }
+
+
 
 #gallery-top {
 }
