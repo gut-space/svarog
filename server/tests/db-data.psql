@@ -26,8 +26,8 @@ VALUES (1069, 'ab802ca1-419f-418a-aeea-d99bb9c702aa-0-1c60fdf5-3f18-409d-9834-17
        (1070, 'abcdefab-cdef-abcd-efab-abcdefabcdef-0-12345678-9012-3456-7890-123456789012_product.png', 'image/png', 750, 0.5);
 
 INSERT INTO public.station_photos (photo_id, station_id, sort, filename, descr) VALUES
-(1, 1, 1, 'wimo-ta1-antenna.jpg	WiMo antenna', NULL),
-(2, 1, 2, 'malina4.jpg	Pi + SDR module', NULL);
+(1, 1, 1, 'wimo-ta1-antenna.jpg', 'WiMo antenna'),
+(2, 1, 2, 'malina4.jpg', 'Pi + SDR module');
 
 INSERT INTO public.users (id, username, digest, email, role) VALUES
 (1, 'asimov', '023456789abcdef', 'issac@terminus.org', 'regular'),
