@@ -120,9 +120,12 @@ dd {
     background-color: white;
   }
 
+.section-title {
+    color: black;
+    font-weight: bold;
+}
 
-
-#gallery-top {
+#gallery-image {
 }
 
 #gallery-close {

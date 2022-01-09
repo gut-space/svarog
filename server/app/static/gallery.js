@@ -1,7 +1,7 @@
 function clicked_img(img,fp){
     console.log(img.src);
 
-    var top=document.getElementById('gallery-top')
+    var top=document.getElementById('gallery-image')
 
     top.src = img.src;
 
