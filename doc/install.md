@@ -14,8 +14,9 @@ done, connect to your Pi and do the following as root:
 1. **Install necessary dependencies**:
 
 ```
-apt update
-apt install python3-minimal git rtl-sdr sox imagemagick
+sudo apt update
+sudo apt upgrade
+sudo apt install python3-minimal git rtl-sdr airspy sox imagemagick
 ```
 
 Also, the following tools are needed:
@@ -46,13 +47,25 @@ git clone https://github.com/gut-space/svarog
 
 ```
 cd svarog/station
-python3 setup.py install
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+python3 setup.py --skip-python
 ```
 
-This step will install necessary dependencies. It is a good practice to install them in virtual environment. However,
-since the scripts will be called using crontab, it would've complicated the setup. If there is an exception
-complaining about `'install_requires' must be a string or list of strings...`, make sure you have recent pip
-version installed. You can update it by `pip install --upgrade pip pip-tools`.
+This step will install necessary dependencies. Alternatively, you skip the `install -r requirements.txt` and do `python3 setup.py install` instead, but it will only work in virtual environment.
+
+
+If you encounter an error similar to this when running the `station` command:
+
+```
+ImportError: libcblas.so.3: cannot open shared object file: No such file or directory
+```
+
+You may want to also install `libatlas3-base` with the following command:
+
+```shell
+sudo apt install libatlas3-base
+```
 
 One particularly useful setup action conducted is to set up convenient alias. Instead of typing `python3 station/cli.py`
 every time, you can simply type `station` instead.
@@ -62,17 +75,18 @@ every time, you can simply type `station` instead.
 There is a command line tool used to manage the station. You can run it with:
 
 ```
-$ station/cli.py
-usage: svarog [-h] {clear,logs,plan,pass,config} ...
+$ station
+usage: svarog [-h] {clear,logs,plan,pass,config,metadata} ...
 
 positional arguments:
-  {clear,logs,plan,pass,config}
+  {clear,logs,plan,pass,config,metadata}
                         commands
     clear               Clear all scheduled reception events
     logs                Show logs
     plan                Schedule planned reception events
     pass                Information about passes
     config              Configuration
+    metadata            Displays metadata
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -135,8 +149,6 @@ Some additional parameters are set by the Svarog station on its own.
 10. **Run unit-tests (devs only)**
 
 Developers may be interested in running unit tests. The best way to do that is to call a command `python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python version).
-
-
 
 # Server installation
 
