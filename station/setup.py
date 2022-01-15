@@ -1,10 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 from setuptools import setup, find_packages
+import argparse
 import shutil
 import stat
 import sys
 
+EXTERNAL_DEPENDENCIES = ["noaa-apt", "rtl_fm", "sox", "meteor-demod", "medet", "convert"]
+RECIPE_DIR = "recipes"
 
 def get_requirements_and_links():
     """Returns required packages list, parsed from requirements.txt. The tricky part is to
@@ -39,6 +42,8 @@ def get_requirements_and_links():
         REQUIREMENTS.append(i)
 
     return REQUIREMENTS, DEP_LINKS
+
+REQUIREMENTS, DEP_LINKS = get_requirements_and_links()
 
 def setup_aliases():
 
@@ -76,42 +81,65 @@ def setup_aliases():
     f.close()
     print("Alias %s written to %s file." % (alias, ALIAS_FILE))
 
-REQUIREMENTS, DEP_LINKS = get_requirements_and_links()
+def check_deps():
+    """Check if required tools are available.
 
-EXTERNAL_DEPENDENCIES = ["noaa-apt", "rtl_fm", "sox", "meteor-demod", "medet", "convert"]
+    :return: True if all is ok, False otherwise"""
+    missing = False
+    for dep in EXTERNAL_DEPENDENCIES:
+        print('Checking if "%s" is installed...' % (dep,), end="")
+        if shutil.which(dep) is None:
+            print("MISSING")
+            missing = True
+        else:
+            print("OK")
 
-RECIPE_DIR = "recipes"
+    return not missing
 
-# Check if required tools are available.
-missing = False
-for dep in EXTERNAL_DEPENDENCIES:
-    print('Checking if "%s" is installed...' % (dep,), end="")
-    if shutil.which(dep) is None:
-        print("MISSING")
-        missing = True
+def setup_recipes():
+    """Sets the recipes' exec flag"""
+    for recipe_candidate_name in os.listdir(RECIPE_DIR):
+        if not recipe_candidate_name.endswith(".sh"):
+            continue
+        recipe_path = os.path.join(RECIPE_DIR, recipe_candidate_name)
+        st = os.stat(recipe_path)
+        os.chmod(recipe_path, st.st_mode | stat.S_IXUSR)
+
+parser =  argparse.ArgumentParser(description='Set up the Svarog station environment.')
+parser.add_argument('--skip-python', dest='skip_python', action='store_const',
+                    const=True, default=False,
+                    help='skips Python package installation')
+parser.add_argument('--ignore-missing-deps', dest='ignore_missing_deps', action='store_const',
+                    const=True, default=False,
+                    help='continue even if tool dependencies (noaa-apt, medet, ...) are missing.')
+
+args, _ = parser.parse_known_args()
+
+if not check_deps():
+    if not args.ignore_missing_deps:
+        print('Please install missing dependencies.')
+        sys.exit(1)
     else:
-        print("OK")
+        print("WARNING: Some dependencies are missing. That may be OK if you install them later")
+        print("WARNING: or are not interested in receiving specific satellites. You can always")
+        print("WARNING: rerun the setup to check if they all were detected.")
 
-if missing:
-    print('Please install missing dependencies.')
-    sys.exit(1)
+if not args.skip_python:
+    setup(name='svarog-station',
+        version='1.0',
+        description='Svarog ground station management tool',
+        author='SF, TM',
+        packages=find_packages(),
+        install_requires=REQUIREMENTS,
+        dependency_links=DEP_LINKS
+    )
+else:
+    print("WARNING: Python installation skipped. Make sure to install them manually using this command:")
+    print("WARNING: ")
+    print("WARNING: $ pip3 install -r requirements.txt")
+    print("WARNING: ")
 
-for recipe_candidate_name in os.listdir(RECIPE_DIR):
-    if not recipe_candidate_name.endswith(".sh"):
-        continue
-    recipe_path = os.path.join(RECIPE_DIR, recipe_candidate_name)
-    st = os.stat(recipe_path)
-    os.chmod(recipe_path, st.st_mode | stat.S_IXUSR)
-
-setup(name='svarog-station',
-      version='1.0',
-      description='Svarog ground station management tool',
-      author='SF, TM',
-      packages=find_packages(),
-      install_requires=REQUIREMENTS,
-      dependency_links=DEP_LINKS
-)
-
+setup_recipes()
 setup_aliases()
 
 print("svarog-station installation complete. Log out, log in, and then:")
