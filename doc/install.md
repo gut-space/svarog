@@ -67,8 +67,8 @@ You may want to also install `libatlas3-base` with the following command:
 sudo apt install libatlas3-base
 ```
 
-One particularly useful setup action conducted is to set up convenient alias. Instead of typing `python3 station/cli.py`
-every time, you can simply type `station` instead.
+One of the useful setup actions conducted is defining a convenience alias. Instead of typing
+`python3 station/cli.py` every time, you can simply type `station` instead.
 
 6. **Station management**
 
@@ -98,19 +98,19 @@ You can use it to inspect your configuration, clear or schedule upcoming transmi
 
 Run the cli command first:
 ```
-python station/cli.py
+station
 ```
 
-It will create a tempate config for you. The config file is stored in ~/.config/svarog/config.yml. The recommended way of tweaking it is to use the cli.py command itself. For example, to set up your location, you can do:
+It will create a tempate config for you. The config file is stored in `~/.config/svarog/config.yml`. The recommended way of tweaking it is to use the cli.py command itself. For example, to set up your location, you can do:
 
 ```
-python station/cli.py config location -lat 54.34 -lng 23.23 -ele 154
+station config location -lat 54.34 -lng 23.23 -ele 154
 ```
 
 In particular, you may want to increase logging level to debug, to spot any problems:
 
 ```shell
-python cli.py config logging --level DEBUG
+station config logging --level DEBUG
 ```
 
 Once your station operates smoothly, you may trim this down to INFO, WARNING or even ERROR.
@@ -120,10 +120,12 @@ Once your station operates smoothly, you may trim this down to INFO, WARNING or 
 Once your station coordinates are set, you can tell Svarog to schedule observations:
 
 ```
-python station/cli.py plan --force
+station plan --force
 ```
 
-This should be done once. CLI will update the crontab jobs and will periodically add new ones. The `--force` command will conduct the scheduling now, rather than wait for 4am to do scheduling.
+This should be done once. CLI will update the crontab jobs and will periodically (at 4am each day) add new ones. The `--force` command will conduct the scheduling now, rather than wait for 4am to do scheduling.
+
+**NOTE**: If you installed the tools being used (noaa-apt, medet, meteor-demod) in non-standard locations, please make sure the PATH is set in the crontab. You can set it by using `crontab -e` command and adding a line `PATH=...`. See this nice explanation: https://stackoverflow.com/questions/10129381/crontab-path-and-user
 
 9. **Tweak metadata**
 
@@ -141,18 +143,21 @@ To generate the template to fill in use the following command:
 python station/cli.py metadata
 ```
 
-It will print the location of the file and its content. Feel free to tweak it as you see fit.
-You may want to add extra data. Any other type will be accepted as long as it's a valid JSON.
-Also, take a look at [submit_obs.py](submit_obs.md), which explains what the parameters mean.
-Some additional parameters are set by the Svarog station on its own.
+It will print the location of the file (`~/.config/svarog/metadata.json`) and its content. Feel
+free to tweak it as you see fit. You may want to add extra data. Any other type will be accepted
+as long as it's a valid JSON. Also, take a look at [submit_obs.py](submit_obs.md), which explains
+what the parameters mean. Some additional parameters are set by the Svarog station on its own.
 
 10. **Run unit-tests (devs only)**
 
-Developers may be interested in running unit tests. The best way to do that is to call a command `python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python version).
+Developers may be interested in running unit tests. The best way to do that is to call a command
+`python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python
+version).
 
 # Server installation
 
-Server installation is a manual process. It is assumed that you already have running apache server. Here are the steps needed to get it up and running.
+Server installation is a manual process. It is assumed that you already have running apache server.
+Here are the steps needed to get it up and running.
 
 1. **Get the latest code**
 
