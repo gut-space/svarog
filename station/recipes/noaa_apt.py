@@ -84,6 +84,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     # Run noaa_apt - this decodes APT from the audio file into PNG image.
     sh.noaa_apt(
         "-o", product_path,
+        "--false-color", "--contrast","telemetry",
         signal_path,
         _out=logfile
     )
