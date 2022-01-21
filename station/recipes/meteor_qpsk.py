@@ -10,6 +10,7 @@ from recipes.helpers import set_sh_defaults
 
 @set_sh_defaults
 def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
+    raw_path = os.path.join(working_dir, "signal.raw")
     signal_path = os.path.join(working_dir, "signal.wav")
     product_path = os.path.join(working_dir, "product.png")
     log_path = os.path.join(working_dir, "session.log")
@@ -29,55 +30,57 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.flush()
 
     # Record signal
-    fm_proc = sh.rtl_fm(
-        # Modulation raw
-        "-M", "raw",
-        # Set frequency (in Hz, e.g. 137MHz)
-        "-f", frequency,
-        # Enable bias-T
-        "-T",
-        # Specify sampling rate (e.g. 48000 Hz)
-        "-s", 48000,
-        # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
-        "-g", 48,
-        # Copy-paste from suspects www
-        "-p", 1,
-        _timeout=duration.total_seconds(),
-        _timeout_signal=signal.SIGTERM,
-        _piped=True,
+    with suppress(sh.TimeoutException):
+        fm_proc = sh.rtl_fm(
+            # Modulation raw
+            "-M", "raw",
+            # Set frequency (in Hz, e.g. 137MHz)
+            "-f", frequency,
+            # Enable bias-T
+            #"-T",
+            # Specify sampling rate (e.g. 48000 Hz)
+            "-s", "288k",
+            # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
+            "-g", 49,
+            # enable DC filter
+            "-E", "dc",
+            # ppm error
+            "-p", 1,
+            raw_path,
+            _timeout=duration.total_seconds(),
+            _timeout_signal=signal.SIGTERM,
 
-        # rtl_fm and rx_fm both print messages on stderr
-        _err=logfile
-    )
+            # rtl_fm and rx_fm both print messages on stderr
+            _err=logfile
+        )
 
     logfile.flush()
 
     logfile.write("---sox log-------\n")
     logfile.flush()
 
-    with suppress(sh.TimeoutException):
-        sh.sox(fm_proc,
-            # Type of input
-            "-t", "raw",
-            "-r", "288k",
-            # Channels - 2 - stereo
-            "-c", 2,
-            # Sample size
-            "-b", 16,
-            # Signed integer encoding
-            "-e", "s",
-            # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
-            "-V3",
-            # Read from stdin (from pipe)
-            "-",
-            # Type of output
-            "-t", "wav",
-            signal_path,
-            # Resampling rate
-            "rate", "96k",
+    sh.sox(fm_proc,
+        # Type of input
+        "-t", "raw",
+        "-r", "288k",
+        # Channels - 2 - stereo
+        "-c", 2,
+        # Sample size
+        "-b", 16,
+        # Signed integer encoding
+        "-e", "s",
+        # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
+        "-V3",
+        # Read from stdin (from pipe)
+        "-",
+        # Type of output
+        "-t", "wav",
+        signal_path,
+        # Resampling rate
+        "rate", "96k",
 
-            _out=logfile
-        )
+        _out=logfile
+    )
 
     logfile.flush()
 
