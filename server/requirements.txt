@@ -96,8 +96,8 @@ pandas==1.3.4
     #   tle-tools
 pg8000==1.23.0
     # via testing.postgresql
-pillow==8.4.0
-    # via matplotlib
+pillow==9.0.0
+    # via matplotlib, also security vuln (CVE-2022-22816, CVE-2022-22817, CVE-2022-22815)
 plotly==5.4.0
     # via poliastro
 poliastro==0.15.2
