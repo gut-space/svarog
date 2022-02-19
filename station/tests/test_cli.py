@@ -57,7 +57,7 @@ class TestCli(unittest.TestCase):
 
     def check_command(self, bin, params, exp_code = 0, exp_strings = []):
         """Runs specified command (bin) with parameters (params) and expected
-        the return code to be exp_code. """
+        the return code to be exp_code. Returns the standard output."""
 
         # Run the command
         result = self.run_cmd(bin, params)
@@ -66,6 +66,8 @@ class TestCli(unittest.TestCase):
 
         if (len(exp_strings)):
             self.check_output(result[1], exp_strings)
+
+        return result[1]
 
     def test_cli_exec(self):
         """Checks if the cli.py file is there and is executable."""
@@ -135,3 +137,15 @@ class TestCli(unittest.TestCase):
         # and just check if the beginnings and ends match.
         self.check_file("tests/config/crontab", ["55 3 * * *", "/station/update.sh # svarog-update",
                                                  "0 4 * * * python3", "station/planner.py 86400 # svarog-plan"])
+
+
+    def test_pass(self):
+        """Checks if cli.py pass can produce diagrams properly."""
+
+        # The actual output produced are different. Testing exact output would be problematic (would need to add capability
+        # to force specific time, also fake inserting TLE data into the database). Instead, we check couple things:
+        # that the return code is 0 (it's 1 if there's an exception thrown), that some of the pass details, axes,
+        # axes descriptions, and legend are shown.
+        txt = self.check_command(CLI, [ "pass", "NOAA 19" ], 0,
+        ["AOS:", "LOS:", "Duration:", "Red dot is AOS point", "⠒⡗⠒", "⠒⠒⠒⠒⠒⠒⠒", "(Degrees)  ^", "Time (local)", "Legend:",
+           "⠤⠤ Azimuth", "⠤⠤ Elevation * 4"])
