@@ -2,8 +2,6 @@
 
 {% block addToHead %}
 
-<script type="text/javascript" src="/static/gallery.js"></script>
-
 {% endblock %}
 
 {% block content %}
@@ -46,13 +44,6 @@
     </p>
 
     {% if files is defined %}
-
-    <div class="gallery-overlay" id="gallery-overlay" hidden=True>
-        <img src="" id="gallery-image">
-        <span id="gallery-close" onclick=do_close()><b><u>CLOSE (X)</u></b></span>
-        <span id="gallery-descr">Image description</span>
-    </div>
-
     <div>
         {% for f in files %}
         <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' width=200 alt="{{ f.descr }}" onclick="clicked_img(this)" >
