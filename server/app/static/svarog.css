@@ -109,34 +109,17 @@ dd {
     padding: 10px;
 }
 
-.gallery-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    /* bring your own prefixes */
-    transform: translate(-50%, -50%);
-
-    border: 5px solid #ccc;
-    background-color: white;
-  }
-
 .section-title {
     color: black;
     font-weight: bold;
 }
 
-#gallery-image {
+#gallery img {
+    width: 300px;
+    max-height: 200px;
+    object-fit: contain;
 }
 
-#gallery-close {
-
-    position: absolute;
-    left: 5px;
-    top: 5px;
-
-    padding: 4px;
-    z-index: 1;
-    border: 2px solid;
-    border-radius: 5px;
-    background-color: white;
+#gallery img+img {
+    margin: 1rem;
 }

@@ -2,6 +2,13 @@
 
 {% block addToHead %}
 
+<script type="text/javascript" src="https://unpkg.com/viewerjs@1.10.4/dist/viewer.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/viewerjs@1.10.4/dist/viewer.min.css">
+<script>
+    window.onload = function() {
+        const gallery = new Viewer(document.getElementById('gallery'));
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -44,9 +51,9 @@
     </p>
 
     {% if files is defined %}
-    <div>
+    <div id="gallery">
         {% for f in files %}
-        <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' width=200 alt="{{ f.descr }}" onclick="clicked_img(this)" >
+        <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' alt="{{ f.descr }}">
         {% endfor %}
     </div>
     {% endif %}
