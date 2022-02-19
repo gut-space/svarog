@@ -47,7 +47,7 @@ packaging==21.3
     #   typepy
 pillow==9.0.0
     # via matplotlib, also security vuln (CVE-2022-22816, CVE-2022-22817, CVE-2022-22815)
-plotille==4.0.1
+plotille==3.8.0
     # via -r requirements.in
 pyparsing==3.0.6
     # via
