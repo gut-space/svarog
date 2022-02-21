@@ -37,7 +37,7 @@
         </ul>
     </p>
     <p>
-        <span class="section-title">About the station</span>: {{ station.descr }}
+        <span class="section-title">About the station</span>: {{ station.descr|safe }}
     </p>
     <p>
         <span class="section-title">Current configuration:</span>
@@ -53,7 +53,7 @@
     {% if files is defined %}
     <div id="gallery">
         {% for f in files %}
-        <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' alt="{{ f.descr }}">
+        <img src='/data/stations/{{ station.station_id }}/{{ f.filename }}' alt="{{ f.descr|safe }}">
         {% endfor %}
     </div>
     {% endif %}
