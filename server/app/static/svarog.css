@@ -123,3 +123,7 @@ dd {
 #gallery img+img {
     margin: 1rem;
 }
+
+.viewer-footer {
+    background-color: rgba(0,0,0,.5);
+}
