@@ -119,6 +119,7 @@ log_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR",
 plan_parser = subparsers.add_parser('plan', help='Schedule planned reception events')
 plan_parser.add_argument("--cron", type=str, help='Cron format required. Default "0 4 * * *" for 4:00 AM')
 plan_parser.add_argument("--force", action="store_true", default=False, help="Perform planning now. (default: %(default)s)")
+plan_parser.add_argument("--show", action="store_true", default=False, help="Just show incoming passes, don't plan anything (default: %(default)s)")
 plan_parser.add_argument("--skip-update", action="store_true", default=False, help="Disables periodic update. (default: %(default)s)")
 
 pass_parser = subparsers.add_parser("pass", help="Information about passes")
@@ -253,8 +254,16 @@ elif command == "plan":
 
     if args.force:
         interval = get_interval(planner_job)
-        planner.execute(interval)
+        # Do the actual scheduling
+        planner.execute(interval, dry_run = False)
         print("Planned receiver jobs successful")
+
+    if args.show:
+        interval = get_interval(planner_job)
+        # Don't schedule anything, just show upcoming passes, based on the orbital trajectories,
+        # not the scheduled jobs
+        planner.execute(interval, dry_run = True)
+        sys.exit(0)
 
     if args.cron is None:
         pass_jobs = cron.find_comment(COMMENT_PASS_TAG)
