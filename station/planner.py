@@ -5,9 +5,11 @@ Code related to getting upcoming sat passes and planning observations.
 import datetime
 import sys
 from typing import Sequence
+from colored import fg
 
 from orbit_predictor.locations import Location
 from datetimerange import DateTimeRange
+from dateutil import tz
 
 from selectstrategy import strategy_factory, Observation
 from utils.globalvars import COMMENT_PASS_TAG
@@ -41,6 +43,7 @@ def get_passes(config: Configuration, from_: datetime.datetime, to: datetime.dat
         max_elevation_greater_than = sat["max_elevation_greater_than"]
         predictor = orbit_db.get_predictor(sat["name"])
         passes = predictor.passes_over(location, from_, to, max_elevation_greater_than, aos_at_dg=aos_at)
+
         init += [(sat["name"], p) for p in passes]
 
     selected = strategy(init)
@@ -61,8 +64,14 @@ def clear(cron):
     cron.remove_all(comment=COMMENT_PASS_TAG)
     cron.write()
 
+def execute(interval: int, cron=None, dry_run : bool = False):
+    """_summary_
 
-def execute(interval, cron=None):
+    :param interval: interval, expressed in seconds
+    :param cron: _description_, defaults to None
+    :param dry_run: _description_, defaults to False
+    :return: List of passes
+    """
     if cron is None:
         cron = open_crontab()
     start = datetime.datetime.utcnow()
@@ -71,7 +80,11 @@ def execute(interval, cron=None):
 
     passes = get_passes(prediction_config, start, end)
     clear(cron)
-    plan_passes(passes, cron)
+    if dry_run:
+        print_passes(passes)
+    else:
+        plan_passes(passes, cron)
+
     return passes
 
 
