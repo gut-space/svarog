@@ -30,18 +30,19 @@ def get_command(name: str, range_: DateTimeRange):
 
 def get_passes(config: Configuration, from_: datetime.datetime, to: datetime.datetime):
     location = Location(*get_location(config))
-    satellties = filter(lambda s: not s.get("disabled", False), config["satellites"])
-    strategy_name: str = config.get("strategy", "max-elevation")  # type: ignore
+    satellites = filter(lambda s: not s.get("disabled", False), config["satellites"])
+    strategy_name: str = config.get("strategy", "max-elevation") # type: ignore
 
     orbit_db = OrbitDatabase(config["norad"])
     strategy = strategy_factory(strategy_name)
 
     init = []
-    for sat in satellties:
+    for sat in satellites:
         set_satellite_defaults(config, sat)
         aos_at = sat["aos_at"]
         max_elevation_greater_than = sat["max_elevation_greater_than"]
         predictor = orbit_db.get_predictor(sat["name"])
+
         passes = predictor.passes_over(location, from_, to, max_elevation_greater_than, aos_at_dg=aos_at)
 
         init += [(sat["name"], p) for p in passes]
@@ -59,6 +60,34 @@ def plan_passes(selected: Sequence[Observation], cron):
         job.setall(start_datetime)
     cron.write()
 
+def print_passes(passes, config: Configuration):
+    """Pretty prints the passes."""
+
+    orbit_db = OrbitDatabase(config["norad"])
+
+    name_width = 12 # width of the sat names
+    passes = sorted(passes, key=lambda x:x[1].aos)
+    n = fg(15) # normal text
+
+    print(" Satellite   | Norad | AOS                      | LOS                      | Max alt. (deg)")
+    print("-------------+-------+--------------------------+--------------------------+----------------")
+
+    for p in passes:
+        max_alt = p[1].max_elevation_deg
+        if max_alt > 60:
+            c = fg(10) # green
+        elif max_alt > 20:
+            c = fg(11) # yellow
+        else:
+            c = fg(9) # rew
+
+        timezone = datetime.timezone.utc if not True else tz.tzlocal()
+        norad = orbit_db.get_norad(p[0])
+
+        aos_txt = get_timestamp_str(p[1].aos, timezone)
+        los_txt = get_timestamp_str(p[1].los, timezone)
+
+        print(f"{p[0]:{name_width}} | {norad:3.0f} | {c}{aos_txt}{n} | {c}{los_txt}{n} | {c}{p[1].max_elevation_deg:.1f}{n}")
 
 def clear(cron):
     cron.remove_all(comment=COMMENT_PASS_TAG)
@@ -81,7 +110,7 @@ def execute(interval: int, cron=None, dry_run : bool = False):
     passes = get_passes(prediction_config, start, end)
     clear(cron)
     if dry_run:
-        print_passes(passes)
+        print_passes(passes, prediction_config)
     else:
         plan_passes(passes, cron)
 
