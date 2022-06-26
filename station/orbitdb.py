@@ -102,6 +102,13 @@ class OrbitDatabase:
         source = self._get_source(sat_id)
         return source.get_tle(sat_id, date).lines  # type: ignore
 
+    def get_norad(self, sat_name: str) -> int:
+        """Attempts to return norad id for specified sat name.
+           May throw LookupError if not found"""
+        source = self._get_source(sat_name)
+        line2 = source.get_tle(sat_name, datetime.datetime.utcnow()).lines[1]
+        return int(line2.split()[1])
+
     def refresh_satellites(self, sat_ids):
         all_sat_ids = set(sat_ids)
         found_sat_ids = set()
