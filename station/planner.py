@@ -45,11 +45,29 @@ def get_passes(config: Configuration, from_: datetime.datetime, to: datetime.dat
 
         passes = predictor.passes_over(location, from_, to, max_elevation_greater_than, aos_at_dg=aos_at)
 
+        # orbit predictor is using naive dates (no timezone info)
+        # We could force the tzinfo to be utc here like this:
+        #
+        # p.aos = p.aos.replace(tzinfo=datetime.timezone.utc)
+        # p.los = p.los.replace(tzinfo=datetime.timezone.utc)
+        #
+        # but then many places in the code would have to be updated to
+        # also deal with timezones. Let's play along and keep it naive.
         init += [(sat["name"], p) for p in passes]
+
+        for p in passes:
+            init.append((sat["name"], p))
 
     selected = strategy(init)
     return selected
 
+def get_timestamp_str(timestamp: datetime, timezone: tz.tz) -> str:
+    # orbital predictor returns timestamps in naive format (no timezones).
+    # To do any timezone conversions, we need to first force it to UTC
+    # if no timezone was specified.
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=datetime.timezone.utc)
+    return f"{timestamp.astimezone(timezone).strftime('%Y-%m-%d %H:%M:%S')} {timestamp.astimezone(timezone).tzname()}"
 
 def plan_passes(selected: Sequence[Observation], cron):
     selected = sorted(selected, key=lambda o: o.pass_.aos)
