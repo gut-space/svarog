@@ -1,3 +1,9 @@
+"""
+Orbits Database - this code imports TLE (Two Line Elements) data from on-line
+Celestrak database and keeps it locally. Basic query mechanism is available
+to retrieve the data.
+"""
+
 import datetime
 import logging
 import os

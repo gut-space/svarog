@@ -2,7 +2,6 @@ import argparse
 import os.path
 from typing import Tuple
 
-
 def exist_file(x: str) -> str:
     """
     'Type' for argparse - checks that file exists but does not open.
