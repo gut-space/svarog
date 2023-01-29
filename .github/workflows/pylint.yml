@@ -31,7 +31,9 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pwd
+        PYTHONPATH=. pylint $(git ls-files '*.py')
     - name: Lint with flake8
       run: |
-        flake8 --config .flake8.ini --color=auto $(git ls-files '*.py')
+        pwd
+        PYTHONPATH=. flake8 --config .flake8.ini --color=auto $(git ls-files '*.py')
