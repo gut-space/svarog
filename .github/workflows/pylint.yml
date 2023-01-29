@@ -1,6 +1,13 @@
 name: Pylint
 
-on: [push]
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -16,8 +23,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        cd station
+        pwd
         python -m pip install --upgrade pip
         pip install pylint
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
+    - name: Lint with flake8
+      run: |
+        flake8 --config .flake8.ini --color=auto $(git ls-files '*.py')
