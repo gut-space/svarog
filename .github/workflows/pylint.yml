@@ -32,7 +32,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pwd
-        PYTHONPATH=. pylint $(git ls-files '*.py')
+        PYTHONPATH=. pylint --rcfile ../.pylint $(git ls-files '*.py')
     - name: Lint with flake8
       run: |
         pwd
