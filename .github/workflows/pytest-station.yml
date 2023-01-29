@@ -34,4 +34,4 @@ jobs:
       run: |
         cd station
         pwd
-        PYTHONPATH=. pytest -s -v
+        PYTHONPATH=. python -m pytest --ignore=src/ -s -v
