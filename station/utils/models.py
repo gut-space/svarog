@@ -54,8 +54,8 @@ class Configuration(TypedDict):
 
 def get_location(config: Configuration) -> Tuple[str, float, float, float]:
     location = (config["location"]["name"],
-            config["location"]["latitude"], config["location"]["longitude"],
-            config["location"]["elevation"])
+                config["location"]["latitude"], config["location"]["longitude"],
+                config["location"]["elevation"])
     return location
 
 

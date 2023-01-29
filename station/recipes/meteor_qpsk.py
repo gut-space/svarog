@@ -41,25 +41,25 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     with suppress(sh.TimeoutException):
         sh.sox(fm_proc,
-            # Type of input
-            "-t", "raw",
-            "-r", "288k",
-            # Channels - 2 - stereo
-            "-c", 2,
-            # Sample size
-            "-b", 16,
-            # Signed integer encoding
-            "-e", "s",
-            # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
-            "-V3",
-            # Read from stdin (from pipe)
-            "-",
-            # Type of output
-            "-t", "wav",
-            signal_path,
-            # Resampling rate
-            "rate", "96k"
-        )
+               # Type of input
+               "-t", "raw",
+               "-r", "288k",
+               # Channels - 2 - stereo
+               "-c", 2,
+               # Sample size
+               "-b", 16,
+               # Signed integer encoding
+               "-e", "s",
+               # Verbosity level (0 - silence, 1 - failure messages, 2 - warnings, 3 - processing phases, 4 - debug)
+               "-V3",
+               # Read from stdin (from pipe)
+               "-",
+               # Type of output
+               "-t", "wav",
+               signal_path,
+               # Resampling rate
+               "rate", "96k"
+               )
 
     # Normalize signal
     sh.sox(
@@ -89,15 +89,15 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     # Generate images
     sh.medet(dump_path, product_raw_prefix_path,
-        # APID for red
-        "-r", 66,
-        # APID for green
-        "-g", 65,
-        # APID for blue
-        "-b", 64,
-        # Use dump
-        "-d"
-    )
+             # APID for red
+             "-r", 66,
+             # APID for green
+             "-g", 65,
+             # APID for blue
+             "-b", 64,
+             # Use dump
+             "-d"
+             )
 
     # Convert to PNG
     sh.convert(product_raw_path, product_path)

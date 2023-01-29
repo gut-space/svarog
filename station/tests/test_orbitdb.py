@@ -1,3 +1,5 @@
+from orbitdb import OrbitDatabase
+from utils.globalvars import CONFIG_DIRECTORY
 import datetime
 from os import makedirs, environ
 import os.path
@@ -7,18 +9,16 @@ from shutil import copy, rmtree
 # It must be set before import "utils"
 environ["SVAROG_CONFIG_DIR"] = "tests/config"
 
-from utils.globalvars import CONFIG_DIRECTORY
-
-from orbitdb import OrbitDatabase
 
 tle_filename = "https___celestrak.com_NORAD_elements_noaa.txt"
+
 
 class TestOrbitDb(unittest.TestCase):
     def setUp(self):
         makedirs(CONFIG_DIRECTORY, exist_ok=True)
         copy("tests/config.yml", CONFIG_DIRECTORY)
         copy(os.path.join("tests", tle_filename),
-            os.path.join(CONFIG_DIRECTORY, tle_filename))
+             os.path.join(CONFIG_DIRECTORY, tle_filename))
         self.db = OrbitDatabase()
 
     def tearDown(self):

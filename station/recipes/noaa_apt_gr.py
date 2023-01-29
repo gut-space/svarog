@@ -24,14 +24,14 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     # Here's the command that can be used to receive the transmission.
 
-    #./satnogs_noaa_apt_decoder.py --soapy-rx-device="driver=airspy" --rx-freq 137.9125M --decoded-data-file-path=/home/pi/observations/satnogs/decoded.png
+    # ./satnogs_noaa_apt_decoder.py --soapy-rx-device="driver=airspy" --rx-freq 137.9125M --decoded-data-file-path=/home/pi/observations/satnogs/decoded.png
     #  --samp-rate-rx=3000000 --antenna RX --gain 45 --bw 41000
 
     # TODO: Some of those parameters should be configurable.
     soapy_rx_device = "driver=airspy,bias=1"
-    sample_rate_rx = 3000000 # number of samples per second
-    gain = 45 # 45 is max for airspy, rtlsdr can go up to 49.6
-    bandwidth = 36000 # specify the received bandwidth in Hz
+    sample_rate_rx = 3000000  # number of samples per second
+    gain = 45  # 45 is max for airspy, rtlsdr can go up to 49.6
+    bandwidth = 36000  # specify the received bandwidth in Hz
 
     # Let's log the operations done by the tools to a log file. We need to flush it
     # frequently, because this file stream is also used capture tools output. Without
@@ -45,7 +45,6 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.flush()
 
     waterfall_dat = waterfall_path + ".dat"
-
 
     # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
