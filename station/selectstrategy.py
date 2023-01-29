@@ -9,6 +9,7 @@ Observation = namedtuple("Entry", ("data", "pass_", "range"))
 Strategy = Callable[[Sequence[Tuple[T, PredictedPass]]], Sequence[Observation]]
 Selector = Callable[[T, PredictedPass, Optional[DateTimeRange], Optional[DateTimeRange]], Optional[DateTimeRange]]
 
+
 def _to_observations(data: Iterable[Tuple[T, PredictedPass]]) -> List[Observation]:
     entries: List[Observation] = []
     for obj, pass_ in data:
@@ -17,14 +18,15 @@ def _to_observations(data: Iterable[Tuple[T, PredictedPass]]) -> List[Observatio
         entries.append(entry)
     return entries
 
+
 def create_strategy(sort_key: Callable[[Observation], Hashable],
-        selector: Selector,
-        min_seconds=1) -> Strategy:
+                    selector: Selector,
+                    min_seconds=1) -> Strategy:
     def strategy(data: Iterable[Tuple[T, PredictedPass]]) -> Sequence[Observation]:
         entries = _to_observations(data)
 
         entries.sort(key=sort_key)  # type: ignore
-        
+
         result = []
         while len(entries) != 0:
             top = entries[0]
@@ -38,13 +40,13 @@ def create_strategy(sort_key: Callable[[Observation], Hashable],
                     if not left_range.is_valid_timerange():
                         left_range = None
                     if not right_range.is_valid_timerange():
-                        right_range = None  
+                        right_range = None
                     if left_range is None and right_range is None:
                         continue
                     selected_range = selector(entry.data, entry.pass_, left_range, right_range)
                     if selected_range is None:
                         continue
-                
+
                     entry.range.set_start_datetime(selected_range.start_datetime)
                     entry.range.set_end_datetime(selected_range.end_datetime)
                     if not entry.range.is_valid_timerange():
@@ -56,7 +58,9 @@ def create_strategy(sort_key: Callable[[Observation], Hashable],
         return result
     return strategy
 
+
 aos_priority_strategy = create_strategy(lambda o: o.pass_.aos, lambda _d, _p, _lr, rr: rr)
+
 
 def max_elevation_selector(_: Any, pass_: PredictedPass, left_range: Optional[DateTimeRange], right_range: Optional[DateTimeRange]) -> Optional[DateTimeRange]:
     """
@@ -67,7 +71,10 @@ def max_elevation_selector(_: Any, pass_: PredictedPass, left_range: Optional[Da
         if r is not None and max_elevation_date in r:
             return r
     return None
+
+
 max_elevation_strategy = create_strategy(lambda o: -o.pass_.max_elevation_deg, max_elevation_selector)
+
 
 def strategy_factory(name: str):
     if name == "aos":

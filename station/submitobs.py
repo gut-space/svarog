@@ -24,6 +24,7 @@ station_id = str(section["id"])
 secret = bytearray.fromhex(section["secret"])
 url = section["url"]
 
+
 @dataclass
 class SubmitRequestData:
     """
@@ -59,8 +60,9 @@ def get_tle(sat_name: str, date: datetime.datetime) -> Optional[List[str]]:
     try:
         db = OrbitDatabase()
         return db.get_tle(sat_name, date)
-    except:
+    except BaseException:
         return None
+
 
 def get_mime_type(filename: str) -> str:
     """
@@ -93,6 +95,7 @@ def get_mime_type(filename: str) -> str:
     txt = filename.lower()
     ext = os.path.splitext(txt)[1]
     return known_types.get(ext, "application/octet-stream")
+
 
 def submit_observation(data: SubmitRequestData):
     '''
@@ -128,7 +131,7 @@ def submit_observation(data: SubmitRequestData):
 
         # If there's only one file, it will use "file" key. The second file will be "file1",
         # third "file2" etc.
-        file_key = "file" if cnt==0 else f"file{cnt}"
+        file_key = "file" if cnt == 0 else f"file{cnt}"
 
         file_obj = open(path, 'rb')
         body[file_key] = file_obj
@@ -139,7 +142,7 @@ def submit_observation(data: SubmitRequestData):
     body.update(form_data)
 
     header_value = get_authorization_header_value(station_id,
-        secret, body, datetime.datetime.utcnow())
+                                                  secret, body, datetime.datetime.utcnow())
 
     headers = {
         "Authorization": header_value
@@ -162,7 +165,7 @@ def submit_observation(data: SubmitRequestData):
     # Logging extra details in case of failed submission.
     if (resp.status_code != 204):
         # On info, just log the field names in what we sent. On debug, log also the content and the whole response.
-        logging.info("Submission details: headers: %s, form: %s" % (",".join(headers.keys()), ",".join(form_data.keys())) )
+        logging.info("Submission details: headers: %s, form: %s" % (",".join(headers.keys()), ",".join(form_data.keys())))
         logging.debug("headers=%s" % headers)
         logging.debug("form=%s" % form_data)
         logging.debug("Response details: %s" % resp.text)
@@ -173,16 +176,17 @@ def submit_observation(data: SubmitRequestData):
     # All seems to be OK
     return None
 
+
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("Not enough parameters. At least 3 are needed: "
-            "filename sat_name aos [tca] [los] [notes] [rating]")
+              "filename sat_name aos [tca] [los] [notes] [rating]")
         print("filename can be a single file or coma separated list (no spaces)")
         exit(1)
 
-    filename=sys.argv[1]
-    sat_name=sys.argv[2]
-    aos=tca=los=from_iso_format(sys.argv[3])
+    filename = sys.argv[1]
+    sat_name = sys.argv[2]
+    aos = tca = los = from_iso_format(sys.argv[3])
     cfg = "{}"
     rating = None
 
@@ -197,14 +201,14 @@ if __name__ == '__main__':
             # Just check if ths input is a valid JSON (but use it as text anyway)
             json.loads(sys.argv[6])
             cfg = sys.argv[6]
-        except:
+        except BaseException:
             logging.error(f"ERROR: The meta-data (config) was specified: {sys.argv[6]}, but it's not a valid JSON")
 
     if len(sys.argv) >= 8:
         rating = float(sys.argv[7])
 
     # Files can be coma separated (or it could be just a single file)
-    filename=filename.split(",")
+    filename = filename.split(",")
 
     result = submit_observation(
         SubmitRequestData(filename, sat_name, aos, tca, los, cfg, rating)

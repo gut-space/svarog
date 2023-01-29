@@ -18,17 +18,19 @@ RECEIVER_COMMAND = get_receiver_command()
 
 prediction_config = open_config()
 
+
 def get_command(name: str, range_: DateTimeRange):
     return RECEIVER_COMMAND + '"%s" "%s"' % (name, range_.end_datetime.isoformat())
+
 
 def get_passes(config: Configuration, from_: datetime.datetime, to: datetime.datetime):
     location = Location(*get_location(config))
     satellties = filter(lambda s: not s.get("disabled", False), config["satellites"])
-    strategy_name: str = config.get("strategy", "max-elevation") # type: ignore
+    strategy_name: str = config.get("strategy", "max-elevation")  # type: ignore
 
     orbit_db = OrbitDatabase(config["norad"])
     strategy = strategy_factory(strategy_name)
-    
+
     init = []
     for sat in satellties:
         set_satellite_defaults(config, sat)
@@ -37,9 +39,10 @@ def get_passes(config: Configuration, from_: datetime.datetime, to: datetime.dat
         predictor = orbit_db.get_predictor(sat["name"])
         passes = predictor.passes_over(location, from_, to, max_elevation_greater_than, aos_at_dg=aos_at)
         init += [(sat["name"], p) for p in passes]
-    
+
     selected = strategy(init)
     return selected
+
 
 def plan_passes(selected: Sequence[Observation], cron):
     selected = sorted(selected, key=lambda o: o.pass_.aos)
@@ -50,9 +53,11 @@ def plan_passes(selected: Sequence[Observation], cron):
         job.setall(start_datetime)
     cron.write()
 
+
 def clear(cron):
     cron.remove_all(comment=COMMENT_PASS_TAG)
     cron.write()
+
 
 def execute(interval, cron=None):
     if cron is None:
@@ -65,6 +70,7 @@ def execute(interval, cron=None):
     clear(cron)
     plan_passes(passes, cron)
     return passes
+
 
 if __name__ == '__main__':
     interval = int(sys.argv[1]) if len(sys.argv) > 1 else 24 * 60 * 60
