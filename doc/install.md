@@ -148,12 +148,6 @@ free to tweak it as you see fit. You may want to add extra data. Any other type 
 as long as it's a valid JSON. Also, take a look at [submit_obs.py](submit_obs.md), which explains
 what the parameters mean. Some additional parameters are set by the Svarog station on its own.
 
-10. **Run unit-tests (devs only)**
-
-Developers may be interested in running unit tests. The best way to do that is to call a command
-`python -m pytest -s -v` (if you call `pytest -s -v` instead, you risk running mismatched python
-version).
-
 # Server installation
 
 Server installation is a manual process. It is assumed that you already have running apache server.
@@ -230,7 +224,12 @@ file. The configuration can be uploaded using command similar to this:
 
 ```curl -X PUT --data-binary @nginx/unit.json --unix-socket /var/run/control.unit.sock http://localhost/config```
 
-Please consult with [Unit docs](https://unit.nginx.org/configuration/) for details.
+Please consult with [Unit docs](https://unit.nginx.org/configuration/) for
+details.
+
+You can check Unit's configuration using:
+
+```curl --unix-socket /var/run/control.unit.sock http://localhost/config/```
 
 5. **Grant sudo privileges**
 
@@ -250,7 +249,7 @@ or
 
 Alternatively, you can allow restarting all services:
 ```
-%svarog ALL= NOPASSWD: /bin/systemctl 
+%svarog ALL= NOPASSWD: /bin/systemctl
 ```
 
 This is more convenient, but may be a bit risky from the security perspective.
