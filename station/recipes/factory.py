@@ -68,6 +68,7 @@ def setup_base_dir():
     os.makedirs(base_dir, exist_ok=True)
     return base_dir
 
+
 def get_recipe(sat: SatelliteConfiguration):
     '''
     Returns path to recipe file assigned with the specified satellite.
@@ -92,6 +93,7 @@ def get_unique_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
     Generates unique, but meaningful dir name.
     '''
     return los.strftime("%Y-%m-%d-%H%M") + "-" + sat["name"].lower().replace(" ", "-")
+
 
 def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
         -> Tuple[Iterable[Tuple[ReceptionResultCategory, str]], str, dict]:

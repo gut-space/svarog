@@ -7,16 +7,19 @@ from orbit_predictor.locations import Location
 
 import selectstrategy
 
-def get_pass(location, name, aos, los, max_elevation, when_max_elevation = 0.5):
+
+def get_pass(location, name, aos, los, max_elevation, when_max_elevation=0.5):
     duration_s = (los - aos).total_seconds()
     max_elevation_date = aos + datetime.timedelta(seconds=duration_s * when_max_elevation)
     return PredictedPass(location, name, max_elevation, aos, los, duration_s, max_elevation_date=max_elevation_date)
+
 
 location = Location("TEST_LOC", 50, 20, 100)
 start = datetime.datetime(2020, 1, 1, 0, 0, 0)
 moments = {}
 for i in range(10):
     moments[i] = start + datetime.timedelta(minutes=i)
+
 
 class TestSelectStrategy(unittest.TestCase):
     #    | 0    1    2    3    4    5    6    7    8    9
@@ -37,7 +40,7 @@ class TestSelectStrategy(unittest.TestCase):
         G = get_pass(location, "G", moments[7], moments[8], 30)
         H = get_pass(location, "H", moments[8], moments[9], 30)
 
-        self.dataset = [(item.sate_id, item) for item in [A,B,C,D,E,F,G,H]]
+        self.dataset = [(item.sate_id, item) for item in [A, B, C, D, E, F, G, H]]
 
     def test_aos_strategy(self):
         strategy = selectstrategy.aos_priority_strategy

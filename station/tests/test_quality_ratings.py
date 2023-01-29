@@ -105,9 +105,8 @@ class TestQualityRatings(unittest.TestCase):
 
     def test_digital_rating_on_3d_quater_zeros(self):
         img = np.ones((1000, 1000, 3))
-        img[:,:,2] = 0
-        img[:250,:,0:2] = 0
+        img[:, :, 2] = 0
+        img[:250, :, 0:2] = 0
         rate = quality_ratings.get_rate_by_name("digital")
         rating = rate(img)
         self.assertAlmostEqual(0.75, rating, 3)
-

@@ -7,6 +7,7 @@ import os
 
 TESTFILE = '/tmp/metadata.json'
 
+
 class TestMetadata(unittest.TestCase):
     def setUp(self):
         return super().tearDown()
@@ -14,7 +15,7 @@ class TestMetadata(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             os.remove(TESTFILE)
-        except:
+        except BaseException:
             pass
         return super().tearDown()
 
@@ -47,7 +48,7 @@ class TestMetadata(unittest.TestCase):
         """Check if deleting existing (and non-existing) keys is working ok."""
         m = Metadata(TESTFILE)
         m.set('foo', 'bar')
-        self.assertEqual(m.get('antenna'), 'unknown') # default entry
+        self.assertEqual(m.get('antenna'), 'unknown')  # default entry
         self.assertEqual(m.get('foo'), 'bar')  # user entry
 
         m.delete('foo')
@@ -65,13 +66,13 @@ class TestMetadata(unittest.TestCase):
         """Tests that the file can be written and that the written context is correct."""
         try:
             os.remove(TESTFILE)
-        except:
+        except BaseException:
             pass
         m = Metadata(TESTFILE)
         m.writeFile()
 
         with open(TESTFILE, 'r') as myfile:
-            data=myfile.read()
+            data = myfile.read()
 
         j = json.loads(data)
         self.assertIsNotNone(j)

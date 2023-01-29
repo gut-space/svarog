@@ -57,7 +57,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.flush()
 
     # Run sox - this convert raw samples into audible WAV
-    sh.sox(# Type of input
+    sh.sox(  # Type of input
         "-t", "raw",
         # Sample size in bits
         "-b16",
@@ -84,7 +84,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     # Run noaa_apt - this decodes APT from the audio file into PNG image.
     sh.noaa_apt(
         "-o", product_path,
-        "--false-color", "--contrast","telemetry",
+        "--false-color", "--contrast", "telemetry",
         signal_path,
         _out=logfile
     )

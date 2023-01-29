@@ -4,7 +4,6 @@ from types import ModuleType
 from typing import Callable, Iterable, Optional, Tuple
 
 
-
 def get_module_in_directory(directory: str, name: str) -> Optional[ModuleType]:
     '''
     Return module with given name in directory.

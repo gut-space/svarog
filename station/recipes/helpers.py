@@ -5,11 +5,11 @@ import sh
 
 def set_sh_defaults(f):
     '''
-    Import and set default parameters in "sh" library. "sh" provides easy and 
+    Import and set default parameters in "sh" library. "sh" provides easy and
     magic wrapper for call shell programs.
 
     This decorator set the fallowing default paramters:
-    
+
     - Set working directory to directory provided as
     first arguement.
 

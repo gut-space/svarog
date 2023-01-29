@@ -19,7 +19,7 @@ def open_config() -> Configuration:
         print("WARNING: config file (%s) was missing, generated using template." % config_path)
 
     with open(config_path) as f:
-        return yaml.safe_load(f) # type: ignore
+        return yaml.safe_load(f)  # type: ignore
 
 
 def save_config(config: Configuration):
