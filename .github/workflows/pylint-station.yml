@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint wheel
+        pip install pylint flake8 wheel
         if [ -f station/requirements.txt ]; then pip install -r station/requirements.txt; fi
 
     - name: Analysing the code with pylint
