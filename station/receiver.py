@@ -14,7 +14,6 @@ from utils.configuration import open_config
 from submitobs import submit_observation, SubmitRequestData
 from recipes import factory
 from quality_ratings import get_rate_by_name
-from dateutil import tz
 from sh import CommandNotFound
 from metadata import Metadata
 
@@ -42,7 +41,7 @@ def get_rating_for_product(product_path: str, rate_name: typing.Optional[str]) \
         rate = get_rate_by_name(rate_name)
         img = imread(product_path)
         return rate(img)
-    except Exception as _:
+    except Exception:
         logging.error("Error during rating the product", exc_info=True)
         return None
 

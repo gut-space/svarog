@@ -1,5 +1,8 @@
+"""
+Code related to getting upcoming sat passes and planning observations.
+"""
+
 import datetime
-from pprint import pprint
 import sys
 from typing import Sequence
 
