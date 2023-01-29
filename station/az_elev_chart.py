@@ -1,11 +1,14 @@
+"""
+Provides utilities to generate console azimuth-elevation charts.
+"""
+
 import datetime
-from dateutil import tz
 import math
 from typing import List, Optional, Sequence, Tuple
+from dateutil import tz
 
 from datetimerange import DateTimeRange
 from orbit_predictor.locations import Location
-from matplotlib import pyplot as plt
 import plotille
 
 from orbitdb import OrbitDatabase
@@ -39,7 +42,7 @@ def _calculate_series(sat_id: str,
         Too small value causes more accurate shape of chart, but plotille draws
         then thicker lines.
         Too big value causes low accurate (or false) chart.
-    
+
     Returns
     =======
     date_series: sequence of datetime.datetime
@@ -58,8 +61,7 @@ def _calculate_series(sat_id: str,
     if time_step is None:
         time_step = datetime.timedelta(minutes=1)
     if location is None:
-        config = open_config()
-        location = Location(*get_location(config))
+        location = Location(*get_location(open_config()))
 
     db = OrbitDatabase()
     predictor = db.get_predictor(sat_id)
@@ -114,11 +116,11 @@ def plot(sat_id: str,
         scalling is placed in legend.
         If this parameter is set to false then we draw auxiliary line Y=90 degree.
     axis_in_local_time: bool
-        If true then time axis (X axis in azimuth/elevation from time plot) is 
+        If true then time axis (X axis in azimuth/elevation from time plot) is
         in local time. Otherwise in UTC.
     scale_polar: float
         @width and @height parameters will scale by this factor for plot polar
-        chart. 
+        chart.
 
     Returns
     =======
@@ -164,7 +166,7 @@ def _plot_azimuth_and_elevation_from_time(date_series: Sequence[datetime.datetim
         fig.plot(date_series, [90,] * len(date_series), interp=None, label="Y=90")
     fig.plot(date_series, elevation_series, label=elevation_label, lc=COLOR_RED)
     fig.y_label = "Degrees"
-    x_label = "Time (%s)" % ("local" if axis_in_local_time else "UTC",) 
+    x_label = f"Time ({'local' if axis_in_local_time else 'UTC'})"
     fig.x_label = x_label
     print(fig.show(legend=True))
 
@@ -194,7 +196,7 @@ def _plot_polar_azimuth_elevation(azimuth_series: Sequence[float], elevation_ser
         x = d * math.sin(az_rad)
         y = d * math.cos(az_rad)
         points.append((x, y))
-    
+
     if len(points) == 0:
         return
 
