@@ -13,9 +13,11 @@ It should have only standard library dependencies.
 AUTHORIZATION_ALGORITHM = "HMAC-SHA256"
 SIG_LIFETIME = datetime.timedelta(minutes=2, seconds=30)
 
+
 def _is_file_like(obj) -> bool:
     '''Return True if @obj is file-like. Otherwise False'''
     return hasattr(obj, "read") and hasattr(obj, "seek")
+
 
 def _hash_file(obj):
     '''Return file-like hash'''
@@ -23,15 +25,18 @@ def _hash_file(obj):
     obj.seek(0)
     return hash_
 
+
 def _serialize_single_item(key, value):
     '''Serialize key-value pair for non-array value'''
     if _is_file_like(value):
         value = _hash_file(value)
     return "%s=%s" % (key, value)
 
+
 def _serialize_iterable_item(key, values):
     '''Serialize key-value pair for array value'''
     return "&".join(_serialize_single_item(key, v) for v in values)
+
 
 def _serialize_body(body: Dict) -> str:
     '''Serialize dictionary to string'''
@@ -44,6 +49,7 @@ def _serialize_body(body: Dict) -> str:
         serialized_items.append(serialized_item)
     return "&".join(serialized_items)
 
+
 def _get_sig_basestring(id_: str, body: Dict, date: datetime.datetime):
     '''Create basestring for signature'''
     timestamp = date.isoformat(timespec='seconds')
@@ -52,10 +58,12 @@ def _get_sig_basestring(id_: str, body: Dict, date: datetime.datetime):
     sig_basestring = ("%s:%s:%s" % (id_, timestamp, body_string)).encode()
     return sig_basestring
 
-def _get_signature(secret: Union[bytes, bytearray], id_: str,  body: Dict, date: datetime.datetime):
+
+def _get_signature(secret: Union[bytes, bytearray], id_: str, body: Dict, date: datetime.datetime):
     '''Create HMAC signature using provided parameters.'''
     sig_basestring = _get_sig_basestring(id_, body, date)
     return hmac.new(secret, sig_basestring, digestmod=hashlib.sha256).hexdigest()
+
 
 def _verify_signature(sig: str, secret: bytes, id_: str, body: Dict, create_date: datetime.datetime):
     '''
@@ -65,13 +73,15 @@ def _verify_signature(sig: str, secret: bytes, id_: str, body: Dict, create_date
     computed_sig = _get_signature(secret, id_, body, create_date)
     return sig == computed_sig
 
+
 def get_token(id_: str, secret: Union[bytes, bytearray], body: Dict, date: datetime.datetime):
     '''Create HMAC based token using provided parameters.'''
     sig = _get_signature(secret, id_, body, date)
     token = ",".join((id_, date.isoformat(timespec='seconds'), sig))
     return token
 
-def get_authorization_header_value(id_: str, secret: Union[bytes, bytearray], body: Dict, date: Optional[datetime.datetime]=None):
+
+def get_authorization_header_value(id_: str, secret: Union[bytes, bytearray], body: Dict, date: Optional[datetime.datetime] = None):
     '''
     Shorthand function for create Authorization header value
 
@@ -98,11 +108,13 @@ def get_authorization_header_value(id_: str, secret: Union[bytes, bytearray], bo
     token = get_token(id_, secret, body, date)
     return "%s %s" % (AUTHORIZATION_ALGORITHM, token)
 
+
 def parse_token(token: str):
     '''Split token to id, timestamp and signature'''
     id_, timestamp, sig = token.split(",")
     create_date = isoparse(timestamp)
     return id_, create_date, sig
+
 
 def validate_token(token: str, secret: bytes, body: Dict, check_date=None):
     '''

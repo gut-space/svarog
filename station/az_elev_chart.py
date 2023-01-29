@@ -18,11 +18,12 @@ from utils.models import get_location
 COLOR_BLUE = 25
 COLOR_RED = 1
 
+
 def _calculate_series(sat_id: str,
-        aos: datetime.datetime, los: datetime.datetime,
-        location: Optional[Location]=None,
-        time_step: Optional[datetime.timedelta]=None) \
-    -> Tuple[Sequence[datetime.datetime], Sequence[float], Sequence[float]]:
+                      aos: datetime.datetime, los: datetime.datetime,
+                      location: Optional[Location] = None,
+                      time_step: Optional[datetime.timedelta] = None) \
+        -> Tuple[Sequence[datetime.datetime], Sequence[float], Sequence[float]]:
     '''
     Produce data for plot charts
 
@@ -73,17 +74,18 @@ def _calculate_series(sat_id: str,
     for date in DateTimeRange(aos, los).range(time_step):
         position = predictor.get_position(date)
         az, el = location.get_azimuth_elev_deg(position)
-        date_series.append(date) # type: ignore
+        date_series.append(date)  # type: ignore
         azimuth_series.append(az)
         elevation_series.append(el)
 
     return date_series, azimuth_series, elevation_series
 
+
 def plot(sat_id: str,
-        aos: datetime.datetime, los: datetime.datetime,
-        location: Optional[Location]=None,
-        time_step: Optional[datetime.timedelta]=None,
-        width=50, height=20, scale_elevation=True, axis_in_local_time=True, scale_polar=0.5):
+         aos: datetime.datetime, los: datetime.datetime,
+         location: Optional[Location] = None,
+         time_step: Optional[datetime.timedelta] = None,
+         width=50, height=20, scale_elevation=True, axis_in_local_time=True, scale_polar=0.5):
     '''
     Plot azimuth/elevation polar chart and next azimuth/elevation from time chart.
 
@@ -129,22 +131,22 @@ def plot(sat_id: str,
 
     date_series, azimuth_series, elevation_series = _calculate_series(sat_id, aos, los, location, time_step)
     _plot_polar_azimuth_elevation(azimuth_series, elevation_series,
-        int(width * scale_polar), int(height * scale_polar))
+                                  int(width * scale_polar), int(height * scale_polar))
     _plot_azimuth_and_elevation_from_time(date_series, azimuth_series, elevation_series,
-        width=width, height=height,
-        scale_elevation=scale_elevation, axis_in_local_time=axis_in_local_time)
+                                          width=width, height=height,
+                                          scale_elevation=scale_elevation, axis_in_local_time=axis_in_local_time)
 
 
 def _plot_azimuth_and_elevation_from_time(date_series: Sequence[datetime.datetime],
-        azimuth_series: Sequence[float], elevation_series: Sequence[float],
-        width=50, height=20, scale_elevation=True, axis_in_local_time=True):
+                                          azimuth_series: Sequence[float], elevation_series: Sequence[float],
+                                          width=50, height=20, scale_elevation=True, axis_in_local_time=True):
     '''
     Plot azimuth/elevation from time chart.
     Series colors are compatible with gPredict.
     '''
     # We scale elevation, because plotille library allow draw only one Y axis.
     if scale_elevation:
-        elevation_series = [el *4 for el in elevation_series]
+        elevation_series = [el * 4 for el in elevation_series]
     if axis_in_local_time:
         target_tz = tz.tzlocal()
         date_series = [d.astimezone(target_tz) for d in date_series]
@@ -170,8 +172,9 @@ def _plot_azimuth_and_elevation_from_time(date_series: Sequence[datetime.datetim
     fig.x_label = x_label
     print(fig.show(legend=True))
 
+
 def _plot_polar_azimuth_elevation(azimuth_series: Sequence[float], elevation_series: Sequence[float],
-        width=50, height=20):
+                                  width=50, height=20):
     '''
     Plot azimuth/elevation polar chart.
     Chart has auxiliary lines on -90, -60, -30, 30, 60, 90 degrees.
@@ -185,7 +188,7 @@ def _plot_polar_azimuth_elevation(azimuth_series: Sequence[float], elevation_ser
     canvas.line(-1, 0, 1, 0)
     canvas.line(0, -1, 0, 1)
     DELIMITER_HALF = 0.05
-    for d in [-1 + i * 1/3 for i in range(0,7)]:
+    for d in [-1 + i * 1 / 3 for i in range(0, 7)]:
         canvas.line(d, -DELIMITER_HALF, d, DELIMITER_HALF)
         canvas.line(-DELIMITER_HALF, d, DELIMITER_HALF, d)
 

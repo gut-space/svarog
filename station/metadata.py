@@ -2,6 +2,7 @@ from typing import Any, Dict
 from utils.globalvars import METADATA_FILE
 import json
 
+
 class Metadata:
     """This class manages metadata, which store hardware (such as lna or receiver type), software
        (such as recipe used) and run-time parameters (such as frequency or name of the satellite).
@@ -17,9 +18,9 @@ class Metadata:
 
     filename = METADATA_FILE
 
-    storage = {} # Stores the keys
+    storage = {}  # Stores the keys
 
-    def __init__(self, filename = METADATA_FILE):
+    def __init__(self, filename=METADATA_FILE):
         self.filename = filename
         self.loadFile()
 
@@ -28,10 +29,10 @@ class Metadata:
            The content is parsed and loaded into self.storage"""
         try:
             with open(self.filename, 'r') as myfile:
-                data=myfile.read()
+                data = myfile.read()
 
             self.storage = json.loads(data)
-        except:
+        except BaseException:
             self.createFile()
 
     def clear(self):
@@ -55,7 +56,7 @@ class Metadata:
 
     def getString(self) -> Dict:
         """Returns all metadata as a string"""
-        return json.dumps(self.storage, indent = 4)
+        return json.dumps(self.storage, indent=4)
 
     def get(self, key: str) -> Any:
         """Returns the parameter or empty string if missing"""

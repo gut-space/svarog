@@ -17,8 +17,9 @@ CELESTRAK = [
     r"https://celestrak.com/NORAD/elements/active.txt"
 ]
 
+
 class OrbitDatabase:
-    def __init__(self, urls=None, max_period=7*24*60*60):
+    def __init__(self, urls=None, max_period=7 * 24 * 60 * 60):
         self.max_period = max_period
         if urls is None:
             config = open_config()
@@ -54,7 +55,7 @@ class OrbitDatabase:
         return ctime
 
     def _is_out_of_date(self, path):
-        ctime = self._get_create_time(path)    
+        ctime = self._get_create_time(path)
         now = time.time()
         return now > ctime + self.max_period
 
@@ -66,7 +67,7 @@ class OrbitDatabase:
 
         try:
             return self._fetch_tle_and_save(url, tle_path)
-        except:
+        except BaseException:
             if not force_fetch and tle_path_exists:
                 return tle_path
             else:
@@ -93,7 +94,7 @@ class OrbitDatabase:
 
     def get_tle(self, sat_id: str, date: datetime.datetime) -> List[str]:
         source = self._get_source(sat_id)
-        return source.get_tle(sat_id, date).lines # type: ignore
+        return source.get_tle(sat_id, date).lines  # type: ignore
 
     def refresh_satellites(self, sat_ids):
         all_sat_ids = set(sat_ids)
@@ -105,14 +106,14 @@ class OrbitDatabase:
 
             path = self._get_current_tle_file(url, force_fetch=True)
             source = NoradTLESource.from_file(path)
-            
+
             for sat_id in satellites_to_search:
                 if self._is_in_source(source, sat_id):
-                    found_sat_ids.add(sat_id)        
+                    found_sat_ids.add(sat_id)
 
         if all_sat_ids != found_sat_ids:
             raise LookupError("Could not find %s in orbit data." % (", ".join(all_sat_ids.difference(found_sat_ids))))
-    
+
     def refresh_urls(self):
         urls = self.urls
 
@@ -129,10 +130,10 @@ class OrbitDatabase:
                 creation_time = self._get_create_time(path)
                 now = time.time()
                 age = now - creation_time
-                
+
                 dt = datetime.timedelta(seconds=age)
                 data.append((url, "%s: %s ago" % ("Out-of-date" if out_of_date else "Current", str(dt))))
             else:
                 data.append((url, "Not exists"))
-        
+
         return "\n".join("%s - %s" % (url, desc) for url, desc in data)

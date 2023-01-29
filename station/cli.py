@@ -20,9 +20,10 @@ from utils.configuration import open_config, save_config
 from utils.functional import first
 from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG, CONFIG_PATH
 from utils.dates import from_iso_format
-from utils.cron import  get_planner_command, get_receiver_command, open_crontab
+from utils.cron import get_planner_command, get_receiver_command, open_crontab
 from recipes.factory import get_recipe_names
 from quality_ratings import get_rate_names
+
 
 def get_interval(job):
     frequency = job.frequency()
@@ -30,6 +31,7 @@ def get_interval(job):
     days_in_year = 366 if calendar.isleap(year) else 365
     interval = int(round((days_in_year * 24 * 60 * 60 * 1.0) / frequency))
     return interval
+
 
 def update_config(config, args, names):
     for name in names:
@@ -44,8 +46,10 @@ def update_config(config, args, names):
 
         config[config_name] = getattr(args, args_name)
 
+
 def get_hash(obj):
     return DeepHash(obj)[obj]
+
 
 def hex_bytes(value):
     try:
@@ -53,6 +57,7 @@ def hex_bytes(value):
     except ValueError:
         raise argparse.ArgumentTypeError("%s is invalid hex bytes value" % (value,))
     return value
+
 
 def exist_directory(x: str) -> str:
     """
@@ -65,6 +70,7 @@ def exist_directory(x: str) -> str:
     if not os.path.isdir(x):
         raise argparse.ArgumentTypeError("%s isn't a directory" % (x,))
     return x
+
 
 def parse_receiver_job(job) -> Tuple[str, datetime.datetime, datetime.datetime]:
     '''
@@ -96,6 +102,7 @@ def parse_receiver_job(job) -> Tuple[str, datetime.datetime, datetime.datetime]:
 
     return sat_name, aos, los
 
+
 parser = argparse.ArgumentParser(APP_NAME)
 subparsers = parser.add_subparsers(help='commands', dest="command")
 
@@ -107,7 +114,7 @@ log_parser = subparsers.add_parser(
 )
 
 log_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
-    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
+                        help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
 
 plan_parser = subparsers.add_parser('plan', help='Schedule planned reception events')
 plan_parser.add_argument("--cron", type=str, help='Cron format required. Default "0 4 * * *" for 4:00 AM')
@@ -117,12 +124,23 @@ plan_parser.add_argument("--skip-update", action="store_true", default=False, he
 pass_parser = subparsers.add_parser("pass", help="Information about passes")
 pass_parser.add_argument("target", type=str, help="Pass number or satellite name")
 pass_parser.add_argument("--aos", help="AOS in ISO format. If not provided then display next pass", type=from_iso_format, required=False)
-pass_parser.add_argument("--step", help="Time step to draw diagram [seconds] (default: 60)", type=lambda v: datetime.timedelta(seconds=int(v)), default=datetime.timedelta(minutes=1))
+pass_parser.add_argument(
+    "--step",
+    help="Time step to draw diagram [seconds] (default: 60)",
+    type=lambda v: datetime.timedelta(
+        seconds=int(v)),
+    default=datetime.timedelta(
+        minutes=1))
 pass_parser.add_argument("--width", help="Plot width in chars (default: %(default)s)", default=80, type=int)
 pass_parser.add_argument("--height", help="Plot height in chars (default: %(default)s)", default=40, type=int)
 pass_parser.add_argument("--scale-polar", help="Scale width and height for polar plot (default: %(default)s)", default=1.0, type=float)
 scale_elevation_pass_parser = pass_parser.add_mutually_exclusive_group()
-scale_elevation_pass_parser.add_argument("--scale-elevation", action="store_true", help="Scale 4x elevation series (default: %(default)s)", dest="scale_elevation", default=True)
+scale_elevation_pass_parser.add_argument(
+    "--scale-elevation",
+    action="store_true",
+    help="Scale 4x elevation series (default: %(default)s)",
+    dest="scale_elevation",
+    default=True)
 scale_elevation_pass_parser.add_argument("--no-scale-elevation", action="store_false", dest="scale_elevation")
 utc_group_pass_parser = pass_parser.add_mutually_exclusive_group()
 utc_group_pass_parser.add_argument("--utc", action="store_true", help="Print dates in UTC (default: %(default)s)", dest="print_utc", default=False)
@@ -147,7 +165,7 @@ submit_global_config_parser = global_config_parser.add_mutually_exclusive_group(
 submit_global_config_parser.add_argument("--submit", action="store_true", help="Submit observations to content server", dest="submit", default=None)
 submit_global_config_parser.add_argument("--no-submit", action="store_false", help="Don't submit observations to content server", dest="submit", default=None)
 global_config_parser.add_argument("--save-to-disk", choices=("NONE", "SIGNAL", "PRODUCT", "ALL"),
-    help="Choose data saved on disk (SIGNAL - WAV file, PRODUCT - exported imageries, ALL - both, NONE - nothing")
+                                  help="Choose data saved on disk (SIGNAL - WAV file, PRODUCT - exported imageries, ALL - both, NONE - nothing")
 global_config_parser.add_argument("--directory", type=exist_directory, help="Directory to store observations")
 satellite_config_parser = config_subparsers.add_parser("sat", help="Satellite configuration")
 satellite_config_parser.add_argument("name", type=str, help="Satellite name", nargs='?')
@@ -159,12 +177,17 @@ satellite_config_parser.add_argument("--recipe", choices=get_recipe_names(), hel
 satellite_config_parser.add_argument("--rate", choices=get_rate_names(), help="Function to rate quality of imagery")
 submit_satellite_config_parser = satellite_config_parser.add_mutually_exclusive_group()
 submit_satellite_config_parser.add_argument("--submit", action="store_true", help="Submit observations to content server", dest="submit", default=None)
-submit_satellite_config_parser.add_argument("--no-submit", action="store_false", help="Don't submit observations to content server", dest="submit", default=None)
+submit_satellite_config_parser.add_argument(
+    "--no-submit",
+    action="store_false",
+    help="Don't submit observations to content server",
+    dest="submit",
+    default=None)
 disabled_satellite_config_parser = satellite_config_parser.add_mutually_exclusive_group()
 disabled_satellite_config_parser.add_argument("--enabled", action="store_false", help="Enable plan observations", dest="disabled", default=None)
 disabled_satellite_config_parser.add_argument("--disabled", action="store_true", help="Disable plan observations", dest="disabled", default=None)
 satellite_config_parser.add_argument("--save-to-disk", choices=("SIGNAL", "PRODUCT", "ALL", "INHERIT"),
-    help="Choose data saved on disk (SIGNAL - WAV file, PRODUCT - exported imageries, ALL - both, INHERIT - as in global")
+                                     help="Choose data saved on disk (SIGNAL - WAV file, PRODUCT - exported imageries, ALL - both, INHERIT - as in global")
 norad_config_parser = config_subparsers.add_parser("norad", help="Manage sources NORAD data")
 norad_config_parser.add_argument("urls", nargs="*", type=str, help="URLs of NORAD data")
 norad_config_parser.add_argument("-d", "--delete", action="store_true", default=False, help="Delete NORAD")
@@ -175,7 +198,7 @@ server_config_parser.add_argument("--id", type=str, help="Station ID")
 server_config_parser.add_argument("-s", "--secret", type=hex_bytes, help="HMAC secret shared with content server")
 logging_parser = config_subparsers.add_parser("logging", help="Station logging configuration")
 logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
-    help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
+                            help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
 
 metadata_parser = subparsers.add_parser("metadata", help="Displays metadata")
 
@@ -207,7 +230,7 @@ elif command == "plan":
         print("Trying to set up cron job for periodic updates.")
         updater_job = first(cron.find_comment(COMMENT_UPDATE_TAG))
         if updater_job is None:
-            cmd = os.path.join(os.path.dirname(os.path.realpath(__file__)) , "update.sh")
+            cmd = os.path.join(os.path.dirname(os.path.realpath(__file__)), "update.sh")
             updater_job = cron.new(comment=COMMENT_UPDATE_TAG, command=cmd)
             updater_job.setall("55 3 * * *")
             cron.write()
@@ -294,8 +317,8 @@ elif command == "pass":
 
     import az_elev_chart
     az_elev_chart.plot(sat_name, pass_.aos, pass_.los, location,
-        args.step, args.width, args.height, args.scale_elevation,
-        axis_in_local_time=not args.print_utc, scale_polar=args.scale_polar)
+                       args.step, args.width, args.height, args.scale_elevation,
+                       axis_in_local_time=not args.print_utc, scale_polar=args.scale_polar)
 
 elif command == "config":
     config_command = args.config_command
@@ -319,11 +342,11 @@ elif command == "config":
             ("directory", "obsdir")
         ))
     elif config_command == "logging":
-        if not "logging" in config:
+        if "logging" not in config:
             # Old configs may not have the logging defined. Add the section.
-            config["logging"] = { "level": "INFO" }
+            config["logging"] = {"level": "INFO"}
         section = config["logging"]
-        update_config(section, args, (("loglevel", "level")) )
+        update_config(section, args, (("loglevel", "level")))
 
     elif config_command == "sat":
         section = config["satellites"]
@@ -402,7 +425,7 @@ elif command == "config":
     pprint(section)
 elif command == "metadata":
     m = Metadata()
-    m.writeFile() # write it to disk in case it was missing.
+    m.writeFile()  # write it to disk in case it was missing.
     print(f"Metadata stored in {m.filename}. Please tweak its content as needed.")
     print("Currently defined metadata:")
     print(m.getString())

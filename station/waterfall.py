@@ -1,15 +1,16 @@
 # This file is heavily based on waterfall.py from satnogs-client.
 
+import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
 import sys
 
 matplotlib.use('Agg')
 
-import matplotlib.pyplot as plt
 
 OFFSET_IN_STDS = -2.0
 SCALE_IN_STDS = 8.0
+
 
 class Waterfall():
     """
@@ -18,6 +19,7 @@ class Waterfall():
     :param datafile_path: Path to data file
     :type datafile_path: str_array
     """
+
     def __init__(self, datafile_path, logger=None):
         """
         Class constructor
@@ -56,8 +58,8 @@ class Waterfall():
                    extent=[fmin, fmax, tmin, tmax],
                    vmin=vmin,
                    vmax=vmax,
-                   cmap='Greens') # 'viridis', 'plasma', 'inferno', 'magma', 'cividis'
-                                  # also, see https://matplotlib.org/stable/tutorials/colors/colormaps.html
+                   cmap='Greens')  # 'viridis', 'plasma', 'inferno', 'magma', 'cividis'
+        # also, see https://matplotlib.org/stable/tutorials/colors/colormaps.html
         plt.xlabel('Frequency (kHz)')
         plt.ylabel('Time (seconds)')
         fig = plt.colorbar(aspect=50)
@@ -99,7 +101,6 @@ class Waterfall():
 
         return waterfall
 
-
     def _compress_waterfall(self, waterfall):
         """
         Compress spectra of waterfall
@@ -116,7 +117,6 @@ class Waterfall():
         values = np.clip((spec - offset) / scale, 0.0, 255.0).astype('uint8')
 
         return {'offset': offset, 'scale': scale, 'values': values}
-
 
     def _get_waterfall(self, datafile_path):
         """
@@ -138,7 +138,6 @@ class Waterfall():
         waterfall['compressed'] = self._compress_waterfall(waterfall)
 
         return waterfall
-
 
 
 if __name__ == '__main__':

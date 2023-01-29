@@ -18,6 +18,7 @@ from dateutil import tz
 from sh import CommandNotFound
 from metadata import Metadata
 
+
 def move_to_satellite_directory(root: str, sat_name: str, path: str):
     now = datetime.datetime.utcnow()
     timestamp_dir = now.strftime(r"%Y-%m-%d")
@@ -55,7 +56,7 @@ def cmd():
 
     aos_datetime = datetime.datetime.utcnow()
     los_datetime = from_iso_format(los)
-    tca_datetime = aos_datetime + (los_datetime - aos_datetime)/2
+    tca_datetime = aos_datetime + (los_datetime - aos_datetime) / 2
 
     results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
 
@@ -67,10 +68,10 @@ def cmd():
     valid_results = []
     for a, b in results:
         if not os.path.exists(b):
-            logging.warning("Recipe claims to provide %s file %s, but this file doesn't exist. Skipping." % (a,b))
+            logging.warning("Recipe claims to provide %s file %s, but this file doesn't exist. Skipping." % (a, b))
             continue
         files_txt += a + ":" + b + " "
-        valid_results.append((a,b))
+        valid_results.append((a, b))
     results = valid_results
 
     logging.info("Recipe execution complete, generated %d result[s] (%s), stored in %s directory." % (len(results), files_txt, dir))
@@ -95,7 +96,7 @@ def cmd():
             rating = get_rating_for_product(product[1], satellite.get("rate"))
             logging.info("Product %s got rating %s" % (product[1], rating))
             # TODO: Submit ALL products and logs
-            files = [ product[1] ]
+            files = [product[1]]
             submit_observation(
                 SubmitRequestData(
                     files, name, aos_datetime, tca_datetime,
@@ -111,6 +112,7 @@ def cmd():
         logging.info("Deleting file %s (type %s), because save_mode is %s" % (f, type, save_mode))
         os.remove(f)
 
+
 if __name__ == '__main__':
     try:
         cmd()
@@ -118,6 +120,6 @@ if __name__ == '__main__':
         _, name, los, *opts = sys.argv
         logging.error("Command not found: %s when executing receiver %s (LOS: %s)" % (e, name, los), exc_info=True)
         logging.error("Make sure you have PATH set up correctly in your crontab. See https://stackoverflow.com/questions/10129381/crontab-path-and-user")
-    except:
+    except BaseException:
         _, name, los, *opts = sys.argv
         logging.error("Failed receiver %s (LOS: %s)" % (name, los), exc_info=True)

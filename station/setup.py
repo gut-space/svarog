@@ -9,6 +9,7 @@ import sys
 EXTERNAL_DEPENDENCIES = ["noaa-apt", "rtl_fm", "sox", "meteor-demod", "medet", "convert"]
 RECIPE_DIR = "recipes"
 
+
 def get_requirements_and_links():
     """Returns required packages list, parsed from requirements.txt. The tricky part is to
        handle custom packages (-e git+https://...#egg=package-name). This is currently used
@@ -25,7 +26,7 @@ def get_requirements_and_links():
 
         # Handle custom download URLs
         if i.find("://") != -1:
-            name=i[i.find('egg=') + 4:]
+            name = i[i.find('egg=') + 4:]
             url = i[i.find('git+'):]
             print("Found custom package: name=[%s] url=[%s]" % (name, url))
             REQUIREMENTS.append(name)
@@ -43,7 +44,9 @@ def get_requirements_and_links():
 
     return REQUIREMENTS, DEP_LINKS
 
+
 REQUIREMENTS, DEP_LINKS = get_requirements_and_links()
+
 
 def setup_aliases():
 
@@ -64,7 +67,7 @@ def setup_aliases():
                 found = True
                 print("alias station already set up: %s, skipping alias setup." % l)
                 return
-    except:
+    except BaseException:
         print(ALIAS_FILE + " not found")
 
     if os.getenv('USER') == 'root':
@@ -81,6 +84,7 @@ def setup_aliases():
     f.close()
     print("Alias %s written to %s file." % (alias, ALIAS_FILE))
 
+
 def check_deps():
     """Check if required tools are available.
 
@@ -96,6 +100,7 @@ def check_deps():
 
     return not missing
 
+
 def setup_recipes():
     """Sets the recipes' exec flag"""
     for recipe_candidate_name in os.listdir(RECIPE_DIR):
@@ -105,7 +110,8 @@ def setup_recipes():
         st = os.stat(recipe_path)
         os.chmod(recipe_path, st.st_mode | stat.S_IXUSR)
 
-parser =  argparse.ArgumentParser(description='Set up the Svarog station environment.')
+
+parser = argparse.ArgumentParser(description='Set up the Svarog station environment.')
 parser.add_argument('--skip-python', dest='skip_python', action='store_const',
                     const=True, default=False,
                     help='skips Python package installation')
@@ -126,13 +132,13 @@ if not check_deps():
 
 if not args.skip_python:
     setup(name='svarog-station',
-        version='1.0',
-        description='Svarog ground station management tool',
-        author='SF, TM',
-        packages=find_packages(),
-        install_requires=REQUIREMENTS,
-        dependency_links=DEP_LINKS
-    )
+          version='1.0',
+          description='Svarog ground station management tool',
+          author='SF, TM',
+          packages=find_packages(),
+          install_requires=REQUIREMENTS,
+          dependency_links=DEP_LINKS
+          )
 else:
     print("WARNING: Python installation skipped. Make sure to install them manually using this command:")
     print("WARNING: ")
