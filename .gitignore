@@ -16,3 +16,8 @@ venv
 /server/dist/
 
 *.pyc
+
+
+# Local observations should be ignored.
+/observations/
+/data/
