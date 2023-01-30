@@ -6,7 +6,7 @@ import unittest
 # It must be set before import "utils"
 environ["SVAROG_CONFIG_DIR"] = "tests/config"
 
-from utils.globalvars import CONFIG_DIRECTORY
+from utils.globalvars import CONFIG_DIRECTORY  # noqa: E402
 
 CLI = "./cli.py"
 
