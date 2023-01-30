@@ -148,3 +148,6 @@ class TestCli(unittest.TestCase):
         txt = self.check_command(CLI, ["pass", "NOAA 19"], 0,
                                  ["AOS:", "LOS:", "Duration:", "Red dot is AOS point", "⠒⡗⠒", "⠒⠒⠒⠒⠒⠒⠒", "(Degrees)  ^", "Time (local)", "Legend:",
                                   "⠤⠤ Azimuth", "⠤⠤ Elevation * 4"])
+
+        # Ok, that's a lame check. But it's better than nothing.
+        self.assertNotEqual(txt, "")

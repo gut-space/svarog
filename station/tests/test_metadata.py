@@ -1,6 +1,5 @@
 
 from metadata import Metadata
-import pytest
 import unittest
 import json
 import os
