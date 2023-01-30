@@ -19,12 +19,10 @@ import sys
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
-from gnuradio import eng_notation
 from gnuradio.filter import pfb
 import satnogs
 import soapy
 import distutils
-from distutils import util
 
 
 class satnogs_noaa_apt_decoder(gr.top_block):

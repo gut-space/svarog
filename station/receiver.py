@@ -95,6 +95,7 @@ def cmd():
             rating = get_rating_for_product(product[1], satellite.get("rate"))
             logging.info("Product %s got rating %s" % (product[1], rating))
             # TODO: Submit ALL products and logs
+            logging.warning("TODO: signal submission not implemented yet (%s)" % signal)
             files = [product[1]]
             submit_observation(
                 SubmitRequestData(

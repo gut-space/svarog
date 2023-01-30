@@ -60,12 +60,10 @@ def setup_aliases():
     # for station. Note we don't care if it ours or not. We wouldn't dare to overwrite
     # user's preferences. User knows best *cough*.
     ALIAS_FILE = os.path.join(os.getenv('HOME'), ".bash_aliases")
-    found = False
     try:
-        for l in open(ALIAS_FILE).readlines():
-            if l.find("alias station") != -1:
-                found = True
-                print("alias station already set up: %s, skipping alias setup." % l)
+        for line in open(ALIAS_FILE).readlines():
+            if line.find("alias station") != -1:
+                print("alias station already set up: %s, skipping alias setup." % line)
                 return
     except BaseException:
         print(ALIAS_FILE + " not found")

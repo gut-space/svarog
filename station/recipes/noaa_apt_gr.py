@@ -3,10 +3,8 @@
 from contextlib import suppress
 from datetime import timedelta
 import os.path
-from os import remove
 import signal
 import waterfall
-
 import sh
 
 from recipes.helpers import set_sh_defaults
