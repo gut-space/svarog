@@ -10,6 +10,7 @@ from utils.globalvars import CONFIG_DIRECTORY
 
 CLI = "./cli.py"
 
+
 class TestCli(unittest.TestCase):
 
     def setUp(self):
@@ -19,7 +20,7 @@ class TestCli(unittest.TestCase):
     def tearDown(self):
         rmtree(CONFIG_DIRECTORY, ignore_errors=True)
 
-    def run_cmd(self, binfile, params, env = None):
+    def run_cmd(self, binfile, params, env=None):
         """Runs file specified as binfile, passes all parameters.
         Returns a pair of returncode, stdout"""
         par = [binfile]
@@ -55,7 +56,7 @@ class TestCli(unittest.TestCase):
 
         self.check_output(content, strings)
 
-    def check_command(self, bin, params, exp_code = 0, exp_strings = []):
+    def check_command(self, bin, params, exp_code=0, exp_strings=[]):
         """Runs specified command (bin) with parameters (params) and expected
         the return code to be exp_code. Returns the standard output."""
 
@@ -77,45 +78,44 @@ class TestCli(unittest.TestCase):
     def test_cli_config(self):
         """ Checks that cli config returns the expected content. Note the setUp() method
             copied over tests/config.yml, so we know exactly what to expect. """
-        exp = [ "{'aos_at': 12,",
-                "'elevation': 123",
-                "'latitude': 45.6",
-                "'longitude': 78.9",
-                "'name': 'Secret Lair'",
-                "'max_elevation_greater_than': 0",
-                "https://celestrak.com/NORAD/elements/noaa.txt",
-                "{'freq': '137.62e6', 'name': 'NOAA 15'}",
-                "{'freq': '137.9125e6', 'name': 'NOAA 18'}",
-                "{'freq': '137.1e6', 'name': 'NOAA 19'}",
-                "'server': {'id': 1,",
-                "'secret': '1234567890abcdef01234567890abcde'",
-                "'url': 'http://127.0.0.1:5000/receive'},",
-                "'strategy': 'max-elevation'}" ]
-        self.check_command(CLI, [ "config" ], 0, exp)
+        exp = ["{'aos_at': 12,",
+               "'elevation': 123",
+               "'latitude': 45.6",
+               "'longitude': 78.9",
+               "'name': 'Secret Lair'",
+               "'max_elevation_greater_than': 0",
+               "https://celestrak.com/NORAD/elements/noaa.txt",
+               "{'freq': '137.62e6', 'name': 'NOAA 15'}",
+               "{'freq': '137.9125e6', 'name': 'NOAA 18'}",
+               "{'freq': '137.1e6', 'name': 'NOAA 19'}",
+               "'server': {'id': 1,",
+               "'secret': '1234567890abcdef01234567890abcde'",
+               "'url': 'http://127.0.0.1:5000/receive'},",
+               "'strategy': 'max-elevation'}"]
+        self.check_command(CLI, ["config"], 0, exp)
 
     def test_cli_config_location(self):
         """Checks if cli config location returns the actual location."""
-        self.check_command(CLI, [ "config", "location"], 0,
-                           [ "{'elevation': 123, 'latitude': 45.6, 'longitude': 78.9, 'name': 'Secret Lair'}"])
+        self.check_command(CLI, ["config", "location"], 0,
+                           ["{'elevation': 123, 'latitude': 45.6, 'longitude': 78.9, 'name': 'Secret Lair'}"])
 
     def test_cli_help(self):
         """Checks if help is printed and has reasonable information."""
 
-        exp = [ "usage: svarog [-h] {clear,logs,plan,pass,config,metadata}",
-                "positional arguments:",
-                "{clear,logs,plan,pass,config,metadata}",
-                "clear               Clear all scheduled reception events",
-                "logs                Show logs",
-                "plan                Schedule planned reception events",
-                "pass                Information about passes",
-                "config              Configuration",
-                "metadata            Displays metadata",
-                "-h, --help            show this help message and exit"
-        ]
+        exp = ["usage: svarog [-h] {clear,logs,plan,pass,config,metadata}",
+               "positional arguments:",
+               "{clear,logs,plan,pass,config,metadata}",
+               "clear               Clear all scheduled reception events",
+               "logs                Show logs",
+               "plan                Schedule planned reception events",
+               "pass                Information about passes",
+               "config              Configuration",
+               "metadata            Displays metadata",
+               "-h, --help            show this help message and exit"
+               ]
         exp_code = 0
 
         self.check_command(CLI, None, exp_code, exp)
-
 
     def test_plan(self):
         """Checks if cli.py plan really schedules anything in cron."""
@@ -124,7 +124,7 @@ class TestCli(unittest.TestCase):
         # actual crontab file.
         environ["DEV_ENVIRONMENT"] = "1"
 
-        self.check_command(CLI, [ "plan" ], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day, every day"])
+        self.check_command(CLI, ["plan"], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day, every day"])
 
         del environ["DEV_ENVIRONMENT"]
 
@@ -138,7 +138,6 @@ class TestCli(unittest.TestCase):
         self.check_file("tests/config/crontab", ["55 3 * * *", "/station/update.sh # svarog-update",
                                                  "0 4 * * * python3", "station/planner.py 86400 # svarog-plan"])
 
-
     def test_pass(self):
         """Checks if cli.py pass can produce diagrams properly."""
 
@@ -146,6 +145,6 @@ class TestCli(unittest.TestCase):
         # to force specific time, also fake inserting TLE data into the database). Instead, we check couple things:
         # that the return code is 0 (it's 1 if there's an exception thrown), that some of the pass details, axes,
         # axes descriptions, and legend are shown.
-        txt = self.check_command(CLI, [ "pass", "NOAA 19" ], 0,
-        ["AOS:", "LOS:", "Duration:", "Red dot is AOS point", "⠒⡗⠒", "⠒⠒⠒⠒⠒⠒⠒", "(Degrees)  ^", "Time (local)", "Legend:",
-           "⠤⠤ Azimuth", "⠤⠤ Elevation * 4"])
+        txt = self.check_command(CLI, ["pass", "NOAA 19"], 0,
+                                 ["AOS:", "LOS:", "Duration:", "Red dot is AOS point", "⠒⡗⠒", "⠒⠒⠒⠒⠒⠒⠒", "(Degrees)  ^", "Time (local)", "Legend:",
+                                  "⠤⠤ Azimuth", "⠤⠤ Elevation * 4"])
