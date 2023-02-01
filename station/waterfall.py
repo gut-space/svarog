@@ -1,9 +1,10 @@
 # This file is heavily based on waterfall.py from satnogs-client.
 
+
+import sys
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
-import sys
 
 matplotlib.use('Agg')
 
