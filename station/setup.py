@@ -65,7 +65,7 @@ def setup_aliases():
             if line.find("alias station") != -1:
                 print("alias station already set up: %s, skipping alias setup." % line)
                 return
-    except BaseException:
+    except Exception:
         print(ALIAS_FILE + " not found")
 
     if os.getenv('USER') == 'root':

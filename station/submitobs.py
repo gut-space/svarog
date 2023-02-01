@@ -201,7 +201,7 @@ if __name__ == '__main__':
             # Just check if ths input is a valid JSON (but use it as text anyway)
             json.loads(sys.argv[6])
             cfg = sys.argv[6]
-        except BaseException:
+        except Exception:
             logging.error(f"ERROR: The meta-data (config) was specified: {sys.argv[6]}, but it's not a valid JSON")
 
     if len(sys.argv) >= 8:
