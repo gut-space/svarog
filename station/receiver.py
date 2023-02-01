@@ -120,6 +120,6 @@ if __name__ == '__main__':
         _, name, los, *opts = sys.argv
         logging.error("Command not found: %s when executing receiver %s (LOS: %s)" % (e, name, los), exc_info=True)
         logging.error("Make sure you have PATH set up correctly in your crontab. See https://stackoverflow.com/questions/10129381/crontab-path-and-user")
-    except BaseException:
+    except Exception:
         _, name, los, *opts = sys.argv
         logging.error("Failed receiver %s (LOS: %s)" % (name, los), exc_info=True)

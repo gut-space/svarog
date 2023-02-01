@@ -32,7 +32,7 @@ class Metadata:
                 data = myfile.read()
 
             self.storage = json.loads(data)
-        except BaseException:
+        except Exception:
             self.createFile()
 
     def clear(self):

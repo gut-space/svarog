@@ -33,7 +33,7 @@ try:
         config = yaml.safe_load(f)  # type: ignore
         lv = config["logging"]["level"]
         loglevel = logging._nameToLevel[lv]
-except BaseException:
+except Exception:
     pass
 
 if DEV_ENVIRONMENT:

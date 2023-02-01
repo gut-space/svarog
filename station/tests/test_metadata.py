@@ -14,7 +14,7 @@ class TestMetadata(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             os.remove(TESTFILE)
-        except BaseException:
+        except Exception:
             pass
         return super().tearDown()
 
@@ -65,7 +65,7 @@ class TestMetadata(unittest.TestCase):
         """Tests that the file can be written and that the written context is correct."""
         try:
             os.remove(TESTFILE)
-        except BaseException:
+        except Exception:
             pass
         m = Metadata(TESTFILE)
         m.writeFile()
