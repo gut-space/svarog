@@ -60,7 +60,7 @@ def get_tle(sat_name: str, date: datetime.datetime) -> Optional[List[str]]:
     try:
         db = OrbitDatabase()
         return db.get_tle(sat_name, date)
-    except BaseException:
+    except Exception:
         return None
 
 
