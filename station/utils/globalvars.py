@@ -2,8 +2,19 @@ import os
 import logging
 import yaml
 
+# The DEV_ENVIRONMENT controls whether the code is run in development
+# environment, so it uses files in more convenient locations. Also,
+# it can enable maximum logging level.
+#
+# allowed cases
+# (not defined) => dev environment disabled
+# 1 => typcial use case, dev env enabled, max logging enabled
+# 2 => running from unit-tests, dev env enabled, logging on info,
+#      so tests are not too verbose
 
-DEV_ENVIRONMENT = os.environ.get("DEV_ENVIRONMENT") == '1'
+DEV_ENVIRONMENT = os.environ.get("DEV_ENVIRONMENT") is not None
+MAX_LOGGING = os.environ.get("DEV_ENVIRONMENT") == "1"
+
 APP_NAME = "svarog"
 COMMENT_PASS_TAG = APP_NAME + "-pass"
 COMMENT_PLAN_TAG = APP_NAME + "-plan"
@@ -25,7 +36,7 @@ if not os.path.exists(CONFIG_DIRECTORY):
 
 
 # Loglevel is a bit complicated. By default, it's ERROR, unless it's set in the config file,
-# unless it's a dev environment which is always DEBUG.
+# unless it's a dev environment which is then DEBUG.
 loglevel = logging.ERROR
 
 try:
@@ -36,7 +47,7 @@ try:
 except Exception:
     pass
 
-if DEV_ENVIRONMENT:
+if MAX_LOGGING:
     loglevel = logging.DEBUG
 
 
