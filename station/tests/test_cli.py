@@ -121,8 +121,8 @@ class TestCli(unittest.TestCase):
         """Checks if cli.py plan really schedules anything in cron."""
 
         # Set the DEV_ENVIRONMENT, so the cron script writes to a crontab file in ./config/crontab rather than the
-        # actual crontab file.
-        environ["DEV_ENVIRONMENT"] = "1"
+        # actual crontab file, but don't enable max logging.
+        environ["DEV_ENVIRONMENT"] = "2"
 
         self.check_command(CLI, ["plan"], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day, every day"])
 
