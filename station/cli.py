@@ -255,14 +255,14 @@ elif command == "plan":
     if args.force:
         interval = get_interval(planner_job)
         # Do the actual scheduling
-        planner.execute(interval, dry_run = False)
+        planner.execute(interval, dry_run=False)
         print("Planned receiver jobs successful")
 
     if args.show:
         interval = get_interval(planner_job)
         # Don't schedule anything, just show upcoming passes, based on the orbital trajectories,
         # not the scheduled jobs
-        planner.execute(interval, dry_run = True)
+        planner.execute(interval, dry_run=True)
         sys.exit(0)
 
     if args.cron is None:
