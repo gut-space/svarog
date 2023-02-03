@@ -131,10 +131,11 @@ def execute(interval: int, cron=None, dry_run: bool = False):
     end = start + delta
 
     passes = get_passes(prediction_config, start, end)
-    clear(cron)
+
     if dry_run:
         print_passes(passes, prediction_config)
     else:
+        clear(cron)
         plan_passes(passes, cron)
 
     return passes
