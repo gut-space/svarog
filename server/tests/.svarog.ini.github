@@ -1,0 +1,14 @@
+[database]
+host = postgres
+database = svarog
+user = postgres
+password = ""
+
+[storage]
+image_root = ~/tmp
+
+[security]
+ignore_hmac_validation_errors = False
+
+[view]
+items_per_page = 100
