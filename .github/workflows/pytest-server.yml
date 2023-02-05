@@ -74,7 +74,7 @@ jobs:
           POSTGRES_HOST: postgres
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: postgres
+          PGPASSWORD: postgres
 
       - name: Test with pytest
         run: |
