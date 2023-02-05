@@ -2,7 +2,7 @@
 host = postgres
 database = svarog
 user = postgres
-password = ""
+password = postgres
 
 [storage]
 image_root = ~/tmp
