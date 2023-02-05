@@ -64,7 +64,7 @@ jobs:
 
       - name: Setup Postgres database
         run: |
-          psql -h ${POSTGRES_HOST} -c 'create database svarog;'
+          PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -h ${POSTGRES_HOST} -c 'create database svarog;'
           cp server/tests/.svarog.ini.github server/svarog.ini
           cd server && python migrate_db.py && cd ..
           psql -f server/tests/db-data.psql svarog
@@ -74,7 +74,8 @@ jobs:
           POSTGRES_HOST: postgres
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
-          PGPASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
 
       - name: Test with pytest
         run: |
