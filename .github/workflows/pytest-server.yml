@@ -56,6 +56,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          apt update
           apt install postgresql-client-14
           python -m pip install --upgrade pip
           pip install pytest wheel
