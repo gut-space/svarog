@@ -15,7 +15,7 @@ def favicon():
 
 @app.route('/data/<path:path>')
 def send_js(path):
-    return send_from_directory('/home/thomson/devel/aquarius/server/data', path)
+    return send_from_directory('/home/thomson/devel/svarog/server/data', path)
 
 
 @app.route('/czml/obs/<id>')

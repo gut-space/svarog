@@ -32,7 +32,7 @@ Note: the labels will be shown as random garbage if firefox's resistFingerprinti
 ```shell
 cd server
 source venv/bin/activate
-./aquarius-web.py
+./svarog-web.py
 ```
 
 This will open http://localhost:8080. Most of the UI is accessible here, except the Cesium visualization.
