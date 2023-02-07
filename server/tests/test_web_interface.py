@@ -6,23 +6,12 @@ import unittest
 import logging
 from logging import FileHandler
 
-import testing.postgresql
-
 from app import app
 from app.hmac_token import get_authorization_header_value
 from app.repository import Repository
-from tests.utils import standard_seed_db, check_output
+from tests.utils import check_output
+from tests.dbtest import setup_database_test_case
 
-Postgresql: testing.postgresql.PostgresqlFactory
-
-def setUpModule():
-    global Postgresql
-    Postgresql = testing.postgresql.PostgresqlFactory(cache_initialized_db=True,
-                                                on_initialized=standard_seed_db)
-
-def tearDownModule():
-    # clear cached database at end of tests
-    Postgresql.clear_cache()
 
 IMAGE_ROOT = "tests/images"
 LOG_FILE = "test.log"
@@ -31,14 +20,13 @@ LOG_FILE = "test.log"
 app.config["SECRET_KEY"] = "test secret"
 
 class BasicTests(unittest.TestCase):
-
     def setUp(self):
-
-        self.postgres = Postgresql()
+        self.db = setup_database_test_case()
+        database_config = self.db.__enter__()
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
-        app.config["database"] = self.postgres.dsn()
+        app.config["database"] = database_config
         app.config["storage"] = {}
         app.config["storage"]["image_root"] = IMAGE_ROOT
         os.makedirs(os.path.join(IMAGE_ROOT, "thumbs"), exist_ok=True)
@@ -56,7 +44,7 @@ class BasicTests(unittest.TestCase):
         app.logger.addHandler(logHandler)
 
     def tearDown(self):
-        self.postgres.stop()
+        self.db.__exit__(None, None, None)
         shutil.rmtree(IMAGE_ROOT, ignore_errors=True)
         os.remove(LOG_FILE)
 

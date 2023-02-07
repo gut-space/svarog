@@ -2,45 +2,13 @@ import datetime
 import os
 from typing import Tuple
 import unittest
-from functools import wraps
 
-import testing.postgresql
-
-from tests.utils import standard_seed_db
+from tests.dbtest import use_repository
 from app.repository import (Observation, ObservationFile, ObservationFileId, ObservationFilter, ObservationId, Repository, SatelliteId, StationId,
     Station, Observation, Satellite, StationStatistics, User, UserRole)
 
-Postgresql: testing.postgresql.PostgresqlFactory
-
-def setUpModule():
-    global Postgresql
-    Postgresql = testing.postgresql.PostgresqlFactory(cache_initialized_db=True,
-                                                  on_initialized=standard_seed_db)
-
-def tearDownModule():
-    # clear cached database at end of tests
-    Postgresql.clear_cache()
-
-def use_repository(f):
-    @wraps(f)
-    def wrapper(self, *args, **kwargs):
-        config = self.db_config
-        repository = Repository(config)
-        return f(self, repository, *args, **kwargs)
-    return wrapper
 
 class RepositoryPostgresTests(unittest.TestCase):
-
-    def setUp(self):
-        self.postgres = Postgresql()
-
-    def tearDown(self):
-        self.postgres.stop()
-
-    @property
-    def db_config(self):
-        return self.postgres.dsn()
-
     @use_repository
     def test_db_version(self, repository):
         """Check if DB version is reported properly."""
