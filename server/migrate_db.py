@@ -1,6 +1,7 @@
 from sys import exit
 import os
 from typing import Tuple, List
+import logging
 
 try:
     from app.repository import Repository
@@ -67,20 +68,21 @@ def migrate(config=None, migration_directory="db"):
     with repository.transaction() as transaction:
         for migration_version, migration_path in migrations:
             if migration_version <= db_version:
-                print("Skip migration to %d version" % (migration_version,))
+                logging.info("Skip migration to %d version" % (migration_version,))
                 continue
 
-            print("Process migration to %d version..." % (migration_version,), end="")
+            logging.info("Process migration to %d version..." % (migration_version,), end="")
             with open(migration_path) as migration_file:
                 content = migration_file.read()
 
             repository.execute_raw_query(content)
-            print("OK")
+            logging.info("OK")
 
         transaction.commit()
 
     new_db_version = repository.get_database_version()
-    print("Migration complete from %d to %d!" % (db_version, new_db_version))
+    logging.info("Migration complete from %d to %d!" % (db_version, new_db_version))
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s', datefmt='%H:%M:%S')
     migrate()
