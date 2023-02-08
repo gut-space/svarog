@@ -1,8 +1,9 @@
 [database]
-host = postgres
-database = svarog
+host = localhost
 user = postgres
 password = postgres
+database = svarog
+maintenance_database = postgres
 
 [storage]
 image_root = ~/tmp
