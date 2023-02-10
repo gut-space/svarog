@@ -112,16 +112,17 @@ def print_passes(passes, config: Configuration):
 
 
 def clear(cron):
+    """Clears all pass entries from the crontab."""
     cron.remove_all(comment=COMMENT_PASS_TAG)
     cron.write()
 
 
 def execute(interval: int, cron=None, dry_run: bool = False):
-    """_summary_
+    """Plans incoming passes jobs in the crontab.
 
     :param interval: interval, expressed in seconds
-    :param cron: _description_, defaults to None
-    :param dry_run: _description_, defaults to False
+    :param cron: cron instance, if not specified (None), new instance will be opened
+    :param dry_run: True means just print, don't set jobs. The default is False
     :return: List of passes
     """
     if cron is None:
