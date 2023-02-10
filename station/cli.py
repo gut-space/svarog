@@ -1,31 +1,37 @@
 #!/usr/bin/env python3
+"""
+This is a command line interface to the Svarog station system.
+"""
 
 import argparse
 import datetime
 from typing import Tuple
-from dateutil import tz
 import calendar
 import os
-from pprint import pprint
 import sys
 import itertools
+from pprint import pprint
+from dateutil import tz
 
 from deepdiff import DeepHash
 
 import planner
 from orbitdb import OrbitDatabase
 from metadata import Metadata
-from utils.models import SatelliteConfiguration, get_location, get_satellite
+from utils.models import Configuration, SatelliteConfiguration, get_location, get_satellite
 from utils.configuration import open_config, save_config
 from utils.functional import first
 from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG, CONFIG_PATH
 from utils.dates import from_iso_format
 from utils.cron import get_planner_command, get_receiver_command, open_crontab
+from crontab import CronItem
+from orbit_predictor.locations import Location
 from recipes.factory import get_recipe_names
 from quality_ratings import get_rate_names
+import az_elev_chart
 
-
-def get_interval(job):
+def get_interval(job: CronItem) -> int:
+    """Returns the interval how frequently (in seconds) a given job should be run."""
     frequency = job.frequency()
     year = datetime.datetime.utcnow().year
     days_in_year = 366 if calendar.isleap(year) else 365
@@ -33,7 +39,11 @@ def get_interval(job):
     return interval
 
 
-def update_config(config, args, names):
+def update_config(config: Configuration, args, names: Tuple):
+    """
+    Updates some fields in the config structure. Names defines which fields
+    to update. The actual values are specified in the args structure.
+    """
     for name in names:
         if isinstance(name, str):
             config_name, args_name = name, name
@@ -48,10 +58,16 @@ def update_config(config, args, names):
 
 
 def get_hash(obj):
+    """Retuns a hash for a given object."""
     return DeepHash(obj)[obj]
 
 
 def hex_bytes(value):
+    """
+    Used to check if value is a valid hex string. Returns the value as is.
+    That's being used to check if the argument specified in argparse is a
+    valid hex string or not.
+    """
     try:
         bytearray.fromhex(value)
     except ValueError:
@@ -309,7 +325,6 @@ elif command == "pass":
     aos = aos.astimezone(tz.tzutc())
     db = OrbitDatabase()
     config = open_config()
-    from orbit_predictor.locations import Location
     location = Location(*get_location(config))
     satellite = get_satellite(config, sat_name)
     predictor = db.get_predictor(sat_name)
@@ -324,7 +339,6 @@ elif command == "pass":
     print("Max elevation:", "%.2f" % (pass_.max_elevation_deg,), "deg", str(pass_.max_elevation_date.astimezone(target_tz)))
     print("Off nadir", "%.2f" % (pass_.off_nadir_deg,), "deg")
 
-    import az_elev_chart
     az_elev_chart.plot(sat_name, pass_.aos, pass_.los, location,
                        args.step, args.width, args.height, args.scale_elevation,
                        axis_in_local_time=not args.print_utc, scale_polar=args.scale_polar)
