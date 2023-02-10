@@ -30,6 +30,7 @@ from recipes.factory import get_recipe_names
 from quality_ratings import get_rate_names
 import az_elev_chart
 
+
 def get_interval(job: CronItem) -> int:
     """Returns the interval how frequently (in seconds) a given job should be run."""
     frequency = job.frequency()

@@ -1,14 +1,15 @@
+'''
+HMAC based token processing - creation, parsing and verification.
+This package is designed for use in server and station side.
+It should have only standard library dependencies.
+'''
+
 import datetime
 from dateutil.parser import isoparse
 import hashlib
 import hmac
 from typing import Dict, Union, Optional
 
-'''
-HMAC based token processing - creation, parsing and verification.
-This package is designed for use in server and station side.
-It should have only standard library dependencies.
-'''
 
 AUTHORIZATION_ALGORITHM = "HMAC-SHA256"
 SIG_LIFETIME = datetime.timedelta(minutes=2, seconds=30)

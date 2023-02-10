@@ -1,18 +1,3 @@
-import datetime
-import os
-import sys
-import logging
-from typing import Iterable, List, Tuple
-
-from utils.models import SatelliteConfiguration
-from recipes import recipes
-from utils.configuration import open_config
-
-if sys.version_info[0] == 3 and sys.version_info[1] >= 8:
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
 '''
 The different satellites require different software and configuration.
 This is a recipe-based solution. "Recipe" is a script which is responsible
@@ -52,6 +37,22 @@ recipe for NOAA).
 All recipes must be located in directory with this file ("recipes") and have
 "execute" method which accept all parameters.
 '''
+
+import datetime
+import os
+import sys
+import logging
+from typing import Iterable, List, Tuple
+
+from utils.models import SatelliteConfiguration
+from recipes import recipes
+from utils.configuration import open_config
+
+if sys.version_info[0] == 3 and sys.version_info[1] >= 8:
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
 
 # Categories of result the reception
 # Signal - recorded signal (recommended in WAV file)
