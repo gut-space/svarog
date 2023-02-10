@@ -45,7 +45,7 @@ packaging==21.3
     # via
     #   matplotlib
     #   typepy
-pillow==9.1.1
+pillow==9.3.0
     # via matplotlib
 plotille==3.8.0
     # via -r requirements.in
