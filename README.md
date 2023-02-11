@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.com/gut-space/svarog.svg?branch=master)](https://travis-ci.com/gut-space/svarog)
+[![Pylint station](https://github.com/gut-space/svarog/actions/workflows/pylint-station.yml/badge.svg)](https://github.com/gut-space/svarog/actions/workflows/pylint-station.yml)
+[![Station tests](https://github.com/gut-space/svarog/actions/workflows/pytest-station.yml/badge.svg)](https://github.com/gut-space/svarog/actions/workflows/pytest-station.yml)
+[![Server tests](https://github.com/gut-space/svarog/actions/workflows/test-server.yml/badge.svg)](https://github.com/gut-space/svarog/actions/workflows/test-server.yml)
 
 <img align="right" width="128" height="128" src="https://github.com/gut-space/svarog/blob/master/doc/logo.png">
 
