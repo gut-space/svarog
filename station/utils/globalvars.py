@@ -12,7 +12,7 @@ import yaml
 # 2 => running from unit-tests, dev env enabled, logging on info,
 #      so tests are not too verbose
 
-DEV_ENVIRONMENT = os.environ.get("DEV_ENVIRONMENT") is not None
+DEV_ENVIRONMENT = os.environ.get("DEV_ENVIRONMENT", "0") != "0"
 MAX_LOGGING = os.environ.get("DEV_ENVIRONMENT") == "1"
 
 APP_NAME = "svarog"
