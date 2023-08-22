@@ -15,7 +15,8 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        # Don't support python 3.11 yet, because one of the major dependencies (poliastro) doesn't support it yet.
+        python-version: ["3.9", "3.10"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
