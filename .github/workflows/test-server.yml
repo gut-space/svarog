@@ -20,7 +20,8 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        # Don't support python 3.11 yet, because one of the major dependencies (poliastro) doesn't support it yet.
+        python-version: ["3.9", "3.10"]
 
     # Service containers to run with `container-job`
     services:
