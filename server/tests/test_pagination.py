@@ -109,7 +109,8 @@ class TestPagination(unittest.TestCase):
             self.assertDictEqual({ 'limit': 50, 'offset': 0},
                 limit_and_offset_b) # type: ignore
 
-            _, context, _ = mock_render.call_args[0]
+            _, _, context = mock_render.call_args[0]
+
             self.assertTrue("pagination_a" in context)
             self.assertTrue("pagination_b" in context)
             self.assertEqual(context["pagination_a"]["items_count"], 100)
