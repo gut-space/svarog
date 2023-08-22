@@ -124,7 +124,7 @@ class TestCli(unittest.TestCase):
         # actual crontab file, but don't enable max logging.
         environ["DEV_ENVIRONMENT"] = "2"
 
-        self.check_command(CLI, ["plan"], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day, every day"])
+        self.check_command(CLI, ["plan"], 0, ["Trying to set up cron job for periodic updates.", "At 04:00, every day"])
 
         del environ["DEV_ENVIRONMENT"]
 
