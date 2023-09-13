@@ -3,14 +3,17 @@ from app import app
 # Load routes from modules in "controllers" directory
 from app.controllers import *
 
+
 @app.route('/')
 @app.route('/index')
 def index():
     return render_template("index.html")
 
+
 @app.route('/favicon.png')
 def favicon():
     return send_file('favicon.png')
+
 
 @app.route('/data/<path:path>')
 def send_js(path):

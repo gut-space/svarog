@@ -7,30 +7,36 @@ from typing import Callable, Iterable, Optional, TypeVar
 from string import Formatter
 from datetime import timedelta
 
+
 def coords(lon, lat):
     t = "%2.4f" % lat
-    if (lat>0):
+    if (lat > 0):
         t += "N"
     else:
         t += "S"
 
     t += " %2.4f" % lon
-    if (lon>0):
+    if (lon > 0):
         t += "E"
     else:
         t += "W"
     return t
 
+
 def make_thumbnail(input_path, output_path, width=200):
-    subprocess.check_call(["convert" ,"-thumbnail", str(width), input_path, output_path])
+    subprocess.check_call(["convert", "-thumbnail", str(width), input_path, output_path])
+
 
 T = TypeVar("T")
+
+
 def first(condition: Callable[[T], bool], items: Iterable[T]) -> Optional[T]:
     '''Return first element for which @condition is True. Otherwise return None'''
     for item in items:
         if condition(item):
             return item
     return None
+
 
 def get_footer():
     """Returns data regarding the last update: timestamp of the upgrade process and SHA of the last git commit.
@@ -50,12 +56,14 @@ def get_footer():
         # The file was not found or is generally inaccessible. Return nothing.
         return None
 
+
 def save_binary_stream_to_file(path: str, stream: BytesIO):
     '''Efficient way to save binary stream to file.
         See: https://stackoverflow.com/a/39050559'''
     stream.seek(0)
     with open(path, 'wb') as f:
         shutil.copyfileobj(stream, f, length=131072)
+
 
 def strfdelta(tdelta, fmt='{D:02}d {H:02}h {M:02}m {S:02}s', inputtype='timedelta'):
     """Convert a datetime.timedelta object or a regular number to a custom-
@@ -88,13 +96,13 @@ def strfdelta(tdelta, fmt='{D:02}d {H:02}h {M:02}m {S:02}s', inputtype='timedelt
     elif inputtype in ['s', 'seconds']:
         remainder = int(tdelta)
     elif inputtype in ['m', 'minutes']:
-        remainder = int(tdelta)*60
+        remainder = int(tdelta) * 60
     elif inputtype in ['h', 'hours']:
-        remainder = int(tdelta)*3600
+        remainder = int(tdelta) * 3600
     elif inputtype in ['d', 'days']:
-        remainder = int(tdelta)*86400
+        remainder = int(tdelta) * 86400
     elif inputtype in ['w', 'weeks']:
-        remainder = int(tdelta)*604800
+        remainder = int(tdelta) * 604800
 
     f = Formatter()
     desired_fields = [field_tuple[1] for field_tuple in f.parse(fmt)]

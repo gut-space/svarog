@@ -2,8 +2,9 @@ from app.repository import Repository
 from flask import render_template, abort
 from app import app, utils
 
+
 @app.route('/station/<station_id>')
-def station(station_id = None):
+def station(station_id=None):
 
     repository = Repository()
     station = repository.read_station(station_id)
@@ -44,4 +45,4 @@ def station(station_id = None):
         y['sort'] = photo['sort']
         files.append(y)
 
-    return render_template('station.html', station = x, files = files, owners = owners, latest_obs=latest_obs, best_obs=best_obs)
+    return render_template('station.html', station=x, files=files, owners=owners, latest_obs=latest_obs, best_obs=best_obs)

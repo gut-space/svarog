@@ -27,12 +27,14 @@ StationId = NewType("StationId", int)
 SatelliteId = NewType("SatelliteId", int)
 StationPhotoId = NewType("StationPhotoId", int)
 
+
 class ObservationFile(TypedDict):
     obs_file_id: ObservationFileId
     filename: str
     media_type: str
     obs_id: ObservationId
     rating: Optional[float]
+
 
 class Observation(TypedDict):
     obs_id: ObservationId
@@ -45,6 +47,7 @@ class Observation(TypedDict):
     station_id: StationId
     tle: Optional[List[str]]
 
+
 class ObservationFilter(TypedDict, total=False):
     obs_id: ObservationId
     aos_before: datetime
@@ -54,9 +57,11 @@ class ObservationFilter(TypedDict, total=False):
     station_id: StationId
     has_tle: bool
 
+
 class Satellite(TypedDict):
     sat_id: SatelliteId
     sat_name: str
+
 
 class Station(TypedDict):
     station_id: StationId
@@ -67,9 +72,11 @@ class Station(TypedDict):
     config: str
     registered: datetime
 
+
 class StationStatistics(TypedDict):
     observation_count: int
     last_los: Optional[datetime]
+
 
 class StationPhoto(TypedDict):
     photo_id: StationPhotoId
@@ -78,11 +85,13 @@ class StationPhoto(TypedDict):
     filename: str
     descr: str
 
+
 class UserRole(Enum):
     REGULAR = 1
     OWNER = 2
     ADMIN = 3
     BANNED = 4
+
 
 class User(TypedDict):
     id: int
@@ -92,22 +101,30 @@ class User(TypedDict):
     role: UserRole
 
 # Lists all stations owned by specific user
+
+
 class Stations(TypedDict):
-    stations: List[Tuple[str, StationId]] # station name, station_id
+    stations: List[Tuple[str, StationId]]  # station name, station_id
 
 # List all users that own a particular station
+
+
 class StationOwners(TypedDict):
-    owners: List[Tuple[str, int]] # username, user_id
+    owners: List[Tuple[str, int]]  # username, user_id
 
 # Utils
+
+
 def without_keys(d, keys: Sequence[str]):
     return {x: d[x] for x in d if x not in keys}
+
 
 def exclude_from_dict(d, keys: Sequence[str]):
     excluded = [d[k] for k in keys]
     obj = without_keys(d, keys)
 
     return [obj,] + excluded
+
 
 class DefaultDictWithAnyKey(defaultdict):
     '''
@@ -117,29 +134,38 @@ class DefaultDictWithAnyKey(defaultdict):
     For expected work you should pass @default_factory in
     constructor.
     '''
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
     def __contains__(self, item):
         return True
 
 # Errors
+
+
 class RepositoryError(Exception):
     '''Base class for Repository module errors.'''
+
     def __init__(self, message: str):
         super().__init__(message)
 
+
 class TransactionAlreadyOpenError(RepositoryError):
     def __init__(self):
-        super().__init__("Other transaction is already open on this repository. " \
-                        "You may to have only one transaction opened in the same time")
+        super().__init__("Other transaction is already open on this repository. "
+                         "You may to have only one transaction opened in the same time")
+
 
 # Psycopg2 doesn't provide typing in current version.
 Connection = Any
 Cursor = RealDictCursor
 
+
 class _TransactionContext(TypedDict):
     conn: Connection
     cursor: Cursor
+
 
 def use_cursor(f):
     '''
@@ -168,6 +194,7 @@ def use_cursor(f):
 
     return wrapper
 
+
 class Repository:
     '''
     Class for communication with database.
@@ -178,6 +205,7 @@ class Repository:
 
     For transactional use .transaction method with context manager.
     '''
+
     def __init__(self, config=None):
         '''
         Config is dictionary of psycopg2.connect method. If you don't
@@ -187,7 +215,7 @@ class Repository:
             from app import app
             config = app.config["database"]
         self._config = config
-        self._transaction_context: Optional[_TransactionContext] = None # type: ignore
+        self._transaction_context: Optional[_TransactionContext] = None  # type: ignore
 
     @property
     def is_pending_transaction(self):
@@ -200,16 +228,16 @@ class Repository:
         return context.get("cursor")
 
     @use_cursor
-    def count_observations(self, filters: ObservationFilter={}) -> int:
+    def count_observations(self, filters: ObservationFilter = {}) -> int:
         q = ("SELECT COUNT(*) as count "
              "FROM observations "
              "WHERE (%(obs_id)s IS NULL OR obs_id = %(obs_id)s) AND "
-              "(%(aos_before)s IS NULL OR aos <= %(aos_before)s) AND "
-              "(%(los_after)s IS NULL OR los >= %(los_after)s) AND "
-              "(%(sat_id)s IS NULL OR sat_id = %(sat_id)s) AND "
-              "(%(station_id)s IS NULL OR station_id = %(station_id)s) AND "
-              "(%(notes)s IS NULL OR notes ILIKE '%%' || %(notes)s || '%%') AND "
-              "(%(has_tle)s IS NULL OR (tle IS NOT NULL) = %(has_tle)s);")
+             "(%(aos_before)s IS NULL OR aos <= %(aos_before)s) AND "
+             "(%(los_after)s IS NULL OR los >= %(los_after)s) AND "
+             "(%(sat_id)s IS NULL OR sat_id = %(sat_id)s) AND "
+             "(%(station_id)s IS NULL OR station_id = %(station_id)s) AND "
+             "(%(notes)s IS NULL OR notes ILIKE '%%' || %(notes)s || '%%') AND "
+             "(%(has_tle)s IS NULL OR (tle IS NOT NULL) = %(has_tle)s);")
         cursor = self._cursor
         query_kwargs = DefaultDictWithAnyKey(lambda: None)
         query_kwargs.update(filters)
@@ -217,8 +245,8 @@ class Repository:
         return cursor.fetchone()["count"]
 
     @use_cursor
-    def read_observations(self, filters: ObservationFilter={}, limit:int=100,
-            offset:int=0, order:str="o.aos DESC", expr:str="TRUE") -> Sequence[Observation]:
+    def read_observations(self, filters: ObservationFilter = {}, limit: int = 100,
+                          offset: int = 0, order: str = "o.aos DESC", expr: str = "TRUE") -> Sequence[Observation]:
         '''Returns observations that match specified criteria.
 
         Parameters
@@ -235,27 +263,27 @@ class Repository:
         # code. And honestly, I was not able to make psycopg2 use them without adding
         # extra quotes.
         q = ("SELECT o.obs_id, o.aos, o.tca, o.los, o.sat_id, o.thumbnail, "
-                "o.station_id, o.notes, o.tle, r.rating, o.config "
-            "FROM observations o "
-            "LEFT JOIN observation_ratings r ON o.obs_id = r.obs_id "
-            "WHERE (%(obs_id)s IS NULL OR o.obs_id = %(obs_id)s) AND "
-              "(%(aos_before)s IS NULL OR o.aos <= %(aos_before)s) AND "
-              "(%(los_after)s IS NULL OR o.los >= %(los_after)s) AND "
-              "(%(sat_id)s IS NULL OR o.sat_id = %(sat_id)s) AND "
-              "(%(station_id)s IS NULL OR o.station_id = %(station_id)s) AND "
-              "(%(notes)s IS NULL OR o.notes ILIKE '%%' || %(notes)s || '%%') AND "
-              "(%(has_tle)s IS NULL OR (o.tle IS NOT NULL) = %(has_tle)s) "
-              f"AND {expr} ORDER BY {order} "
-            "LIMIT %(limit)s OFFSET %(offset)s")
+             "o.station_id, o.notes, o.tle, r.rating, o.config "
+             "FROM observations o "
+             "LEFT JOIN observation_ratings r ON o.obs_id = r.obs_id "
+             "WHERE (%(obs_id)s IS NULL OR o.obs_id = %(obs_id)s) AND "
+             "(%(aos_before)s IS NULL OR o.aos <= %(aos_before)s) AND "
+             "(%(los_after)s IS NULL OR o.los >= %(los_after)s) AND "
+             "(%(sat_id)s IS NULL OR o.sat_id = %(sat_id)s) AND "
+             "(%(station_id)s IS NULL OR o.station_id = %(station_id)s) AND "
+             "(%(notes)s IS NULL OR o.notes ILIKE '%%' || %(notes)s || '%%') AND "
+             "(%(has_tle)s IS NULL OR (o.tle IS NOT NULL) = %(has_tle)s) "
+             f"AND {expr} ORDER BY {order} "
+             "LIMIT %(limit)s OFFSET %(offset)s")
         cursor = self._cursor
         query_kwargs = DefaultDictWithAnyKey(lambda: None)
         query_kwargs.update(filters)
-        query_kwargs.update({ 'limit': limit, 'offset': offset})
+        query_kwargs.update({'limit': limit, 'offset': offset})
         cursor.execute(q, query_kwargs)
         return cursor.fetchall()
 
     def read_observation(self, obs_id: ObservationId) -> Optional[Observation]:
-        observations = self.read_observations({ 'obs_id': obs_id }, limit=1)
+        observations = self.read_observations({'obs_id': obs_id}, limit=1)
         if len(observations) == 0:
             return None
         return observations[0]
@@ -265,9 +293,9 @@ class Repository:
         cursor = self._cursor
         cursor.execute(
             "INSERT INTO observations "
-                "(aos, tca, los, sat_id, thumbnail, config, station_id, tle) "
+            "(aos, tca, los, sat_id, thumbnail, config, station_id, tle) "
             "VALUES (%(aos)s, %(tca)s, %(los)s, %(sat_id)s, %(thumbnail)s, "
-                    "%(config)s, %(station_id)s, %(tle)s) "
+            "%(config)s, %(station_id)s, %(tle)s) "
             "RETURNING obs_id;",
             {
                 'aos': observation["aos"].isoformat(),
@@ -301,12 +329,12 @@ class Repository:
 
     @use_cursor
     def read_observation_files(self, obs_id: ObservationId,
-            limit:int=100, offset:int=0) -> Sequence[ObservationFile]:
+                               limit: int = 100, offset: int = 0) -> Sequence[ObservationFile]:
         q = ("SELECT obs_file_id, filename, media_type, obs_id, rating "
-            "FROM observation_files "
-            "WHERE obs_id = %s "
-            "ORDER BY obs_file_id "
-            "LIMIT %s OFFSET %s")
+             "FROM observation_files "
+             "WHERE obs_id = %s "
+             "ORDER BY obs_file_id "
+             "LIMIT %s OFFSET %s")
         cursor = self._cursor
         cursor.execute(q, (obs_id, limit, offset))
         return cursor.fetchall()
@@ -314,9 +342,9 @@ class Repository:
     @use_cursor
     def insert_observation_file(self, observation_file: ObservationFile) -> ObservationFileId:
         q = ("INSERT INTO observation_files "
-                "(filename, media_type, obs_id, rating) "
+             "(filename, media_type, obs_id, rating) "
              "VALUES "
-                "(%(filename)s, %(media)s, %(obs)s, %(rating)s) "
+             "(%(filename)s, %(media)s, %(obs)s, %(rating)s) "
              "RETURNING obs_file_id;")
         cursor = self._cursor
         cursor.execute(q, {
@@ -328,7 +356,7 @@ class Repository:
         return cursor.fetchone()['obs_file_id']
 
     @use_cursor
-    def read_satellites(self, limit:int=100, offset:int=0) -> Optional[Satellite]:
+    def read_satellites(self, limit: int = 100, offset: int = 0) -> Optional[Satellite]:
         q = ("SELECT sat_id, sat_name "
              "FROM satellites "
              "LIMIT %s OFFSET %s;")
@@ -338,7 +366,7 @@ class Repository:
 
     @use_cursor
     def read_satellite(self, sat: Union[SatelliteId, str]) -> Optional[Satellite]:
-        if type(sat) == str:
+        if isinstance(sat, str):
             q = "SELECT sat_id, sat_name FROM satellites WHERE sat_name = %s LIMIT 1;"
         else:
             q = "SELECT sat_id, sat_name FROM satellites WHERE sat_id = %s LIMIT 1;"
@@ -384,9 +412,9 @@ class Repository:
     @use_cursor
     def read_stations(self, limit=100, offset=0) -> Sequence[Station]:
         q = ("SELECT s.station_id, s.name, s.lon, s.lat, s.descr, s.config, s.registered "
-            "FROM stations s "
-            "ORDER BY s.station_id "
-            "LIMIT %s OFFSET %s;")
+             "FROM stations s "
+             "ORDER BY s.station_id "
+             "LIMIT %s OFFSET %s;")
 
         cursor = self._cursor
         cursor.execute(q, (limit, offset))
@@ -395,9 +423,9 @@ class Repository:
     @use_cursor
     def read_station(self, id_: StationId) -> Optional[Station]:
         q = ("SELECT s.station_id, s.name, s.lon, s.lat, s.descr, s.config, s.registered "
-            "FROM stations s "
-            "WHERE s.station_id = %s "
-            "LIMIT 1")
+             "FROM stations s "
+             "WHERE s.station_id = %s "
+             "LIMIT 1")
 
         cursor = self._cursor
         cursor.execute(q, (id_,))
@@ -418,7 +446,7 @@ class Repository:
         return cursor.fetchone()
 
     @use_cursor
-    def read_stations_statistics(self, limit:int=100, offset:int=0) \
+    def read_stations_statistics(self, limit: int = 100, offset: int = 0) \
             -> Sequence[StationStatistics]:
         q = ("SELECT COUNT(o) AS observation_count, MAX(o.los) AS last_los "
              "FROM stations s "
@@ -433,8 +461,8 @@ class Repository:
     @use_cursor
     def read_station_photos(self, id_: StationId) -> Sequence[StationPhoto]:
         q = ("SELECT photo_id, station_id, sort, filename, descr "
-            "FROM station_photos "
-            "WHERE station_id = %s")
+             "FROM station_photos "
+             "WHERE station_id = %s")
 
         cursor = self._cursor
         cursor.execute(q, (id_,))
@@ -463,7 +491,7 @@ class Repository:
 
     @use_cursor
     def read_user(self, user: Union[int, str]) -> Optional[User]:
-        if type(user) == int:
+        if isinstance(user, int):
             query = "SELECT id, username, digest, email, role FROM users WHERE id = %s"
         else:
             query = "SELECT id, username, digest, email, role FROM users WHERE username = %s"
@@ -484,11 +512,11 @@ class Repository:
         @see: https://stackoverflow.com/a/42693458
         '''
         is_database_empty_query = ("SELECT count(*) AS count "
-                "FROM pg_class c "
-                "JOIN pg_namespace s ON s.oid = c.relnamespace "
-                "WHERE s.nspname NOT IN ('pg_catalog', 'information_schema') "
-                        "AND s.nspname NOT LIKE 'pg_temp%' "
-                        "AND s.nspname <> 'pg_toast'")
+                                   "FROM pg_class c "
+                                   "JOIN pg_namespace s ON s.oid = c.relnamespace "
+                                   "WHERE s.nspname NOT IN ('pg_catalog', 'information_schema') "
+                                   "AND s.nspname NOT LIKE 'pg_temp%' "
+                                   "AND s.nspname <> 'pg_toast'")
 
         cursor = self._cursor
         cursor.execute(is_database_empty_query)
@@ -500,7 +528,7 @@ class Repository:
         exists_query = ("SELECT EXISTS ( "
                         "SELECT FROM information_schema.tables "
                         "WHERE table_schema = 'public' "
-                            "AND  table_name = 'schema' "
+                        "AND  table_name = 'schema' "
                         ");")
         cursor.execute(exists_query)
         res = cursor.fetchone()
@@ -515,7 +543,7 @@ class Repository:
             if row is None:
                 raise Exception("Database version not set")
             return row["version"]
-        except:
+        except BaseException:
             print("Failed to select schema version, assuming 0")
             return 0
 
@@ -527,7 +555,6 @@ class Repository:
     def transaction(self):
         '''Create new transaction.'''
         return Transaction(self)
-
 
 
 class Transaction:

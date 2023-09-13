@@ -3,6 +3,7 @@ from urllib.parse import urlsplit, parse_qsl, urlencode, urlunsplit
 from app import app
 from app.utils import first
 
+
 @app.template_global()
 def url_page(url: str, page: int, param_name: str):
     """Given a URL, set or replace a query parameter and return the
@@ -22,12 +23,14 @@ def url_page(url: str, page: int, param_name: str):
     query_params.append((param_name, str(page)))
 
     new_query_string = urlencode(query_params, doseq=True)
-    return urlunsplit((scheme, netloc, path, new_query_string, fragment)) # type: ignore
+    return urlunsplit((scheme, netloc, path, new_query_string, fragment))  # type: ignore
+
 
 @app.template_filter()
 def datetime(value):
     """Given a datetime, it format the out to use yyyy-mm-dd hh:mm:ss format"""
     return value.isoformat(" ", "seconds")
+
 
 @app.template_filter()
 def percentage(value):

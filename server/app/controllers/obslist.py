@@ -6,6 +6,7 @@ from app.pagination import use_pagination
 from webargs import fields
 from webargs.flaskparser import use_kwargs
 
+
 @app.route('/obslist')
 @use_pagination()
 # Use_kwargs introduces ugly behavior when user provide parameter without value,
@@ -19,9 +20,9 @@ from webargs.flaskparser import use_kwargs
     'station_id': fields.Int(),
     'has_tle': fields.Bool()
 }, validate=lambda kwargs: "aos_before" not in kwargs or
-                        "los_after" not in kwargs or
-                        kwargs["aos_before"] >= kwargs["los_after"],
-   location="querystring")
+    "los_after" not in kwargs or
+    kwargs["aos_before"] >= kwargs["los_after"],
+    location="querystring")
 def obslist(limit_and_offset, **filters):
     '''This function retrieves observations list from a local database and
         displays it.'''
@@ -41,8 +42,8 @@ def obslist(limit_and_offset, **filters):
     observation_count = repository.count_observations(filters)
     stations_list = repository.read_stations()
 
-    satellites_dict = { sat["sat_id"]: sat["sat_name"] for sat in satellites_list }
-    stations_dict = { s["station_id"]: s["name"] for s in stations_list }
+    satellites_dict = {sat["sat_id"]: sat["sat_name"] for sat in satellites_list}
+    stations_dict = {s["station_id"]: s["name"] for s in stations_list}
     for obs in obslist:
         obs["sat_name"] = satellites_dict[obs["sat_id"]]
         obs["station_name"] = stations_dict[obs["station_id"]]
@@ -54,4 +55,4 @@ def obslist(limit_and_offset, **filters):
     # When database will contain many satellites and stations then we need
     # refactor this code to lazy, async read satellites and stations.
     return 'obslist.html', dict(obslist=obslist, item_count=observation_count,
-        satellites=satellites_list, stations=stations_list, filters=filters)
+                                satellites=satellites_list, stations=stations_list, filters=filters)

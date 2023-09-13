@@ -19,6 +19,7 @@ LOG_FILE = "test.log"
 # Setting the secret is necessary for storing login details is a session.
 app.config["SECRET_KEY"] = "test secret"
 
+
 class BasicTests(unittest.TestCase):
     def setUp(self):
         self.db = setup_database_test_case()
@@ -99,13 +100,14 @@ class BasicTests(unittest.TestCase):
         }
 
         header_value = get_authorization_header_value(str(station_id), secret,
-            data)
+                                                      data)
         headers = {
             'Authorization': header_value
         }
         response = self.app.post('/receive', data=data, headers=headers)
         self.assertEqual(response.status_code, 204)
-        file_count = lambda dir_: len(
+
+        def file_count(dir_): return len(
             [f for f in os.listdir(dir_)
                 if os.path.isfile(os.path.join(dir_, f))]
         )
@@ -145,18 +147,17 @@ class BasicTests(unittest.TestCase):
             'tca': datetime.datetime(2020, 3, 28, 12, 15),
             'los': datetime.datetime(2020, 3, 28, 12, 30),
             'sat': 'NOAA 15',
-             # 'notes': optional,
+            # 'notes': optional,
             "file0": open("tests/x.png", 'rb'),
             "file1": open("tests/x.png", 'rb')
         }
 
         header_value = get_authorization_header_value(str(station_id), secret,
-            data)
+                                                      data)
         headers = {
             'Authorization': header_value
         }
         response = self.app.post('/receive', data=data, headers=headers)
-
 
         self.assertEqual(response.status_code, 503)
 
@@ -217,6 +218,7 @@ class BasicTests(unittest.TestCase):
         # The login information should be remembered, no need to pass the data every time.
         response = self.app.post('/login', follow_redirects=True)
         check_output(self, response.data, ["Welcome, clarke!", "Your user-id is 3", "Your role is ADMIN"])
+
 
 if __name__ == "__main__":
     unittest.main()

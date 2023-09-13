@@ -11,9 +11,10 @@ from tletools import TLE
 from astropy import units as u
 import os
 
+
 @app.route('/obs/<obs_id>')
 @use_pagination(5)
-def obs(obs_id: ObservationId = None, limit_and_offset = None):
+def obs(obs_id: ObservationId = None, limit_and_offset=None):
     if obs_id is None:
         abort(300, description="ID is required")
         return
@@ -28,7 +29,7 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
             abort(404, "Observation not found")
 
         files = repository.read_observation_files(observation["obs_id"],
-            **limit_and_offset)
+                                                  **limit_and_offset)
         files_count = repository.count_observation_files(obs_id)
         satellite = repository.read_satellite(observation["sat_id"])
 
@@ -54,8 +55,9 @@ def obs(obs_id: ObservationId = None, limit_and_offset = None):
 
         owner = repository.is_station_owner(user_id, station_id)
 
-    return 'obs.html', dict(obs = observation, files=files,
-        sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station, is_owner = owner)
+    return 'obs.html', dict(obs=observation, files=files,
+                            sat_name=satellite["sat_name"], item_count=files_count, orbit=orbit, station=station, is_owner=owner)
+
 
 def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     """ Parses orbital data in TLE format and returns a dictionary with printable orbital elements
@@ -69,12 +71,12 @@ def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     # Hence the orb dictionary.
     o = t.to_orbit()
 
-    RE = o.attractor.R # Earth radius
-    r_a = o.r_a - RE # Calculate apogee and perigee as altitude above Earth surface,
-    r_p = o.r_p - RE # rather than as distance from barycenter.
+    RE = o.attractor.R  # Earth radius
+    r_a = o.r_a - RE  # Calculate apogee and perigee as altitude above Earth surface,
+    r_p = o.r_p - RE  # rather than as distance from barycenter.
 
-    m = floor(o.period.to(u.s).value/60)
-    s = (o.period.to(u.s) - m*60*u.s).value
+    m = floor(o.period.to(u.s).value / 60)
+    s = (o.period.to(u.s) - m * 60 * u.s).value
 
     # Now make the parameters easier to read (cut unnecessary digits after comma, show altitude, etc)
     orb = {}
@@ -91,6 +93,7 @@ def parse_tle(tle1: str, tle2: str, name: str) -> dict:
     orb["epoch"] = o.epoch.strftime("%Y-%m-%d %H:%M:%S") + " UTC"
 
     return orb
+
 
 def human_readable_obs(obs: Observation) -> Observation:
     """Gets an observation and formats some of its parameters to make it more human readable.
@@ -111,11 +114,11 @@ def human_readable_obs(obs: Observation) -> Observation:
     los_duration_m = floor(aos_los_duration.total_seconds() / 60)
     los_duration_s = aos_los_duration.total_seconds() - los_duration_m * 60
 
-
     obs.aos = obs["aos"].strftime("%Y-%m-%d %H:%M:%S")
     obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_tca_duration, fmt="{M:02}m {S:02}s since AOS")
     obs.los = obs["los"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_los_duration, fmt="{M:02}m {S:02}s since AOS")
     return obs
+
 
 @app.route('/obs/delete/<obs_id>', methods=["GET", "POST"])
 def obs_delete(obs_id: ObservationId = None):
@@ -124,11 +127,11 @@ def obs_delete(obs_id: ObservationId = None):
     repository = Repository()
     observation = repository.read_observation(obs_id)
     if observation is None:
-        return render_template('obs_delete.html', status= ["There is no observation %s" % obs_id], obs_id=obs_id)
+        return render_template('obs_delete.html', status=["There is no observation %s" % obs_id], obs_id=obs_id)
 
     # Second, check if the guy is logged in.
     if not current_user.is_authenticated:
-        return render_template('obs_delete.html', status = ["You are not logged in, you can't delete anything."], obs_id=obs_id)
+        return render_template('obs_delete.html', status=["You are not logged in, you can't delete anything."], obs_id=obs_id)
 
     # Ok, at least this guy is logged in. Let's check who he is.
     user_id = current_user.get_id()
@@ -140,13 +143,14 @@ def obs_delete(obs_id: ObservationId = None):
     owner = repository.is_station_owner(user_id, station_id)
 
     if not owner:
-        return render_template('obs_delete.html', status = ["You are not the owner of station %s, you can't delete observation %s."
-               % (station.name, obs_id)], obs_id=obs_id)
+        return render_template('obs_delete.html', status=["You are not the owner of station %s, you can't delete observation %s."
+                                                          % (station.name, obs_id)], obs_id=obs_id)
 
     # If you got that far, this means the guy is logged in, he's the owner and is deleting his own observation.
 
     status = obs_delete_db_and_disk(repository, obs_id)
-    return render_template('obs_delete.html', status = status, obs_id=obs_id)
+    return render_template('obs_delete.html', status=status, obs_id=obs_id)
+
 
 def obs_delete_db_and_disk(repository: Repository, obs_id: ObservationId):
 

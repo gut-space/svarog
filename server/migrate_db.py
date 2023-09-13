@@ -8,6 +8,7 @@ try:
 except KeyError:
     exit("Unable to load svarog.ini - make sure the file is present and has all entries.")
 
+
 def list_migrations(directory: str, extension=".psql", prefix="svarog-") -> List[Tuple[int, str]]:
     '''
     List all files in @directory meet the convention:
@@ -36,6 +37,7 @@ def list_migrations(directory: str, extension=".psql", prefix="svarog-") -> List
 
     migrations.sort(key=lambda p: p[0])
     return migrations
+
 
 def migrate(config=None, migration_directory="db"):
     '''
@@ -82,6 +84,7 @@ def migrate(config=None, migration_directory="db"):
 
     new_db_version = repository.get_database_version()
     logging.info("Migration complete from %d to %d!" % (db_version, new_db_version))
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s', datefmt='%H:%M:%S')

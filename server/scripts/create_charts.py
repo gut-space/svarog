@@ -6,7 +6,7 @@ from app.controllers.receive import make_charts
 from app.repository import Repository, Station, StationId
 
 if __name__ == '__main__':
-    stations: Dict[StationId, Station] = { }
+    stations: Dict[StationId, Station] = {}
 
     repository = Repository()
     observation_count = repository.count_observations()
@@ -34,7 +34,6 @@ if __name__ == '__main__':
             else:
                 station = repository.read_station(station_id)
                 stations[station_id] = station
-
 
             make_charts(observation, station)
             index += 1

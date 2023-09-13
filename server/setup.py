@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from migrate_db import *
 import datetime
 from os import getcwd, path, makedirs, environ
 import shutil
@@ -15,7 +16,7 @@ setup(name='svarog-server',
       author='SF, TM',
       packages=find_packages(),
       install_requires=REQUIREMENTS
-)
+      )
 
 # STEP 2: ensure the config is exists
 config_path = "svarog.ini"
@@ -29,6 +30,8 @@ if not path.exists(config_path):
     sys.exit(-1)
 
 # STEP 3: ensure the database is updated.
+
+
 def backup_database():
     import subprocess
     try:
@@ -41,7 +44,7 @@ def backup_database():
     config.read(config_path)
     db = config["database"]
     now = datetime.datetime.utcnow()
-    timestamp_filename="svarog-%s.backup" % (now.isoformat())
+    timestamp_filename = "svarog-%s.backup" % (now.isoformat())
     backup_path = path.join(backup_dir, timestamp_filename)
     env = environ.copy()
     env["PGPASSWORD"] = db["password"]
@@ -51,23 +54,23 @@ def backup_database():
          "--port", db.get("port", "5432"),
          "--username", db["user"],
          "--dbname", db["database"],
-         "--format", "c", # Custom
+         "--format", "c",  # Custom
          "--compress", "8",
          "--no-password",
          "--file", backup_path
-        ], env=env
+         ], env=env
     )
     if not path.exists(backup_path):
         raise FileNotFoundError(backup_path)
     print("Backup created here: %s" % (backup_path,))
 
+
 backup_database()
-import sys
-from migrate_db import *
 migrate()
 
 # STEP 4: make sure the update script will be called every day
 COMMENT_UPDATE_TAG = 'svarog-update'
+
 
 def install_update_cronjob():
     print("Installing cronjob")
@@ -82,6 +85,7 @@ def install_update_cronjob():
     job.setall('0 12 * * *')
 
     cron.write()
+
 
 install_update_cronjob()
 

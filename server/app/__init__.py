@@ -1,16 +1,18 @@
+
 try:
     from configparser import ConfigParser, NoSectionError, NoOptionError
 except ImportError:
     from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
+from flask import Flask
 import os
 
-from flask import Flask
 
 def create_app():
     """ Creates and returns a Flask app."""
     app = Flask(__name__, template_folder='../templates')
     return app
+
 
 app = create_app()
 
@@ -34,15 +36,15 @@ try:
             app.config[section_name][key] = value
 
 except IOError as e:
-    raise Exception("Unable to read %s file: %s" % (ini_path, e) )
+    raise Exception("Unable to read %s file: %s" % (ini_path, e))
 except NoSectionError as e:
-    raise Exception("Unable to find section 'database' in the %s file: %s" % (ini_path, e) )
+    raise Exception("Unable to find section 'database' in the %s file: %s" % (ini_path, e))
 except NoOptionError as e:
-    raise Exception("Unable to find option in 'database' section in the %s file: %s" % (ini_path, e) )
+    raise Exception("Unable to find option in 'database' section in the %s file: %s" % (ini_path, e))
 
-from app import routes
-from app import template_globals
 from app.utils import get_footer
+from app import template_globals
+from app import routes
 
 footer = get_footer()
 app.jinja_env.globals["footer"] = footer
