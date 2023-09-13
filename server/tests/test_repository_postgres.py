@@ -1,11 +1,10 @@
 import datetime
 import os
-from typing import Tuple
 import unittest
 
 from tests.dbtest import use_repository
 from app.repository import (Observation, ObservationFile, ObservationFileId, ObservationFilter, ObservationId, Repository, SatelliteId, StationId,
-                            Station, Observation, Satellite, StationStatistics, User, UserRole)
+                            Station, StationStatistics, UserRole)
 
 
 class RepositoryPostgresTests(unittest.TestCase):
@@ -335,13 +334,15 @@ class RepositoryPostgresTests(unittest.TestCase):
 
         user1 = repository.read_user(user="clarke")
         self.assertEqual(user1['username'], 'clarke')
-        self.assertEqual(user1['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')  # sha256('password')
+        # sha256('password')
+        self.assertEqual(user1['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')
         self.assertEqual(user1['email'], 'acc@gmail.com')
         self.assertEqual(user1['role'], UserRole.ADMIN)
 
         user2 = repository.read_user(user=3)
         self.assertEqual(user2['username'], 'clarke')
-        self.assertEqual(user2['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')  # sha256('password')
+        # sha256('password')
+        self.assertEqual(user2['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')
         self.assertEqual(user2['email'], 'acc@gmail.com')
         self.assertEqual(user2['role'], UserRole.ADMIN)
 

@@ -5,7 +5,6 @@ from os import path
 import shutil
 from typing import Callable, Iterable, Optional, TypeVar
 from string import Formatter
-from datetime import timedelta
 
 
 def coords(lon, lat):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from migrate_db import *
+from migrate_db import migrate
 import datetime
 from os import getcwd, path, makedirs, environ
 import shutil

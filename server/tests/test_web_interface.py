@@ -128,8 +128,8 @@ class BasicTests(unittest.TestCase):
 
         # Check that the log is there
         self.assertTrue(os.path.isfile(LOG_FILE))
-        with open(LOG_FILE, 'r') as l:
-            log = l.read()
+        with open(LOG_FILE, 'r') as log_file:
+            log = log_file.read()
             check_output(self, log, strings)
 
     def test_receive_obs_error(self):
