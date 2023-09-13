@@ -33,6 +33,7 @@ Work in progress and plans for the near future:
 - [Installation](doc/install.md)
 - [Architecture](doc/arch.md)
 - [Developer's guide](doc/devel.md)
+- [Cesium](doc/cesium.md)
 - [User Management](doc/users.md)
 - [Project report](doc/prototype-phase/satnogs-gdn-report.pdf) - a report from the early days when this was a team university project
 - [Project poster 1](doc/prototype-phase/poster1-pl.jpg)
