@@ -43,8 +43,9 @@ except NoSectionError as e:
 except NoOptionError as e:
     raise Exception("Unable to find option in 'database' section in the %s file: %s" % (ini_path, e))
 
-from app import template_globals
-from app import routes
+# TODO: this is a hack. Template_globals and routes does "from app import app". This is a circular dependency.
+from app import template_globals  # noqa: F401, E402
+from app import routes  # noqa: F401, E402
 
 footer = get_footer()
 app.jinja_env.globals["footer"] = footer
