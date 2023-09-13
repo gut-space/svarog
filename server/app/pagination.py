@@ -29,9 +29,11 @@ from flask import render_template
 
 from app import app
 
+
 class LimitAndOffsetDict(TypedDict):
     limit: int
     offset: int
+
 
 class PaginationDict(TypedDict):
     page_count: int
@@ -41,11 +43,12 @@ class PaginationDict(TypedDict):
     items_current: int
     param: str
 
+
 class Pagination:
     '''Helper class. It is responsible for all calculations related
        to pagination.'''
 
-    def __init__(self, items_per_page:Optional[int]=None, param_name:str="page"):
+    def __init__(self, items_per_page: Optional[int] = None, param_name: str = "page"):
         '''items_per_page defines how many item should be display on one page.
             If it is None then value will be read from configuration'''
         if items_per_page is None:
@@ -65,7 +68,7 @@ class Pagination:
         _, _, _, query, _ = urlparse.urlsplit(url)
         params = urlparse.parse_qs(query)
         pages = params.get(self.param_name, None)
-        if pages is None :
+        if pages is None:
             return 1
         page = int(pages[0])
         if page < 1:
@@ -95,7 +98,7 @@ class Pagination:
         }
 
     def _template_parameters(self, item_count: int,
-            url: Optional[str]=None, page:Optional[int]=None) -> PaginationDict:
+                             url: Optional[str] = None, page: Optional[int] = None) -> PaginationDict:
         '''Return parameters for paginate template.'''
         url = Pagination._current_url() if url is None else url
         if page is None:
@@ -112,8 +115,8 @@ class Pagination:
         }
 
     def template_kwargs(self, item_count: int,
-            url: Optional[str]=None, page:Optional[int]=None,
-            template_arg:str='pagination'):
+                        url: Optional[str] = None, page: Optional[int] = None,
+                        template_arg: str = 'pagination'):
         '''Return parameters for pagination template bounded with dict with
             expected key name by template'''
         return {
@@ -122,7 +125,8 @@ class Pagination:
             )
         }
 
-def use_page(*param_names:Iterable[str]):
+
+def use_page(*param_names: Iterable[str]):
     def use_page_decorator(f):
         '''
         Decorator for retrieving page number from request. Part of medium-level
@@ -173,9 +177,10 @@ def use_page(*param_names:Iterable[str]):
         argmap = {}
         for param_name in param_names:
             argmap[param_name] = webargs.fields.Int(missing=1,
-                validate=webargs.validate.Range(min=1))
+                                                    validate=webargs.validate.Range(min=1))
         return use_kwargs(argmap, location="query")(f)
     return use_page_decorator
+
 
 class PaginationConfiguration(TypedDict):
     '''
@@ -189,14 +194,17 @@ class PaginationConfiguration(TypedDict):
     page_param: str
     template_arg_name: str
 
-PaginationConfigurationSingleOrMany=Union[PaginationConfiguration,
-                                          Iterable[PaginationConfiguration]]
+
+PaginationConfigurationSingleOrMany = Union[PaginationConfiguration,
+                                            Iterable[PaginationConfiguration]]
 ItemsPerPageOrPaginationConfig = Union[
-        Optional[int],
-        PaginationConfiguration
+    Optional[int],
+    PaginationConfiguration
 ]
+
+
 def use_pagination(
-        per_page_or_config: Optional[ItemsPerPageOrPaginationConfig]=None,
+        per_page_or_config: Optional[ItemsPerPageOrPaginationConfig] = None,
         *args: PaginationConfiguration):
     '''
     High-level pagination helper. It automatically retrive page number,
@@ -284,11 +292,11 @@ def use_pagination(
     configurations: Sequence[PaginationConfiguration]
     items_per_page: Optional[int] = None
 
-    if type(per_page_or_config) == int:
-        items_per_page = per_page_or_config # type: ignore
+    if isinstance(per_page_or_config, int):
+        items_per_page = per_page_or_config  # type: ignore
         configurations = args
-    elif per_page_or_config is not None :
-        configurations = [per_page_or_config, *args] # type: ignore
+    elif per_page_or_config is not None:
+        configurations = [per_page_or_config, *args]  # type: ignore
     else:
         configurations = args
 
@@ -314,20 +322,20 @@ def use_pagination(
 
             paginations = [Pagination(items_per_page=c["items_per_page"],
                                       param_name=c["page_param"])
-                            for c in configurations]
+                           for c in configurations]
             many_lao = [pagination.limit_and_offset(page)
-                for page, pagination in zip(pages, paginations)]
+                        for page, pagination in zip(pages, paginations)]
             limit_and_offset = many_lao[0] if is_single_configuration else many_lao
 
             template, context = f(*args, **kwargs,
-                limit_and_offset=limit_and_offset)
+                                  limit_and_offset=limit_and_offset)
 
             item_counts = [context[c["count_name"]] for c in configurations]
             pagination_kwargs = {}
             for pagination, item_count, page, config in zip(paginations,
-                                            item_counts, pages, configurations):
+                                                            item_counts, pages, configurations):
                 kwargs = pagination.template_kwargs(item_count,
-                    page=page, template_arg=config["template_arg_name"])
+                                                    page=page, template_arg=config["template_arg_name"])
                 pagination_kwargs.update(kwargs)
             return render_template(template, **context, **pagination_kwargs)
 

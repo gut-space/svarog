@@ -5,7 +5,7 @@ import unittest
 
 from tests.dbtest import use_repository
 from app.repository import (Observation, ObservationFile, ObservationFileId, ObservationFilter, ObservationId, Repository, SatelliteId, StationId,
-    Station, Observation, Satellite, StationStatistics, User, UserRole)
+                            Station, Observation, Satellite, StationStatistics, User, UserRole)
 
 
 class RepositoryPostgresTests(unittest.TestCase):
@@ -88,11 +88,11 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertIsNotNone(obs)
 
         # Now check if the response is as expected.
-        self.check_obs750(obs) # type: ignore
+        self.check_obs750(obs)  # type: ignore
 
         # Now test negative case. There's nos uch observation
         obs = repository.read_observation(ObservationId(12345))
-        assert obs == None
+        assert obs is None
 
     @use_repository
     def test_observation_cr_d(self, repository: Repository):
@@ -120,7 +120,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         observation["obs_id"] = obs_id
         db_observation = repository.read_observation(obs_id)
         self.assertIsNotNone(db_observation)
-        self.assertDictEqual(observation, db_observation) # type: ignore
+        self.assertDictEqual(observation, db_observation)  # type: ignore
 
         observation_file: ObservationFile = {
             'obs_file_id': ObservationFileId(0),
@@ -138,7 +138,7 @@ class RepositoryPostgresTests(unittest.TestCase):
 
         observation_file["obs_file_id"] = file_id
         db_observation_file = observation_files[0]
-        self.assertDictEqual(observation_file, db_observation_file) # type: ignore
+        self.assertDictEqual(observation_file, db_observation_file)  # type: ignore
 
         db_observation = repository.read_observation(obs_id)
         self.assertAlmostEqual(db_observation["rating"], 0.66, places=2)
@@ -155,10 +155,10 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(station['name'], 'TKiS-1')
         self.assertEqual(station['lon'], 18.531787)
         self.assertEqual(station['lat'], 54.352469)
-        self.assertEqual(station['config'], {'sdr':'RTL-SDR v3', 'antenna': 'WiMo TA-1', 'antenna-type':'crossed dipole'})
+        self.assertEqual(station['config'], {'sdr': 'RTL-SDR v3', 'antenna': 'WiMo TA-1', 'antenna-type': 'crossed dipole'})
         self.assertEqual(station['registered'], datetime.datetime(2019, 12, 15, 8, 54, 53))
-        self.assertEqual(count, 4) # Number of observations
-        self.assertEqual(last_obs_date, datetime.datetime(2020, 4, 12, 9, 17, 6, 466954)) # Last observation.
+        self.assertEqual(count, 4)  # Number of observations
+        self.assertEqual(last_obs_date, datetime.datetime(2020, 4, 12, 9, 17, 6, 466954))  # Last observation.
 
     def check_station2(self, station: Station, stat: StationStatistics):
         """Check if returned parameters match station-id=2 defined in tests/db-data.psql"""
@@ -168,10 +168,10 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(station['lon'], 18.613253)
         self.assertEqual(station['lat'], 54.37089)
         self.assertEqual(station['descr'], 'Planned ground station at ETI faculty of Gdansk University of Technology')
-        self.assertEqual(station['config'], {'text':'Configuration is TBD'})
+        self.assertEqual(station['config'], {'text': 'Configuration is TBD'})
         self.assertEqual(station['registered'], datetime.datetime(2020, 2, 16, 21, 15, 20, 615274))
-        self.assertEqual(count, 0) # Number of observations
-        self.assertEqual(last_obs_date, None) # Last observation.
+        self.assertEqual(count, 0)  # Number of observations
+        self.assertEqual(last_obs_date, None)  # Last observation.
 
     @use_repository
     def test_stations(self, repository: Repository):
@@ -190,14 +190,14 @@ class RepositoryPostgresTests(unittest.TestCase):
         station_statistics = repository.read_stations_statistics(limit=1)
         self.assertEqual(len(station_entries), 1)
         self.assertEqual(len(station_statistics), 1)
-        self.check_station1(station_entries[0], station_statistics[0]) # This should return values for station-id 1
+        self.check_station1(station_entries[0], station_statistics[0])  # This should return values for station-id 1
 
         # Now skip the first station. Only station 2 should be returned.
         station_entries = repository.read_stations(offset=1)
         station_statistics = repository.read_stations_statistics(offset=1)
         self.assertEqual(len(station_entries), 1)
         self.assertEqual(len(station_statistics), 1)
-        self.check_station2(station_entries[0], station_statistics[0]) # This should return values for station-id 2
+        self.check_station2(station_entries[0], station_statistics[0])  # This should return values for station-id 2
 
     @use_repository
     def test_station(self, repository: Repository):
@@ -231,10 +231,10 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(sat['sat_name'], 'NOAA 19')
 
         sat = repository.read_satellite(12345)
-        self.assertIsNone(sat) # :( No such thing yet.
+        self.assertIsNone(sat)  # :( No such thing yet.
 
         sat = repository.read_satellite('GDANSKSAT-1')
-        self.assertIsNone(sat) # :( No such thing yet.
+        self.assertIsNone(sat)  # :( No such thing yet.
 
     @use_repository
     def test_satellites(self, repository: Repository):
@@ -250,7 +250,7 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(satellites[-1]['sat_id'], 28654)
         self.assertEqual(satellites[-2]['sat_id'], 25338)
 
-        satellites = repository.read_satellites(offset = 2)
+        satellites = repository.read_satellites(offset=2)
         self.assertEqual(len(satellites), 1)
         self.assertEqual(satellites[-1]['sat_id'], 33591)
 
@@ -309,7 +309,7 @@ class RepositoryPostgresTests(unittest.TestCase):
             "has_tle": True
         }
         observations = repository.read_observations(filters=filters)
-        self.assertEqual(len(observations), 2) # obs 751 and 1276
+        self.assertEqual(len(observations), 2)  # obs 751 and 1276
         self.assertIsNotNone(observations[0]["tle"])
         self.assertIsNotNone(observations[1]["tle"])
 
@@ -335,13 +335,13 @@ class RepositoryPostgresTests(unittest.TestCase):
 
         user1 = repository.read_user(user="clarke")
         self.assertEqual(user1['username'], 'clarke')
-        self.assertEqual(user1['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8') # sha256('password')
+        self.assertEqual(user1['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')  # sha256('password')
         self.assertEqual(user1['email'], 'acc@gmail.com')
         self.assertEqual(user1['role'], UserRole.ADMIN)
 
         user2 = repository.read_user(user=3)
         self.assertEqual(user2['username'], 'clarke')
-        self.assertEqual(user2['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8') # sha256('password')
+        self.assertEqual(user2['digest'], 'pbkdf2:sha256:150000$Ij6XJyek$d6a0cd085e6955843a9c3224ccf24088852207d55bb056aa0b544168f94860b8')  # sha256('password')
         self.assertEqual(user2['email'], 'acc@gmail.com')
         self.assertEqual(user2['role'], UserRole.ADMIN)
 
@@ -366,14 +366,14 @@ class RepositoryPostgresTests(unittest.TestCase):
         self.assertEqual(repository.user_role_to_enum('BANNED'), UserRole.BANNED)
 
         self.assertRaises(LookupError, repository.user_role_to_enum,
-            'moderator') # no such role
+                          'moderator')  # no such role
 
     @use_repository
     def test_station_owners(self, repository: Repository):
         """Tests that the owners of a station can be returned properly. This query is used on
            the station page to list its owners."""
-        owners1 = repository.station_owners(1) # List owners of station id 1
-        owners5 = repository.station_owners(5) # List owners of station id 5 (no such station, so should be empty list)
+        owners1 = repository.station_owners(1)  # List owners of station id 1
+        owners5 = repository.station_owners(5)  # List owners of station id 5 (no such station, so should be empty list)
 
         # See tests/db-data.psql for details (station_owners table)
         self.assertEqual(len(owners1), 4)
@@ -392,7 +392,7 @@ class RepositoryPostgresTests(unittest.TestCase):
     @use_repository
     def test_owned_stations(self, repository: Repository):
         """Tests that it's possible to get a list of stations a given user is allowed to manage."""
-        stations = repository.owned_stations(5) # get the list of stations that user with user_id=5 owns.
+        stations = repository.owned_stations(5)  # get the list of stations that user with user_id=5 owns.
         self.assertEqual(len(stations), 1)
         self.assertEqual(stations[0]['name'], 'TKiS-1')
         self.assertEqual(stations[0]['station_id'], 1)
@@ -401,7 +401,7 @@ class RepositoryPostgresTests(unittest.TestCase):
     def test_is_station_owner(self, repository: Repository):
         """Tests if the ownership relation can be checked properly. The input data is defined in the db-data.psql file.
            Here it's copied for convenience: (1,1), (2,1), (3,1), (5,1), (4,2)"""
-        cases = [ [1,1, True], [2,2,False], [2,1, True], [3,1,True], [4,1,False], [5,1,True], [4,2,True] ]
+        cases = [[1, 1, True], [2, 2, False], [2, 1, True], [3, 1, True], [4, 1, False], [5, 1, True], [4, 2, True]]
 
         for c in cases:
             # Checking if user {c[0]} owns the station {c[1]}, expected result {c[2]}

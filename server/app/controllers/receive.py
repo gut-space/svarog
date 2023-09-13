@@ -2,7 +2,6 @@ import abc
 from abc import abstractmethod
 import datetime
 import os.path
-import shutil
 import sys
 from typing import Dict, List, Optional, Tuple
 import uuid
@@ -23,19 +22,23 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import TypedDict
 
+
 class WebFileLike(abc.ABC):
     '''Class for type-checking the file-like object from request'''
     @property
     @abstractmethod
     def filename(self) -> str:
         pass
+
     @property
     @abstractmethod
     def mimetype(self) -> str:
         pass
+
     @abstractmethod
     def save(self, path: str) -> None:
         pass
+
 
 class RequestArguments(TypedDict):
     aos: datetime.datetime
@@ -45,6 +48,7 @@ class RequestArguments(TypedDict):
     config: Optional[str]
     tle: Optional[List[str]]
     rating: Optional[float]
+
 
 # When adding new types, don't forget to update known_types list in station/submitobs.py
 ALLOWED_FILE_TYPES = {
@@ -57,8 +61,10 @@ ALLOWED_FILE_TYPES = {
     ".csv": "text/plain"
 }
 
-get_extension = lambda p: os.path.splitext(p)[1]
-is_allowed_file = lambda f: ALLOWED_FILE_TYPES.get(get_extension(f.filename)) == f.mimetype
+
+def get_extension(p): return os.path.splitext(p)[1]
+def is_allowed_file(f): return ALLOWED_FILE_TYPES.get(get_extension(f.filename)) == f.mimetype
+
 
 @app.route('/receive', methods=["POST",])
 @authorize_station
@@ -70,17 +76,17 @@ is_allowed_file = lambda f: ALLOWED_FILE_TYPES.get(get_extension(f.filename)) ==
     'config': fields.Str(required=False),
     'rating': fields.Float(required=False),
     'tle': fields.List(fields.Str, required=False,
-        validate=[
-            # TLE must contains exact two lines
-            validate.Length(equal=2, error="Require 2 line TLE. Actual: {input}"),
-            # TLE lines may be ended with trailling character
-            lambda tle: validate.Length(min=69, max=70,
-                error="First TLE line length expected {min}-{max}. Actual: {input}")
-                (tle[0]),
-            lambda tle: validate.Length(min=69, max=70,
-                error="Second TLE line length expected {min}-{max}. Actual: {input}")
-                (tle[1]),
-        ])
+                       validate=[
+                           # TLE must contains exact two lines
+                           validate.Length(equal=2, error="Require 2 line TLE. Actual: {input}"),
+                           # TLE lines may be ended with trailling character
+                           lambda tle: validate.Length(min=69, max=70,
+                                                       error="First TLE line length expected {min}-{max}. Actual: {input}")
+                           (tle[0]),
+                           lambda tle: validate.Length(min=69, max=70,
+                                                       error="Second TLE line length expected {min}-{max}. Actual: {input}")
+                           (tle[1]),
+                       ])
 }, location="form")
 def receive(station_id: str, args: RequestArguments):
     '''
@@ -145,7 +151,7 @@ def receive(station_id: str, args: RequestArguments):
         # is not mandatory, so we only complain if important parameters are missing, but we
         # accept the observation anyway.
         metadata = args.get('config') or "{}"
-        mandatory_tags = [ "protocol", "frequency", "antenna", "antenna-type", "receiver", "lna", "filter"]
+        mandatory_tags = ["protocol", "frequency", "antenna", "antenna-type", "receiver", "lna", "filter"]
         missing = []
         for t in mandatory_tags:
             if t not in metadata:
@@ -194,7 +200,7 @@ def receive(station_id: str, args: RequestArguments):
             app.logger.error("Failed to write %s (image_root=%s): %s" % (path, root, e))
             return abort(503, "Unable to write file %s. Disk operation error." % filename)
 
-    if thumb_filename != None:
+    if thumb_filename is not None:
         # Make thumbnail (but only if suitable images were submitted, for text we're out of luck)
         thumb_source_path = os.path.join(root, thumb_source_filename)
         thumb_path = os.path.join(root, "thumbs", thumb_filename)
@@ -209,22 +215,24 @@ def receive(station_id: str, args: RequestArguments):
     # to update the observation in some way (send additional info or perhaps decide to delete it in the future).
     return 'Observation %d received.' % obs_id, 204
 
+
 def make_charts(observation: Observation, station: Station,
-        root:str=None):
+                root: str = None):
     if root is None:
         root = app.config["storage"]['image_root']
 
     location = tle_diagrams.Location(station["lat"], station["lon"], 0)
 
     chart_dir = os.path.join(root, "charts")
-    get_chart_path = lambda type_, obs_id: os.path.join(
+
+    def get_chart_path(type_, obs_id): return os.path.join(
         chart_dir,
         "%s-%d.png" % (type_, obs_id)
     )
 
     for type_, gen in [("by_time", tle_diagrams.generate_by_time_plot_png),
-                    ("polar", tle_diagrams.generate_polar_plot_png)]:
+                       ("polar", tle_diagrams.generate_polar_plot_png)]:
         stream = gen(location, observation["tle"], observation["aos"],
-                        observation["los"])
+                     observation["los"])
         path = get_chart_path(type_, observation["obs_id"])
         save_binary_stream_to_file(path, stream)

@@ -9,6 +9,7 @@ import logging
 from app import app
 from app.hmac_token import parse_token, validate_token, AUTHORIZATION_ALGORITHM
 
+
 def _normalize_request_dict(dict_):
     '''Accepts multi-dict. If entry has multiple values then handle it as pair
     with single key and array of values. Else handle entry as key-value pair'''
@@ -22,6 +23,7 @@ def _normalize_request_dict(dict_):
         res[key] = value
     return res
 
+
 def _get_body(request):
     '''
     Return dict with request arguments..
@@ -30,6 +32,7 @@ def _get_body(request):
     body.update(_normalize_request_dict(request.form))
     body.update(_normalize_request_dict(request.files))
     return body
+
 
 def _get_secret(station_id) -> bytes:
     '''
@@ -41,6 +44,7 @@ def _get_secret(station_id) -> bytes:
     repository = Repository()
     return repository.read_station_secret(station_id)
 
+
 def _verify_request() -> Tuple[Optional[str], Optional[str]]:
     '''Verify Authorization header in current request.
 
@@ -51,7 +55,7 @@ def _verify_request() -> Tuple[Optional[str], Optional[str]]:
         str
             station_id (if successful) or None (if unsuccessful)
     '''
-    header = request.headers.get("Authorization") # type: ignore
+    header = request.headers.get("Authorization")  # type: ignore
     if header is None:
         return "Missing Authorization header", None
     algorithm, token = header.split()
@@ -67,6 +71,7 @@ def _verify_request() -> Tuple[Optional[str], Optional[str]]:
     body = _get_body(request)
 
     return validate_token(token, secret, body)
+
 
 def authorize_station(f):
     '''

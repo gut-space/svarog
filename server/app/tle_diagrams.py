@@ -17,10 +17,11 @@ from orbit_predictor.locations import Location as PredictLocation
 
 Location = namedtuple("Location", ("latitude", "longitude", "elevation"))
 
+
 def _calculate_series(location: Location, tle: Sequence[str],
-        aos: datetime, los: datetime,
-        time_step: timedelta) -> Tuple[Sequence[datetime],
-        Sequence[float], Sequence[float]]:
+                      aos: datetime, los: datetime,
+                      time_step: timedelta) -> Tuple[Sequence[datetime],
+                                                     Sequence[float], Sequence[float]]:
     '''Calculate data for plot diagrams'''
     date_series: List[datetime] = []
     azimuth_series: List[float] = []
@@ -42,8 +43,9 @@ def _calculate_series(location: Location, tle: Sequence[str],
 
     return date_series, azimuth_series, elevation_series
 
+
 def _produce_azimuth_elevation_by_time_figure(dates: Sequence[datetime],
-        azimuths: Sequence[float], elevations: Sequence[float]) -> plt.Figure:
+                                              azimuths: Sequence[float], elevations: Sequence[float]) -> plt.Figure:
     '''Return figure with azimuth/elevation plot by time. X axis contains dates.
         Plot has two Y axis. Colors are compatible with gPredict.'''
     fig: plt.Figure = plt.figure()
@@ -62,9 +64,10 @@ def _produce_azimuth_elevation_by_time_figure(dates: Sequence[datetime],
     fig.legend(("Azimuth", "Elevation"))
     return fig
 
+
 def _produce_azimuth_elevation_polar_figure(dates: Sequence[datetime],
-        azimuths: Sequence[float], elevations: Sequence[float],
-        time_step:timedelta) -> plt.Figure:
+                                            azimuths: Sequence[float], elevations: Sequence[float],
+                                            time_step: timedelta) -> plt.Figure:
     '''Returns figure with azimuth/elevation polar plot. @time_step define
         temporal distance between labels near trajectory.'''
     fig: plt.Figure = plt.figure()
@@ -86,6 +89,7 @@ def _produce_azimuth_elevation_polar_figure(dates: Sequence[datetime],
 
     return fig
 
+
 def _save_to_png(figure: plt.Figure) -> io.BytesIO:
     '''Generate PNG from figure and return binary stream.
         @see https://stackoverflow.com/a/50728936'''
@@ -94,10 +98,11 @@ def _save_to_png(figure: plt.Figure) -> io.BytesIO:
     plt.close(figure)
     return output
 
+
 def generate_polar_plot_png(location: Location, tle: Sequence[str],
-        aos: datetime, los: datetime,
-        predict_time_step: timedelta=timedelta(seconds=30),
-        polar_time_step: timedelta=timedelta(minutes=2, seconds=30)):
+                            aos: datetime, los: datetime,
+                            predict_time_step: timedelta = timedelta(seconds=30),
+                            polar_time_step: timedelta = timedelta(minutes=2, seconds=30)):
     '''
     Return binary stream with azimuth/elevation polar plot in PNG file.
 
@@ -119,15 +124,16 @@ def generate_polar_plot_png(location: Location, tle: Sequence[str],
         readability.
     '''
     series = _calculate_series(location, tle, aos, los, predict_time_step)
-    by_time_figure = _produce_azimuth_elevation_by_time_figure(*series) # type: ignore
-    figure = _produce_azimuth_elevation_polar_figure(*series, # type: ignore
-            polar_time_step)
+    by_time_figure = _produce_azimuth_elevation_by_time_figure(*series)  # type: ignore
+    figure = _produce_azimuth_elevation_polar_figure(*series,  # type: ignore
+                                                     polar_time_step)
 
     return _save_to_png(figure)
 
+
 def generate_by_time_plot_png(location: Location, tle: Sequence[str],
-        aos: datetime, los: datetime,
-        predict_time_step: timedelta=timedelta(seconds=30)):
+                              aos: datetime, los: datetime,
+                              predict_time_step: timedelta = timedelta(seconds=30)):
     '''
     Return binary stream with azimuth/elevation by time plot in PNG file.
 
@@ -146,5 +152,5 @@ def generate_by_time_plot_png(location: Location, tle: Sequence[str],
         plot, but increase computation time
     '''
     series = _calculate_series(location, tle, aos, los, predict_time_step)
-    figure = _produce_azimuth_elevation_by_time_figure(*series) # type: ignore
+    figure = _produce_azimuth_elevation_by_time_figure(*series)  # type: ignore
     return _save_to_png(figure)

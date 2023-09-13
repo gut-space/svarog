@@ -11,12 +11,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import app
 from app.repository import Repository, UserRole
 
+
 class LoginForm(FlaskForm):
     username = StringField("Your login name", validators=[InputRequired(), Length(min=3, max=20)])
     password = PasswordField("Your password", validators=[InputRequired(), Length(min=5, max=80)])
     remember = BooleanField("Remember me")
 
     submit = SubmitField("Sign In")
+
 
 class ApplicationUser(UserMixin):
 
@@ -61,7 +63,7 @@ def login():
         l = " ".join(f"{s['name']}({s['station_id']})" for s in stations)
         app.logger.info("Authenticated user %s, owner of %s" % (current_user.username, l))
 
-        return render_template("login.html", user = current_user, stations=stations)
+        return render_template("login.html", user=current_user, stations=stations)
 
     form = LoginForm()
 
@@ -87,7 +89,7 @@ def login():
             return redirect(url_for("login"))
 
         app.logger.info("Login successful for user %s" % form.username.data)
-        login_user(u, remember = form.remember.data)
+        login_user(u, remember=form.remember.data)
 
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
@@ -96,7 +98,9 @@ def login():
 
     return render_template("login.html", form=form)
 
+
 lm = LoginManager(app)
+
 
 @lm.user_loader
 def load_user(user_id):
@@ -105,6 +109,7 @@ def load_user(user_id):
     if u:
         return ApplicationUser(u)
     return None
+
 
 @app.route("/logout")
 def logout():

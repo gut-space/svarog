@@ -40,9 +40,10 @@ class TestPagination(unittest.TestCase):
         items = 15
         items_per_page = 5
         pagination = Pagination(items_per_page)
-        current = lambda p: pagination.template_kwargs(
-                items, url="http://example.com", page=p
-            )["pagination"]["items_current"]
+
+        def current(p): return pagination.template_kwargs(
+            items, url="http://example.com", page=p
+        )["pagination"]["items_current"]
 
         self.assertEqual(current(1), 5)
         self.assertEqual(current(2), 5)
@@ -64,13 +65,13 @@ class TestPagination(unittest.TestCase):
                 received_limit_and_offset = limit_and_offset
                 return 'index.html', dict(item_count=100)
             response = client.get("/test-single-pagination",
-                query_string=dict(page=3))
+                                  query_string=dict(page=3))
 
             self.assertTrue(mock_render.called)
             self.assertEqual(response.status_code, 200)
             self.assertIsNotNone(received_limit_and_offset)
-            self.assertDictEqual({ 'limit': 10, 'offset': 20},
-                received_limit_and_offset) # type: ignore
+            self.assertDictEqual({'limit': 10, 'offset': 20},
+                                 received_limit_and_offset)  # type: ignore
 
             _, _, context = mock_render.call_args[0]
             self.assertTrue("pagination" in context)
@@ -91,7 +92,7 @@ class TestPagination(unittest.TestCase):
                 'page_param': 'page_a',
                 'template_arg_name': 'pagination_a'
             },
-            {
+                {
                 'items_per_page': 50,
                 'count_name': 'item_b_count',
                 'page_param': 'page_b',
@@ -102,17 +103,17 @@ class TestPagination(unittest.TestCase):
                 received_limit_and_offset = limit_and_offset
                 return 'index.html', dict(item_a_count=100, item_b_count=200)
             response = client.get("/test-multi-pagination",
-                query_string=dict(page_a=3))
+                                  query_string=dict(page_a=3))
 
             self.assertTrue(mock_render.called)
             self.assertEqual(response.status_code, 200)
 
             self.assertIsNotNone(received_limit_and_offset)
             limit_and_offset_a, limit_and_offset_b = received_limit_and_offset
-            self.assertDictEqual({ 'limit': 50, 'offset': 100},
-                limit_and_offset_a) # type: ignore
-            self.assertDictEqual({ 'limit': 50, 'offset': 0},
-                limit_and_offset_b) # type: ignore
+            self.assertDictEqual({'limit': 50, 'offset': 100},
+                                 limit_and_offset_a)  # type: ignore
+            self.assertDictEqual({'limit': 50, 'offset': 0},
+                                 limit_and_offset_b)  # type: ignore
 
             _, _, context = mock_render.call_args[0]
 

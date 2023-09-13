@@ -4,6 +4,7 @@ from app import app, utils
 
 from app.pagination import Pagination, use_pagination
 
+
 @app.route('/stations')
 @use_pagination()
 def stations(limit_and_offset):
@@ -29,5 +30,3 @@ def stations(limit_and_offset):
         stationlist.append(x)
 
     return 'stations.html', dict(stations=stationlist, item_count=station_count)
-
-
