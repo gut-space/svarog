@@ -28,9 +28,9 @@ jobs:
         pip install pylint flake8 wheel
         if [ -f station/requirements.txt ]; then pip install -r station/requirements.txt; fi
 
-    - name: Analysing the code with pylint
+    - name: Linting with pylint
       run: |
         PYTHONPATH=.:station/ pylint --rcfile .pylint $(git ls-files 'station/*.py')
-    - name: Lint with flake8
+    - name: Linting with flake8
       run: |
         PYTHONPATH=.:station/ flake8 --config .flake8.ini --color=auto $(git ls-files 'station/*.py')
