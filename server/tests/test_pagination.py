@@ -2,8 +2,9 @@ from typing import Any
 import unittest
 from unittest import mock
 
-from app import app
+from app import create_app
 from app.pagination import Pagination, use_pagination
+
 
 class TestPagination(unittest.TestCase):
 
@@ -52,12 +53,14 @@ class TestPagination(unittest.TestCase):
     def test_use_pagination_single(self, mock_render):
 
         received_limit_and_offset = None
+        app = create_app()
+        app.testing = True
 
         with app.test_client() as client:
             @app.route("/test-single-pagination")
             @use_pagination(10)
             def pagination_single(limit_and_offset):
-                nonlocal received_limit_and_offset              
+                nonlocal received_limit_and_offset
                 received_limit_and_offset = limit_and_offset
                 return 'index.html', dict(item_count=100)
             response = client.get("/test-single-pagination",
@@ -69,7 +72,7 @@ class TestPagination(unittest.TestCase):
             self.assertDictEqual({ 'limit': 10, 'offset': 20},
                 received_limit_and_offset) # type: ignore
 
-            _, context, _ = mock_render.call_args[0]
+            _, _, context = mock_render.call_args[0]
             self.assertTrue("pagination" in context)
             self.assertEqual(context["pagination"]["items_count"], 100)
 
@@ -77,6 +80,8 @@ class TestPagination(unittest.TestCase):
     def test_use_pagination_multiple(self, mock_render):
 
         received_limit_and_offset: Any = None
+        app = create_app()
+        app.testing = True
 
         with app.test_client() as client:
             @app.route("/test-multi-pagination")
@@ -93,7 +98,7 @@ class TestPagination(unittest.TestCase):
                 'template_arg_name': 'pagination_b'
             })
             def pagination_multiple(limit_and_offset):
-                nonlocal received_limit_and_offset              
+                nonlocal received_limit_and_offset
                 received_limit_and_offset = limit_and_offset
                 return 'index.html', dict(item_a_count=100, item_b_count=200)
             response = client.get("/test-multi-pagination",
@@ -101,7 +106,7 @@ class TestPagination(unittest.TestCase):
 
             self.assertTrue(mock_render.called)
             self.assertEqual(response.status_code, 200)
-    
+
             self.assertIsNotNone(received_limit_and_offset)
             limit_and_offset_a, limit_and_offset_b = received_limit_and_offset
             self.assertDictEqual({ 'limit': 50, 'offset': 100},

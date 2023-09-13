@@ -7,7 +7,12 @@ import os
 
 from flask import Flask
 
-app = Flask(__name__, template_folder='../templates')
+def create_app():
+    """ Creates and returns a Flask app."""
+    app = Flask(__name__, template_folder='../templates')
+    return app
+
+app = create_app()
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.dirname(root_dir)
