@@ -13,7 +13,7 @@ Pagination helpers. You have three ways to use this tools:
 
 from functools import wraps
 import math
-from typing import Iterable, List, Optional, Sequence, Sized, Tuple, Union
+from typing import Iterable, List, Optional, Sequence, Union
 import urllib.parse as urlparse
 import sys
 

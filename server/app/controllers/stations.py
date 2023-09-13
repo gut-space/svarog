@@ -1,8 +1,7 @@
 from app.repository import Repository
-from flask import render_template
 from app import app, utils
 
-from app.pagination import Pagination, use_pagination
+from app.pagination import use_pagination
 
 
 @app.route('/stations')

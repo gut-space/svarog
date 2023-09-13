@@ -108,14 +108,8 @@ def human_readable_obs(obs: Observation) -> Observation:
 
     aos_tca_duration = obs["tca"] - obs["aos"]
 
-    # This is ridiculous, but there's no formatter for timedelta object.
-    tca_duration_m = floor(aos_tca_duration.total_seconds() / 60)
-    tca_duration_s = aos_tca_duration.total_seconds() - tca_duration_m * 60
-    los_duration_m = floor(aos_los_duration.total_seconds() / 60)
-    los_duration_s = aos_los_duration.total_seconds() - los_duration_m * 60
-
     obs.aos = obs["aos"].strftime("%Y-%m-%d %H:%M:%S")
-    obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_tca_duration, fmt="{M:02}m {S:02}s since AOS")
+    obs.tca = obs["tca"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_tca_duration, fmt="{M:02}m {S:02}s since AOS") + tca_correction
     obs.los = obs["los"].strftime("%Y-%m-%d %H:%M:%S") + ", " + strfdelta(aos_los_duration, fmt="{M:02}m {S:02}s since AOS")
     return obs
 

@@ -1,14 +1,13 @@
-from flask import render_template, abort, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for
 from app import app
 from flask_wtf import FlaskForm
 from flask_login import current_user, login_user, logout_user, UserMixin, LoginManager
 
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import InputRequired, Email, Length
+from wtforms.validators import InputRequired, Length
 from werkzeug.urls import url_parse
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 
-from app import app
 from app.repository import Repository, UserRole
 
 
@@ -60,8 +59,8 @@ def login():
         stations = repository.owned_stations(current_user.get_id())
 
         # list of stations
-        l = " ".join(f"{s['name']}({s['station_id']})" for s in stations)
-        app.logger.info("Authenticated user %s, owner of %s" % (current_user.username, l))
+        owned_stations = " ".join(f"{s['name']}({s['station_id']})" for s in stations)
+        app.logger.info("Authenticated user %s, owner of %s" % (current_user.username, owned_stations))
 
         return render_template("login.html", user=current_user, stations=stations)
 

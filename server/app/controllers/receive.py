@@ -127,7 +127,7 @@ def receive(station_id: str, args: RequestArguments):
     # Select thumbnail source file
     thumbnail_source_entry = first(lambda f: f[1].mimetype.startswith("image/"), file_entries)
     if thumbnail_source_entry is None:
-        app.logger.info(f"No suitable images for thumbnail, using None")
+        app.logger.info("No suitable images for thumbnail, using None")
         thumb_filename = None
     else:
         thumb_source_filename, _ = thumbnail_source_entry

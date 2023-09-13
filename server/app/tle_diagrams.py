@@ -1,14 +1,8 @@
 from datetime import datetime, timedelta
 import io
 import math
-import sys
 from collections import namedtuple
 from typing import List, Sequence, Tuple
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
 
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -124,9 +118,8 @@ def generate_polar_plot_png(location: Location, tle: Sequence[str],
         readability.
     '''
     series = _calculate_series(location, tle, aos, los, predict_time_step)
-    by_time_figure = _produce_azimuth_elevation_by_time_figure(*series)  # type: ignore
-    figure = _produce_azimuth_elevation_polar_figure(*series,  # type: ignore
-                                                     polar_time_step)
+    # by_time_figure = _produce_azimuth_elevation_by_time_figure(*series)  # type: ignore
+    figure = _produce_azimuth_elevation_polar_figure(*series, polar_time_step)  # type: ignore
 
     return _save_to_png(figure)
 

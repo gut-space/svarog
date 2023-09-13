@@ -1,11 +1,12 @@
+from app.utils import get_footer
 
 try:
     from configparser import ConfigParser, NoSectionError, NoOptionError
 except ImportError:
     from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
-from flask import Flask
 import os
+from flask import Flask
 
 
 def create_app():
@@ -42,7 +43,6 @@ except NoSectionError as e:
 except NoOptionError as e:
     raise Exception("Unable to find option in 'database' section in the %s file: %s" % (ini_path, e))
 
-from app.utils import get_footer
 from app import template_globals
 from app import routes
 
