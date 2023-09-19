@@ -24,6 +24,7 @@ from utils.functional import first
 from utils.globalvars import APP_NAME, LOG_FILE, COMMENT_PASS_TAG, COMMENT_PLAN_TAG, COMMENT_UPDATE_TAG, CONFIG_PATH
 from utils.dates import from_iso_format
 from utils.cron import get_planner_command, get_receiver_command, open_crontab
+from utils.observations import obs_list
 from crontab import CronItem
 from orbit_predictor.locations import Location
 from recipes.factory import get_recipe_names
@@ -217,6 +218,8 @@ server_config_parser.add_argument("-s", "--secret", type=hex_bytes, help="HMAC s
 logging_parser = config_subparsers.add_parser("logging", help="Station logging configuration")
 logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
                             help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
+
+obs_parser = subparsers.add_parser("obs", help="Local observations management")
 
 metadata_parser = subparsers.add_parser("metadata", help="Displays metadata")
 
@@ -453,6 +456,14 @@ elif command == "metadata":
     print(f"Metadata stored in {m.filename}. Please tweak its content as needed.")
     print("Currently defined metadata:")
     print(m.getString())
+elif command == "obs":
+    print("Loading config file %s" % CONFIG_PATH)
+    config = open_config()
+    obsdir = ""
+    if "obsdir" not in config.keys():
+        print("No obsdir defined in config file. Please use `station config global --directory <dir>` to set it.")
+        sys.exit(1)
 
+    obs_list(obsdir = config["obsdir"])
 else:
     parser.print_help()
