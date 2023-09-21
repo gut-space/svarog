@@ -220,6 +220,7 @@ logging_parser.add_argument("--level", choices=("DEBUG", "INFO", "WARNING", "ERR
                             help="Specify the logging level (DEBUG, INFO, WARNING, ERROR, or CRITICAL)")
 
 obs_parser = subparsers.add_parser("obs", help="Local observations management")
+obs_parser.add_argument("--clean", action="store_true", default=False, help="Clean useless observations (default: %(default)s)")
 
 metadata_parser = subparsers.add_parser("metadata", help="Displays metadata")
 
@@ -464,6 +465,6 @@ elif command == "obs":
         print("No obsdir defined in config file. Please use `station config global --directory <dir>` to set it.")
         sys.exit(1)
 
-    obs_list(obsdir = config["obsdir"])
+    obs_list(obsdir = config["obsdir"], clean = args.clean)
 else:
     parser.print_help()

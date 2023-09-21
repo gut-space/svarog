@@ -10,7 +10,23 @@ class ObservationStatus(Enum):
     SUCCESS = 2 # Observation is successful, but was not uploaded
     SUBMITTED = 3 # Was able to confirm that the observation was uploaded properly.
 
-def obs_list(obsdir: str):
+def obs_del(obsdir: str, obsname: str):
+    print(f"Deleting observation {obsname}...")
+    obsdir = Path(obsdir)
+    obsname = Path(obsname)
+    fullpath = obsdir / obsname
+    if not obsdir.is_dir():
+        print(f"Observation directory {obsdir} does not exist!")
+        return
+    if not fullpath.is_dir():
+        print(f"Observation {fullpath} does not exist!")
+        return
+    obsdir = obsdir / obsname
+    for f in obsdir.glob('*'):
+        f.unlink()
+    obsdir.rmdir()
+
+def obs_list(obsdir: str, clean: bool = False):
     obs_stats(obsdir)
 
     dirs = sorted([d for d in Path(obsdir).glob('*') if d.is_dir()])
@@ -25,6 +41,9 @@ def obs_list(obsdir: str):
         elif status == ObservationStatus.UNKOWN:
             unknown_cnt += 1
         obs_print_info(obsdir, d.name)
+        if clean and status == ObservationStatus.USELESS:
+            print(f"obsdir={obsdir} Deleting useless observation {d.name}...")
+            obs_del(obsdir, d.name)
 
     print(f"SUMMARY: {total_cnt} observations, {useless_cnt} useless, {unknown_cnt} unknown, {total_cnt - useless_cnt - unknown_cnt} useful.")
 
