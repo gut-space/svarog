@@ -12,6 +12,7 @@ class ObservationStatus(Enum):
 
 
 def obs_del(obsdir: str, obsname: str):
+    """ This physically deletes the observation from the local disk."""
     print(f"Deleting observation {obsname}...")
     obsdir = Path(obsdir)
     obsname = Path(obsname)
@@ -29,6 +30,7 @@ def obs_del(obsdir: str, obsname: str):
 
 
 def obs_list(obsdir: str, clean: bool = False):
+    """ Lists observations in the specified directory. If clean is True, it will also delete useless observations."""
     obs_stats(obsdir)
 
     dirs = sorted([d for d in Path(obsdir).glob('*') if d.is_dir()])
@@ -51,6 +53,7 @@ def obs_list(obsdir: str, clean: bool = False):
 
 
 def obs_print_info(obsdir: str, obsname: str):
+    """ Prints information about observation in the specified directory."""
     du = sum(file.stat().st_size for file in Path(obsdir + "/" + obsname).rglob('*'))
 
     regex = re.compile(r"([0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4})-([a-zA-Z-0-9_]+)")
@@ -69,8 +72,29 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
     # Test 1: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.
     files = [f for f in Path(obsdir + "/" + obsname).glob('*') if f.is_file()]
+    # If there's only one file and it's just a log, it's a failed observation.
     if len(files) == 1 and files[0].name == "session.log":
         return ObservationStatus.USELESS
+
+    # Check if there's a signal.wav file that's too small. If there is, it's a failed observation.
+    for file in files:
+        if file.name == "signal.wav" and file.stat().st_size < 1024:
+            return ObservationStatus.USELESS
+
+    found = False
+    for file in files:
+        if str(file.name).endswith('png'):
+            found = True
+            break
+
+    if found and file is not None:
+        if file.stat().st_size < 1024:
+            print(f"Found a small png file {file}, assuming this is a failed observation.")
+            return ObservationStatus.USELESS
+        else:
+            print(f"Found a large png file {file}, assuming this is a successful observation.")
+            return ObservationStatus.SUCCESS
+
     if len(files) == 1 and files[0].name == "signal.wav" and files[0].stat().st_size < 1024:
         return ObservationStatus.USELESS
 
