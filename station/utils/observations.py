@@ -29,6 +29,23 @@ def obs_del(obsdir: str, obsname: str):
     obsdir.rmdir()
 
 
+def obs_clean(obsdir: str, obsname: str):
+    """Removes obsolete files from good, successfull operation."""
+    obsdir = Path(obsdir + "/" + obsname)
+    files = obsdir.glob('*.png')
+
+    if list(files):
+        # Ok, there are PNG files, we can get rid of the .raw and .wav files.
+        wav_files = obsdir.glob('*.wav')
+        for file in wav_files:
+            print(f"PNG exists in this {str(obsdir)}, deleting {str(file)}")
+            file.unlink()
+        raw_files = obsdir.glob('*.raw')
+        for file in raw_files:
+            print(f"RAW exists in this {str(obsdir)}, deleting {str(file)}")
+            file.unlink()
+
+
 def obs_list(obsdir: str, clean: bool = False):
     """ Lists observations in the specified directory. If clean is True, it will also delete useless observations."""
     obs_stats(obsdir)
@@ -48,6 +65,9 @@ def obs_list(obsdir: str, clean: bool = False):
         if clean and status == ObservationStatus.USELESS:
             print(f"obsdir={obsdir} Deleting useless observation {d.name}...")
             obs_del(obsdir, d.name)
+        if clean and status == ObservationStatus.SUCCESS:
+            print(f"obsdir={obsdir} Cleaning useless files from observation {d.name}...")
+            obs_clean(obsdir, d.name)
 
     print(f"SUMMARY: {total_cnt} observations, {useless_cnt} useless, {unknown_cnt} unknown, {total_cnt - useless_cnt - unknown_cnt} useful.")
 
