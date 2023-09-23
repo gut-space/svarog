@@ -465,6 +465,6 @@ elif command == "obs":
         print("No obsdir defined in config file. Please use `station config global --directory <dir>` to set it.")
         sys.exit(1)
 
-    obs_list(obsdir = config["obsdir"], clean = args.clean)
+    obs_list(obsdir=config["obsdir"], clean=args.clean)
 else:
     parser.print_help()

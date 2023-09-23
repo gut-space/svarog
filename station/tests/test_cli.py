@@ -102,14 +102,15 @@ class TestCli(unittest.TestCase):
     def test_cli_help(self):
         """Checks if help is printed and has reasonable information."""
 
-        exp = ["usage: svarog [-h] {clear,logs,plan,pass,config,metadata}",
+        exp = ["usage: svarog [-h] {clear,logs,plan,pass,config,obs,metadata}",
                "positional arguments:",
-               "{clear,logs,plan,pass,config,metadata}",
+               "{clear,logs,plan,pass,config,obs,metadata}",
                "clear               Clear all scheduled reception events",
                "logs                Show logs",
                "plan                Schedule planned reception events",
                "pass                Information about passes",
                "config              Configuration",
+               "obs                 Local observations management",
                "metadata            Displays metadata",
                "-h, --help            show this help message and exit"
                ]
