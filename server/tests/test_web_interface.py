@@ -105,7 +105,7 @@ class BasicTests(unittest.TestCase):
             'Authorization': header_value
         }
         response = self.app.post('/receive', data=data, headers=headers)
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 201)
 
         def file_count(dir_): return len(
             [f for f in os.listdir(dir_)
