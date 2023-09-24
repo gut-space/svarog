@@ -28,7 +28,7 @@ def set_sh_defaults(f):
     '''
     @wraps(f)
     def inner(working_dir, *args, **kwargs):
-        sh2 = sh(_cwd=working_dir)
+        sh2 = sh.bake(_cwd=working_dir)
         kwargs["sh"] = sh2
         return f(working_dir, *args, **kwargs)
     return inner
