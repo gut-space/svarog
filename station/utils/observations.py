@@ -53,6 +53,7 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
     dirs = sorted([d for d in Path(obsdir).glob('*') if d.is_dir()])
     useless_cnt = 0
     submitted_cnt = 0
+    success_cnt = 0
     total_cnt = 0
     unknown_cnt = 0
     for d in dirs:
@@ -64,6 +65,8 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
             unknown_cnt += 1
         elif status == ObservationStatus.SUBMITTED:
             submitted_cnt += 1
+        elif status == ObservationStatus.SUCCESS:
+            success_cnt += 1
         obs_print_info(obsdir, d.name)
         if clean and status == ObservationStatus.USELESS:
             print(f"obsdir={obsdir} Deleting useless observation {d.name}...")
@@ -75,7 +78,7 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
             print(f"obsdir={obsdir} Deleting uploaded observation {d.name}...")
             obs_del(obsdir, d.name)
 
-    print(f"SUMMARY: {total_cnt} observations, {submitted_cnt} uploaded, {useless_cnt} useless, {unknown_cnt} unknown, {total_cnt - useless_cnt - unknown_cnt} useful.")
+    print(f"SUMMARY: {total_cnt} observations, {submitted_cnt} uploaded, {success_cnt} successful, {useless_cnt} useless, {unknown_cnt} unknown.")
 
 
 def obs_print_info(obsdir: str, obsname: str):
@@ -122,10 +125,10 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
     if found and file is not None:
         if file.stat().st_size < 1024:
-            print(f"Found a small png file {file}, assuming this is a failed observation.")
+            # Found a small png file {file}, assuming this is a failed observation.
             return ObservationStatus.USELESS
         else:
-            print(f"Found a large png file {file}, assuming this is a successful observation.")
+            # Found a large png file {file}, assuming this is a successful observation.
             return ObservationStatus.SUCCESS
 
     # Test 5: If there's a very small wav file, it's useless junk.
