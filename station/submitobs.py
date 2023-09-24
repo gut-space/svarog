@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import datetime
 import os
 import requests
@@ -180,7 +180,7 @@ def submit_observation(data: SubmitRequestData):
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print("Not enough parameters. At least 3 are needed: "
-              "filename sat_name aos [tca] [los] [notes] [rating]")
+              "filename sat_name aos [tca] [los] [metadata.json] [rating(float)]")
         print("filename can be a single file or coma separated list (no spaces)")
         exit(1)
 
