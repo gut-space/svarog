@@ -225,7 +225,7 @@ if __name__ == '__main__':
         logging.info(f"Upload result: {status}")
         # write status to file
         result_file = str(os.path.dirname(os.path.abspath(filename[0]))) + "/upload_result.json"
-        with open(result_file , "w") as f:
+        with open(result_file, "w") as f:
             f.write(json.dumps(status, indent=4))
             logging.info(f"Upload result stored in {result_file}")
 
