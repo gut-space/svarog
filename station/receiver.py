@@ -86,6 +86,10 @@ def cmd():
     m = Metadata()
     for x in metadata:
         m.set(x, metadata[x])
+    # Write metadata to local file
+    metadata_file = os.path.join(dir, "metadata.json")
+    m.writeFile(metadata_file)
+    logging.info(f"INFO: metadata written to {metadata_file}.")
 
     if should_submit:
         logging.info("Submitting results")
