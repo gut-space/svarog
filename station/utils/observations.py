@@ -46,12 +46,13 @@ def obs_clean(obsdir: str, obsname: str):
             file.unlink()
 
 
-def obs_list(obsdir: str, clean: bool = False):
+def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
     """ Lists observations in the specified directory. If clean is True, it will also delete useless observations."""
     obs_stats(obsdir)
 
     dirs = sorted([d for d in Path(obsdir).glob('*') if d.is_dir()])
     useless_cnt = 0
+    submitted_cnt = 0
     total_cnt = 0
     unknown_cnt = 0
     for d in dirs:
@@ -61,6 +62,8 @@ def obs_list(obsdir: str, clean: bool = False):
             useless_cnt += 1
         elif status == ObservationStatus.UNKOWN:
             unknown_cnt += 1
+        elif status == ObservationStatus.SUBMITTED:
+            submitted_cnt += 1
         obs_print_info(obsdir, d.name)
         if clean and status == ObservationStatus.USELESS:
             print(f"obsdir={obsdir} Deleting useless observation {d.name}...")
@@ -68,8 +71,11 @@ def obs_list(obsdir: str, clean: bool = False):
         if clean and status == ObservationStatus.SUCCESS:
             print(f"obsdir={obsdir} Cleaning useless files from observation {d.name}...")
             obs_clean(obsdir, d.name)
+        if del_uploaded and status == ObservationStatus.SUBMITTED:
+            print(f"obsdir={obsdir} Deleting uploaded observation {d.name}...")
+            obs_del(obsdir, d.name)
 
-    print(f"SUMMARY: {total_cnt} observations, {useless_cnt} useless, {unknown_cnt} unknown, {total_cnt - useless_cnt - unknown_cnt} useful.")
+    print(f"SUMMARY: {total_cnt} observations, {submitted_cnt} uploaded, {useless_cnt} useless, {unknown_cnt} unknown, {total_cnt - useless_cnt - unknown_cnt} useful.")
 
 
 def obs_print_info(obsdir: str, obsname: str):
@@ -90,17 +96,24 @@ def obs_print_info(obsdir: str, obsname: str):
 
 def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
-    # Test 1: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.
     files = [f for f in Path(obsdir + "/" + obsname).glob('*') if f.is_file()]
+
+    # Test 1: If there's a upload status file, it's a successful, uploaded observation.
+    for file in files:
+        if file.name == "upload_result.json":
+            return ObservationStatus.SUBMITTED
+
+    # Test 2: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.
     # If there's only one file and it's just a log, it's a failed observation.
     if len(files) == 1 and files[0].name == "session.log":
         return ObservationStatus.USELESS
 
-    # Check if there's a signal.wav file that's too small. If there is, it's a failed observation.
+    # Test 3: Check if there's a signal.wav file that's too small. If there is, it's a failed observation.
     for file in files:
         if file.name == "signal.wav" and file.stat().st_size < 1024:
             return ObservationStatus.USELESS
 
+    # Test 4: Check if there's a large png file. If there is, it's a successful observation.
     found = False
     for file in files:
         if str(file.name).endswith('png'):
@@ -115,6 +128,7 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
             print(f"Found a large png file {file}, assuming this is a successful observation.")
             return ObservationStatus.SUCCESS
 
+    # Test 5: If there's a very small wav file, it's useless junk.
     if len(files) == 1 and files[0].name == "signal.wav" and files[0].stat().st_size < 1024:
         return ObservationStatus.USELESS
 
