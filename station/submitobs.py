@@ -106,7 +106,7 @@ def submit_observation(data: SubmitRequestData):
     data: SubmitRequestData
         Observation to be sent (image, sat_name, etc.)
     return:
-        None if successful or description of what went wrong
+        dict with an extended status (successful, observation id, extra details etc.)
     '''
     form_data = {
         "aos": data.aos.isoformat(),
@@ -163,18 +163,25 @@ def submit_observation(data: SubmitRequestData):
         logging.info("Response status: %d" % resp.status_code)
 
     # Logging extra details in case of failed submission.
-    if (resp.status_code != 204):
+    status = {
+        "status-code": resp.status_code,
+        "upload-time": datetime.datetime.now().isoformat(),
+        "response-text": resp.text
+    }
+
+    if resp.status_code not in [201, 204]:
         # On info, just log the field names in what we sent. On debug, log also the content and the whole response.
         logging.info("Submission details: headers: %s, form: %s" % (",".join(headers.keys()), ",".join(form_data.keys())))
         logging.debug("headers=%s" % headers)
         logging.debug("form=%s" % form_data)
         logging.debug("Response details: %s" % resp.text)
-        return f"Upload failed, status code {resp.status_code}"
     else:
-        logging.info("Upload successful.")
+        logging.info(f"Upload successful: {resp.text}")
+
+    # write upload result to a file:
 
     # All seems to be OK
-    return None
+    return status
 
 
 if __name__ == '__main__':
@@ -210,12 +217,17 @@ if __name__ == '__main__':
     # Files can be coma separated (or it could be just a single file)
     filename = filename.split(",")
 
-    result = submit_observation(
+    status = submit_observation(
         SubmitRequestData(filename, sat_name, aos, tca, los, cfg, rating)
     )
 
-    if result:
-        logging.error(f"Upload result: {result}")
+    if status:
+        logging.info(f"Upload result: {status}")
+        # write status to file
+        result_file = str(os.path.dirname(os.path.abspath(filename[0]))) + "/upload_result.json"
+        with open(result_file , "w") as f:
+            f.write(json.dumps(status, indent=4))
+            logging.info(f"Upload result stored in {result_file}")
 
     # Empty string means success, everything else is a failure
-    sys.exit(result is not None)
+    sys.exit(0 if status["status-code"] in [201, 204] else 1)

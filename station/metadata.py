@@ -45,9 +45,11 @@ class Metadata:
         self.addDefaults()
         self.writeFile()
 
-    def writeFile(self):
+    def writeFile(self, filename=None):
         """Writes content of the metadata to disk."""
-        with open(self.filename, 'w') as outfile:
+        if not filename:
+            filename = self.filename
+        with open(filename, 'w') as outfile:
             outfile.write(self.getString())
 
     def getAll(self) -> Dict:
