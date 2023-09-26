@@ -26,8 +26,8 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         "-M", "raw",
         # Set frequency (in Hz, e.g. 137MHz)
         "-f", frequency,
-        # Enable bias-T
-        #"-T",
+        # Enable bias-T (disabled)
+        # "-T",
         # Specify sampling rate (e.g. 48000 Hz)
         "-s", 48000,
         # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
