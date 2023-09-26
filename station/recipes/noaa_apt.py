@@ -38,7 +38,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
             # Higher quality downsampling - possible value 0 or 9. 9 is experimental.
             "-F", 9,
             # Enable bias-T
-            "-T",
+            #"-T",
             # How arctan is computed. We don't test other options.
             "-A", "fast",
             # dc blocking filter (?)
