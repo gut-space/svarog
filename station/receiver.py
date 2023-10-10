@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import typing
+import json
 
 from matplotlib.pyplot import imread
 
@@ -47,6 +48,12 @@ def get_rating_for_product(product_path: str, rate_name: typing.Optional[str]) \
 
 
 def cmd():
+    if len(sys.argv) < 3:
+        print("Usage: receiver.py <name> <los> [opts]")
+        print("name - name of the receiver")
+        print("los - loss of signal time (UTC)")
+        return
+
     _, name, los, *opts = sys.argv
 
     logging.info("Starting receiver job: name=%s los=%s, PATH=%s" % (name, los, os.getenv('PATH')))
@@ -55,9 +62,31 @@ def cmd():
 
     aos_datetime = datetime.datetime.utcnow()
     los_datetime = from_iso_format(los)
+
+    # TODO: calculate TCA properly. There may be cases when an observation is interrupted by another,
+    # better pass. Also, part of the pass could be obscured by buildings.
     tca_datetime = aos_datetime + (los_datetime - aos_datetime) / 2
 
-    results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
+    dir = factory.get_dir(satellite, los_datetime)
+
+    # Early metadata write to local file. We do this before the recipe is executed, because the recipe
+    # may file. If the recipe returns without any major issues, we will write it again with possibly
+    # extra metadata returned by the recipe.
+    m = Metadata()
+    m.set("satellite", satellite["name"])
+    m.set("aos", aos_datetime.isoformat())
+    m.set("los", los_datetime.isoformat())
+    m.set("tca", tca_datetime.isoformat())
+    # Write metadata to local file
+    metadata_file = os.path.join(dir, "metadata.json")
+    m.writeFile(metadata_file)
+    logging.info(f"INFO: metadata written to {metadata_file}.")
+
+    try:
+        results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
+    except:
+        logging.error("ERROR: Recipe execution failed, exception:", exc_info=True)
+        return
 
     # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
     # However, if things go south and for some reason the recipe is mistaken (e.g. the noaa-apt fails to
@@ -86,10 +115,14 @@ def cmd():
     m = Metadata()
     for x in metadata:
         m.set(x, metadata[x])
+    m.set("satellite", satellite["name"])
+    m.set("aos", aos_datetime.isoformat())
+    m.set("los", los_datetime.isoformat())
+    m.set("tca", tca_datetime.isoformat())
     # Write metadata to local file
     metadata_file = os.path.join(dir, "metadata.json")
     m.writeFile(metadata_file)
-    logging.info(f"INFO: metadata written to {metadata_file}.")
+    logging.info(f"INFO: Updated metadata written to {metadata_file}.")
 
     if should_submit:
         logging.info("Submitting results")
