@@ -4,7 +4,6 @@ import os
 import shutil
 import sys
 import typing
-import json
 
 from matplotlib.pyplot import imread
 
@@ -84,8 +83,8 @@ def cmd():
 
     try:
         results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
-    except:
-        logging.error("ERROR: Recipe execution failed, exception:", exc_info=True)
+    except Exception as e:
+        logging.error(f"ERROR: Recipe execution failed, exception: {e}")
         return
 
     # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
