@@ -85,12 +85,23 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.flush()
 
     # Run noaa_apt - this decodes APT from the audio file into PNG image.
-    sh.noaa_apt(
-        "-o", product_path,
-        "--false-color", "--contrast", "telemetry",
-        signal_path,
-        _out=logfile
-    )
+    try:
+        sh.noaa_apt(
+            "-o", product_path,
+            "--false-color", "--contrast", "telemetry",
+            signal_path,
+            _out=logfile
+        )
+    except sh.ErrorReturnCode_1:
+        # noaa_apt returns 1 when it fails to decode the image. We don't want to fail the whole
+        # observation because of this, so we just log the error and continue.
+        logfile.write("ERROR: noaa_apt failed with exit code 1 (likely failed to decode image).\n")
+        return [
+            ("PRODUCT", product_path),
+            ("LOG", log_path),
+            ("RAW", raw_path)
+        ]
+
     logfile.flush()
     logfile.close()
 
