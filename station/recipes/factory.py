@@ -86,7 +86,7 @@ def get_recipe(sat: SatelliteConfiguration):
     if recipe is None:
         raise LookupError("Unknown recipe")
 
-    return recipes[recipe]
+    return recipes[recipe], recipe
 
 
 def get_unique_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
@@ -94,6 +94,16 @@ def get_unique_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
     Generates unique, but meaningful dir name.
     '''
     return los.strftime("%Y-%m-%d-%H%M") + "-" + sat["name"].lower().replace(" ", "-")
+
+
+def get_dir(sat: SatelliteConfiguration, los: datetime.datetime) -> str:
+    base_dir = setup_base_dir()
+
+    reception_dir = os.path.join(base_dir, get_unique_dir(sat, los))
+    logging.info("Recipe will store all files in %s" % reception_dir)
+    os.makedirs(reception_dir, exist_ok=True)
+
+    return reception_dir
 
 
 def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
@@ -113,19 +123,15 @@ def execute_recipe(sat: SatelliteConfiguration, los: datetime.datetime) \
     You need delete or move returned files when you don't need them. You should
     also delete the temporary observation directory.
     '''
-    recipe_function = get_recipe(sat)
+    recipe_function, recipe_name = get_recipe(sat)
 
-    base_dir = setup_base_dir()
-
-    reception_dir = os.path.join(base_dir, get_unique_dir(sat, los))
-    logging.info("Recipe will store all files in %s" % reception_dir)
-    os.makedirs(reception_dir, exist_ok=True)
+    reception_dir = get_dir(sat, los)
     now = datetime.datetime.utcnow()
     record_interval = los - now
 
     metadata = {
         "frequency": sat["freq"],
-        "recipe": str(recipe_function)
+        "recipe": str(recipe_name)
     }
 
     output = recipe_function(reception_dir, sat["freq"], record_interval)
