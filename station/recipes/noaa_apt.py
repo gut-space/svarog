@@ -26,35 +26,38 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
 
     # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
-        sh.rtl_fm(
-            # Specify frequency (in Hz, e.g. 137MHz)
-            "-f", frequency,
-            # Specify sampling rate (e.g. 48000 Hz)
-            "-s", sample_rate,
-            # Maximal possible value. Probably is wrong for other SDR then rtl-sdr
-            "-g", 49.6,
-            # Copy-paste from suspects www
-            "-p", 1,
-            # Higher quality downsampling - possible value 0 or 9. 9 is experimental.
-            "-F", 9,
-            # Enable bias-T (disabled)
-            # "-T",
-            # How arctan is computed. We don't test other options.
-            "-A", "fast",
-            # dc blocking filter (?)
-            "-E", "DC",
-            # Output to pipe, optional in this command
-            raw_path,
-            _timeout=duration.total_seconds(),
-            _timeout_signal=signal.SIGTERM,
+        try:
+            sh.rtl_fm(
+                # Specify frequency (in Hz, e.g. 137MHz)
+                "-f", frequency,
+                # Specify sampling rate (e.g. 48000 Hz)
+                "-s", sample_rate,
+                # Maximal possible value. Probably is wrong for other SDR then rtl-sdr
+                "-g", 49.6,
+                # Copy-paste from suspects www
+                "-p", 1,
+                # Higher quality downsampling - possible value 0 or 9. 9 is experimental.
+                "-F", 9,
+                # Enable bias-T (disabled)
+                # "-T",
+                # How arctan is computed. We don't test other options.
+                "-A", "fast",
+                # dc blocking filter (?)
+                "-E", "DC",
+                # Output to pipe, optional in this command
+                raw_path,
+                _timeout=duration.total_seconds(),
+                _timeout_signal=signal.SIGKILL,
 
-            # rtl_fm and rx_fm both print messages on stderr
-            _err=logfile
-        )
-    logfile.flush()
+                # rtl_fm and rx_fm both print messages on stderr
+                _err=logfile
+            )
+        except sh.ErrorReturnCode_1 as e:
+            # The rtl_fm command is undocumented wrt to exit codes. Reading the code, it could return 1
+            # in multiple cases in rtlsdr_open().
+            logfile.write(f"ERROR: rtl_fm failed with exit code 1, details: {e}\n")
 
     logfile.write("---sox log-------\n")
-    logfile.flush()
 
     # Run sox - this convert raw samples into audible WAV
     sh.sox(  # Type of input
