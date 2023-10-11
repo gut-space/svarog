@@ -53,12 +53,14 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
                 _err=logfile
             )
             rtl_proc.send_signal(signal.SIGKILL)
+
         except sh.ErrorReturnCode_1 as e:
             # The rtl_fm command is undocumented wrt to exit codes. Reading the code, it could return 1
             # in multiple cases in rtlsdr_open().
             logfile.write(f"ERROR: rtl_fm failed with exit code 1, details: {e}\n")
 
     logfile.write("---sox log-------\n")
+    logfile.flush()
 
     # Run sox - this convert raw samples into audible WAV
     sh.sox(  # Type of input
