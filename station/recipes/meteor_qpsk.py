@@ -2,13 +2,9 @@ from contextlib import suppress
 from datetime import timedelta, datetime
 import os.path
 import signal
-
 import sh
-import logging
-
 from recipes.helpers import set_sh_defaults
 
-logging.basicConfig(level=logging.INFO)
 
 @set_sh_defaults
 def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
@@ -35,28 +31,29 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.flush()
     with suppress(sh.TimeoutException):
         fm_proc = sh.rtl_fm(
-        # Modulation raw
-        "-M", "raw",
-        # Set frequency (in Hz, e.g. 137MHz)
-        "-f", frequency,
-        # Enable bias-T (disabled)
-        # "-T",
-        # Specify sampling rate (e.g. 48000 Hz)
-        "-s", 48000,
-        # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
-        "-g", 48,
-        # Copy-paste from suspicious www
-        "-p", 1,
-        raw_path,
-        _timeout=duration.total_seconds(),
-        _timeout_signal=signal.SIGKILL,
-        _err=logfile,
-        _bg_exc=False
-        )
+            # Modulation raw
+            "-M", "raw",
+            # Set frequency (in Hz, e.g. 137MHz)
+            "-f", frequency,
+            # Enable bias-T (disabled)
+            # "-T",
+            # Specify sampling rate (e.g. 48000 Hz)
+            "-s", 48000,
+            # Almost maximal possible value. Probably is wrong for other SDR then rtl-sdr
+            "-g", 48,
+            # Copy-paste from suspicious www
+            "-p", 1,
+            raw_path,
+            _timeout=duration.total_seconds(),
+            _timeout_signal=signal.SIGKILL,
+            _err=logfile,
+            _bg_exc=False
+            )
+        logfile.write(f"rtl_fm started, pid is {fm_proc.pid}\n")
 
     logfile.write(f"{str(datetime.now())} --- sox (step 1, convert) log ---\n")
     logfile.flush()
-    sox_proc = sh.sox(
+    sh.sox(
         # Type of input
         "-t", "raw",
         "-r", "288k",
@@ -78,7 +75,6 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
         _out=logfile
         )
 
-
     # Normalize signal
     logfile.write(f"{str(datetime.now())} --- sox (step 2, normalize signal) log ---\n")
     logfile.flush()
@@ -94,7 +90,6 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     logfile.write(f"{str(datetime.now())} --- meteor_demod log ---\n")
     logfile.flush()
     sh.meteor_demod(
-        sh.yes(_piped=True),
         "-o", qpsk_path,
         "-B", normalized_signal_path,
         _out=logfile
@@ -127,7 +122,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
              # Use dump
              "-d",
              _out=logfile
-            )
+             )
 
     # Convert to PNG
     logfile.write(f"{str(datetime.now())} --- convert product log ---\n")
