@@ -84,7 +84,7 @@ def cmd():
     try:
         results, dir, metadata = factory.execute_recipe(satellite, los_datetime)
     except Exception as e:
-        logging.error(f"ERROR: Recipe execution failed, exception: {e}")
+        logging.error(f"ERROR: Recipe execution failed, exception: {e}, {str(e)}")
         return
 
     # We're entirely sure the recipe is honest and reported only files that were actually created *cough*.
@@ -131,7 +131,7 @@ def cmd():
             rating = get_rating_for_product(product[1], satellite.get("rate"))
             logging.info("Product %s got rating %s" % (product[1], rating))
             # TODO: Submit ALL products and logs
-            logging.warning("TODO: signal submission not implemented yet (%s)" % signal)
+            logging.warning(f"TODO: signal submission not implemented yet")
             files = [product[1]]
             submit_observation(
                 SubmitRequestData(
