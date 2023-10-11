@@ -27,7 +27,7 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
     # Run rtl_fm/rx_fm - this records the actual samples from the RTL device
     with suppress(sh.TimeoutException):
         try:
-            sh.rtl_fm(
+            rtl_proc = sh.rtl_fm(
                 # Specify frequency (in Hz, e.g. 137MHz)
                 "-f", frequency,
                 # Specify sampling rate (e.g. 48000 Hz)
@@ -47,11 +47,12 @@ def execute(working_dir: str, frequency: str, duration: timedelta, sh=sh):
                 # Output to pipe, optional in this command
                 raw_path,
                 _timeout=duration.total_seconds(),
-                _timeout_signal=signal.SIGKILL,
+                _timeout_signal=signal.SIGHUP,
 
                 # rtl_fm and rx_fm both print messages on stderr
                 _err=logfile
             )
+            rtl_proc.send_signal(signal.SIGKILL)
         except sh.ErrorReturnCode_1 as e:
             # The rtl_fm command is undocumented wrt to exit codes. Reading the code, it could return 1
             # in multiple cases in rtlsdr_open().
