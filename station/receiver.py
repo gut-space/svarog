@@ -107,8 +107,11 @@ def cmd():
     save_mode = satellite["save_to_disk"]
     should_submit = satellite["submit"]
 
-    signal = first(results, lambda r: r[0] == "SIGNAL")
     products = filter(lambda r: r[0] == "PRODUCT", results)
+
+    # We could extract the signal file and log file here, but we don't need them for now.
+    # signal = first(results, lambda r: r[0] == "SIGNAL")
+    # log = first(results, lambda r: r[0] == "LOG")
 
     # Use the metadata stored in file, but supplement it with details returned by the recipe
     m = Metadata()
