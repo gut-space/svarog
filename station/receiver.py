@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import typing
+import json
 
 from matplotlib.pyplot import imread
 
@@ -127,21 +128,34 @@ def cmd():
     logging.info(f"INFO: Updated metadata written to {metadata_file}.")
 
     if should_submit:
-        logging.info("Submitting results")
         product = first(products, lambda _: True)
         if product is not None:
-            logging.info("Getting rating for product %s (rating algorithm is %s)" % (product[1], satellite.get("rate")))
+            logging.info(f"Submitting results, Getting rating for product {product[1]} (rating algorithm is {satellite.get('rate')}")
             rating = get_rating_for_product(product[1], satellite.get("rate"))
-            logging.info("Product %s got rating %s" % (product[1], rating))
+            logging.info("Product {product[1]} got rating {rating}.")
+
             # TODO: Submit ALL products and logs
-            logging.warning("TODO: signal submission not implemented yet")
+            logging.warning("TODO: signal and logs submission not implemented yet")
+
             files = [product[1]]
-            submit_observation(
+            upload_status = submit_observation(
                 SubmitRequestData(
                     files, name, aos_datetime, tca_datetime,
                     los_datetime, m.getString(), rating
                 )
             )
+        else:
+            logging.warning("No products to submit")
+            upload_status = {
+                "status-code": 0,
+                "response-text": "not uploaded, there is no product to upload."
+            }
+
+        logging.info(f"Upload result: {upload_status}")
+        # write status to file
+        with open(os.path.join(dir, "uploaded.json"), "w") as f:
+            f.write(json.dumps(upload_status, indent=4))
+            logging.info(f"Upload result written to {f.name}")
 
     # Now, delete files we don't want to save
     for type, f in products:

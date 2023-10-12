@@ -103,7 +103,7 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
     # Test 1: If there's a upload status file, it's a successful, uploaded observation.
     for file in files:
-        if file.name == "upload_result.json":
+        if file.name == "uploaded.json":
             return ObservationStatus.SUBMITTED
 
     # Test 2: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.

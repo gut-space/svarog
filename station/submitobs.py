@@ -156,7 +156,10 @@ def submit_observation(data: SubmitRequestData):
     try:
         resp = requests.post(url, form_data, headers=headers, files=files)
     except requests.exceptions.ConnectionError:
-        return f"Unable to connect to {url}, connection refused"
+        return {
+            "status-code": 0,
+            "response-text": f"Unable to connect to {url}, connection refused"
+        }
     if (resp.status_code >= 400):
         logging.warning("Response status: %d" % resp.status_code)
     else:
@@ -177,8 +180,6 @@ def submit_observation(data: SubmitRequestData):
         logging.debug("Response details: %s" % resp.text)
     else:
         logging.info(f"Upload successful: {resp.text}")
-
-    # write upload result to a file:
 
     # All seems to be OK
     return status
@@ -220,14 +221,6 @@ if __name__ == '__main__':
     status = submit_observation(
         SubmitRequestData(filename, sat_name, aos, tca, los, cfg, rating)
     )
-
-    if status:
-        logging.info(f"Upload result: {status}")
-        # write status to file
-        result_file = str(os.path.dirname(os.path.abspath(filename[0]))) + "/upload_result.json"
-        with open(result_file, "w") as f:
-            f.write(json.dumps(status, indent=4))
-            logging.info(f"Upload result stored in {result_file}")
 
     # Empty string means success, everything else is a failure
     sys.exit(0 if status["status-code"] in [201, 204] else 1)
