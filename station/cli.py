@@ -461,7 +461,6 @@ elif command == "metadata":
 elif command == "obs":
     print("Loading config file %s" % CONFIG_PATH)
     config = open_config()
-    obsdir = ""
     if "obsdir" not in config.keys():
         print("No obsdir defined in config file. Please use `station config global --directory <dir>` to set it.")
         sys.exit(1)

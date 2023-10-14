@@ -1,14 +1,16 @@
 
 from pathlib import Path
 import re
+import json
 from enum import Enum
 
 
 class ObservationStatus(Enum):
-    USELESS = 0  # Observation is useless (no useful data, just log)
-    UNKOWN = 1  # Unable to determine status
+    UNKOWN = 0  # Unable to determine status
+    USELESS = 1  # Observation is useless (no useful data, just log)
     SUCCESS = 2  # Observation is successful, but was not uploaded
-    SUBMITTED = 3  # Was able to confirm that the observation was uploaded properly.
+    UPLOADED = 3  # Was able to confirm that the observation was uploaded properly.
+    UPLOAD_FAILED = 4 # An attempt to upload was attempted, but it failed.
 
 
 def obs_del(obsdir: str, obsname: str):
@@ -50,9 +52,10 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
     """ Lists observations in the specified directory. If clean is True, it will also delete useless observations."""
     obs_stats(obsdir)
 
-    dirs = sorted([d for d in Path(obsdir).glob('*') if d.is_dir()])
+    dirs = sorted(d for d in Path(obsdir).glob('*') if d.is_dir())
     useless_cnt = 0
-    submitted_cnt = 0
+    uploaded_cnt = 0
+    upload_failed_cnt = 0
     success_cnt = 0
     total_cnt = 0
     unknown_cnt = 0
@@ -63,8 +66,10 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
             useless_cnt += 1
         elif status == ObservationStatus.UNKOWN:
             unknown_cnt += 1
-        elif status == ObservationStatus.SUBMITTED:
-            submitted_cnt += 1
+        elif status == ObservationStatus.UPLOADED:
+            uploaded_cnt += 1
+        elif status == ObservationStatus.UPLOAD_FAILED:
+            upload_failed_cnt += 1
         elif status == ObservationStatus.SUCCESS:
             success_cnt += 1
         obs_print_info(obsdir, d.name)
@@ -74,11 +79,11 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
         if clean and status == ObservationStatus.SUCCESS:
             print(f"obsdir={obsdir} Cleaning useless files from observation {d.name}...")
             obs_clean(obsdir, d.name)
-        if del_uploaded and status == ObservationStatus.SUBMITTED:
+        if del_uploaded and status == ObservationStatus.UPLOADED:
             print(f"obsdir={obsdir} Deleting uploaded observation {d.name}...")
             obs_del(obsdir, d.name)
 
-    print(f"SUMMARY: {total_cnt} observations, {submitted_cnt} uploaded, {success_cnt} successful, {useless_cnt} useless, {unknown_cnt} unknown.")
+    print(f"SUMMARY: {total_cnt} observations, {uploaded_cnt} uploaded, {upload_failed_cnt} uploads failed, {success_cnt} successful, {useless_cnt} useless, {unknown_cnt} unknown.")
 
 
 def obs_print_info(obsdir: str, obsname: str):
@@ -101,10 +106,19 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
     files = [f for f in Path(obsdir + "/" + obsname).glob('*') if f.is_file()]
 
-    # Test 1: If there's a upload status file, it's a successful, uploaded observation.
+    # Test 1: If there's a upload status file, it's either failed or successful upload.
     for file in files:
+        print(f"#### file " + str(file))
         if file.name == "uploaded.json":
-            return ObservationStatus.SUBMITTED
+            with open(file) as json_data:
+                content = json.load(json_data)
+                if "status-code" in content and "response-text" in content:
+                    if content["status-code"] in [200, 201, 202, 203, 204, 205]:
+                        return ObservationStatus.UPLOADED
+                    else:
+                        return ObservationStatus.UPLOAD_FAILED
+                else:
+                    return ObservationStatus.UPLOADED
 
     # Test 2: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.
     # If there's only one file and it's just a log, it's a failed observation.
@@ -131,9 +145,6 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
             # Found a large png file {file}, assuming this is a successful observation.
             return ObservationStatus.SUCCESS
 
-    # Test 5: If there's a very small wav file, it's useless junk.
-    if len(files) == 1 and files[0].name == "signal.wav" and files[0].stat().st_size < 1024:
-        return ObservationStatus.USELESS
 
     return ObservationStatus.UNKOWN
 
