@@ -10,7 +10,7 @@ class ObservationStatus(Enum):
     USELESS = 1  # Observation is useless (no useful data, just log)
     SUCCESS = 2  # Observation is successful, but was not uploaded
     UPLOADED = 3  # Was able to confirm that the observation was uploaded properly.
-    UPLOAD_FAILED = 4 # An attempt to upload was attempted, but it failed.
+    UPLOAD_FAILED = 4  # An attempt to upload was attempted, but it failed.
 
 
 def obs_del(obsdir: str, obsname: str):
@@ -83,7 +83,8 @@ def obs_list(obsdir: str, clean: bool = False, del_uploaded: bool = False):
             print(f"obsdir={obsdir} Deleting uploaded observation {d.name}...")
             obs_del(obsdir, d.name)
 
-    print(f"SUMMARY: {total_cnt} observations, {uploaded_cnt} uploaded, {upload_failed_cnt} uploads failed, {success_cnt} successful, {useless_cnt} useless, {unknown_cnt} unknown.")
+    print(f"SUMMARY: {total_cnt} observations, {uploaded_cnt} uploaded, {upload_failed_cnt} uploads failed, {success_cnt} successful, "
+          f"{useless_cnt} useless, {unknown_cnt} unknown.")
 
 
 def obs_print_info(obsdir: str, obsname: str):
@@ -108,7 +109,6 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
 
     # Test 1: If there's a upload status file, it's either failed or successful upload.
     for file in files:
-        print(f"#### file " + str(file))
         if file.name == "uploaded.json":
             with open(file) as json_data:
                 content = json.load(json_data)
@@ -118,7 +118,7 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
                     else:
                         return ObservationStatus.UPLOAD_FAILED
                 else:
-                    return ObservationStatus.UPLOADED
+                    return ObservationStatus.UNKNOWN
 
     # Test 2: check if there is only a session.log file. If there is, there's no data, so it's a failed observation.
     # If there's only one file and it's just a log, it's a failed observation.
@@ -144,7 +144,6 @@ def obs_determine_status(obsdir: str, obsname: str) -> ObservationStatus:
         else:
             # Found a large png file {file}, assuming this is a successful observation.
             return ObservationStatus.SUCCESS
-
 
     return ObservationStatus.UNKOWN
 
