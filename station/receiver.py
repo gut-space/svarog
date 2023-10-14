@@ -132,7 +132,9 @@ def cmd():
         if product is not None:
             logging.info(f"Submitting results, Getting rating for product {product[1]} (rating algorithm is {satellite.get('rate')}")
             rating = get_rating_for_product(product[1], satellite.get("rate"))
-            logging.info("Product {product[1]} got rating {rating}.")
+            logging.info(f"Product {product[1]} got rating {rating}.")
+            m.set("rating-algorithm", satellite.get("rate"))
+            m.set("rating", rating)
 
             # TODO: Submit ALL products and logs
             logging.warning("TODO: signal and logs submission not implemented yet")
