@@ -20,7 +20,7 @@ from utils.configuration import open_config
 from utils.filenames import safe_filename
 
 CELESTRAK = [
-    r"https://celestrak.com/NORAD/elements/active.txt"
+    r"https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle"
 ]
 
 

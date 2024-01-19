@@ -6,7 +6,7 @@ location:
   name: Secret Lair
 max_elevation_greater_than: 0
 norad:
-- https://celestrak.com/NORAD/elements/noaa.txt
+- https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=tle
 satellites:
 - freq: 137.62e6
   name: NOAA 15
