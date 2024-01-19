@@ -10,7 +10,7 @@ from shutil import copy, rmtree
 environ["SVAROG_CONFIG_DIR"] = "tests/config"
 
 
-tle_filename = "https___celestrak.com_NORAD_elements_noaa.txt"
+tle_filename = "https___celestrak.org_NORAD_elements_gp.php_GROUP_noaa_FORMAT_tle"
 
 
 class TestOrbitDb(unittest.TestCase):

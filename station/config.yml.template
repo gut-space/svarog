@@ -8,8 +8,8 @@ logging:
   level: WARNING
 max_elevation_greater_than: 0
 norad:
-- https://celestrak.com/NORAD/elements/noaa.txt
-- https://celestrak.com/NORAD/elements/active.txt
+- https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=tle
+- https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle
 satellites:
 - freq: 137.62e6
   name: NOAA 15
