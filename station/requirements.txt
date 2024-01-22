@@ -50,7 +50,7 @@ packaging==23.1
     # via
     #   matplotlib
     #   typepy
-pillow==10.0.1
+pillow==10.2.0
     # via matplotlib
 plotille==3.8.0
     # via -r requirements.in
