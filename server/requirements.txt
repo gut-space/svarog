@@ -45,7 +45,7 @@ fonttools==4.43.0
     # via matplotlib
 html5lib==1.1
     # via astroquery
-idna==3.4
+idna==3.7
     # via requests
 importlib-metadata==6.8.0
     # via keyring
