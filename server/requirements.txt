@@ -172,7 +172,7 @@ webargs==8.3.0
     # via -r requirements.in
 webencodings==0.5.1
     # via html5lib
-werkzeug==2.3.8
+werkzeug==3.0.3
     # via
     #   flask
     #   flask-login
