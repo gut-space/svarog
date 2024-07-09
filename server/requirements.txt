@@ -178,5 +178,5 @@ werkzeug==2.3.8
     #   flask-login
 wtforms==3.0.1
     # via flask-wtf
-zipp==3.16.2
+zipp==3.19.1
     # via importlib-metadata
