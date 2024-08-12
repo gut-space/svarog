@@ -141,7 +141,7 @@ pyvo==1.4.2
     # via astroquery
 pyyaml==6.0.1
     # via astropy
-requests==2.31.0
+requests==2.32.2
     # via
     #   astroquery
     #   orbit-predictor
