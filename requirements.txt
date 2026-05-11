@@ -101,7 +101,7 @@ six==1.17.0
     # via python-dateutil
 typing-extensions==4.12.2
     # via -r requirements.in
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests
 webargs==8.6.0
     # via -r requirements.in
