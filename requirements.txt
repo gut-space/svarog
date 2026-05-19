@@ -33,7 +33,7 @@ flask-wtf==1.2.2
     # via -r requirements.in
 fonttools==4.61.0
     # via matplotlib
-idna==3.10
+idna==3.15
     # via requests
 itsdangerous==2.2.0
     # via
