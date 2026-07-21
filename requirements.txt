@@ -70,7 +70,7 @@ packaging==24.2
     #   marshmallow
     #   matplotlib
     #   webargs
-pillow==12.2.0
+pillow==12.3.0
     # via matplotlib
 psycopg2-binary==2.9.10
     # via -r requirements.in
